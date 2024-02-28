@@ -1,0 +1,53 @@
+.container {
+  box-sizing: border-box;
+  height: calc(1.25 * var(--row-sm));
+  width: 100%;
+  margin: 0rem;
+  padding: var(--gap-xsm) var(--gap-sm);
+  background-color: var(--primary-10);
+  cursor: pointer;
+  border-radius: calc(1.5 * var(--border-radius));
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--gap-sm);
+  user-select: none;
+}
+
+.label {
+  width: 100%;
+  font-weight: 900;
+}
+
+.options {
+  height: 100%;
+  width: fit-content;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.badge {
+  height: 1.25rem;
+  width: 1.25rem;
+  border-radius: 0.75rem;
+  background-color: var(--gray-400);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.badge-label {
+  font-weight: 900;
+  color: var(--gray-700);
+}
+
+.container:hover {
+  outline: solid 1px var(--primary-70);
+  box-shadow: 0px 0px 2px 1px var(--gray-400);
+}

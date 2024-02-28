@@ -1,0 +1,46 @@
+.container {
+  box-sizing: border-box;
+  height: 3rem;
+  width: 3rem;
+  overflow: hidden;
+  padding: 0.25rem;
+
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--gap-sm);
+}
+
+.button {
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
+  height: auto;
+  width: 100%;
+  border-radius: 50%;
+  padding: 25%;
+  background-color: var(--primary-10);
+  color: var(--gray-400);
+}
+
+.button > svg {
+  aspect-ratio: 1 / 1;
+}
+
+.button:hover {
+  outline: 1px solid var(--gray-400);
+}
+
+.display-menu-on-hover {
+  transition: height 0.75s;
+}
+
+.display-menu-on-hover:hover {
+  height: calc(calc(4 * 3rem) + calc(3 * var(--gap-sm)));
+}
+
+.send {
+  background-color: var(--primary-70);
+  color: var(--gray-900);
+}

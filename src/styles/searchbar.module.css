@@ -1,0 +1,27 @@
+.searchbar {
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--row-sm);
+  max-width: var(--frame-xl);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  background-color: var(--frame-background);
+  border: none;
+
+  padding: calc(var(--gap-sm) / 2) var(--gap-sm);
+  border-radius: var(--border-radius);
+  font-family: "Roboto", serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.searchbar:hover,
+.searchbar:focus {
+  outline: 1px solid var(--primary-70);
+  box-shadow: 0px 0px 2px 1px var(--gray-400);
+}
