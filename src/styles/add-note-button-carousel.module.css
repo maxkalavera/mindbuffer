@@ -40,7 +40,7 @@
   height: calc(calc(4 * 3rem) + calc(3 * var(--gap-sm)));
 }
 
-.send {
+.save {
   background-color: var(--primary-70);
   color: var(--gray-900);
 }

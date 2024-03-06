@@ -1,0 +1,20 @@
+.button {
+  min-width: var(--gap-lg);
+  width: fit-content;
+  height: var(--gap-md);
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+}
+
+.primary h4 {
+  color: var(--gray-400);
+}
+
+.secondary h4 {
+  color: var(--gray-600);
+}
+
+.button:hover h4 {
+  color: var(--primary-70);
+}

@@ -1,7 +1,8 @@
-import { useState } from 'react'
-import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
+import { useEffect, useState } from 'react'
+//import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
 
-import NoteGallery from '@components/NoteGallery'
+import { useAlert } from '@providers/Alert'
+import NotesBoard from '@components/NotesBoard'
 import AddNoteInput from '@components/AddNoteInput'
 import Pages from '@components/Pages'
 import SearchBar from '@components/SearchBar'
@@ -10,6 +11,12 @@ import styles from '@styles/home.module.css'
 
 function Home() {
   const [searchTerm, setSearchTerm] = useState('')
+  const { showAlert } = useAlert()
+
+  useEffect(() => {
+    showAlert('Everything is ok')
+  }, [])
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -17,16 +24,20 @@ function Home() {
           value={searchTerm}
           onChange={(value) => setSearchTerm(value)}
         />
-        <IconButton 
-          icon={faEllipsisVertical}
-        />
+        { /*
+          <IconButton 
+            icon={faEllipsisVertical}
+          />
+        */ }
       </div>
       <div className={styles.content}>
-        <div className={styles.pages}>
-          <Pages />
-        </div>
+        { 
+          <div className={styles.pages}>
+            <Pages />
+          </div>
+         }
         <div className={styles['notes-frame']}>
-          <NoteGallery />
+          <NotesBoard />
           <AddNoteInput />
         </div>
       </div>

@@ -16,10 +16,18 @@
       "@components/*": ["components/*"],
       "@assets/*": ["assets/*"],
       "@pages/*": ["pages/*"],
-      "@styles/*": ["styles/*"]
+      "@styles/*": ["styles/*"],
+      "@models/*": ["models/*"],
+      "@utils/*": ["utils/*"],
+      "@handlers/*": ["handlers/*"],
+      "@providers/*": ["providers/*"],
+      "@hooks/*": ["hooks/*"],
     }
   },
   "include": [
     "src/*"
-  ]
+  ],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  }
 }

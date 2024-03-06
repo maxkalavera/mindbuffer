@@ -1,6 +1,6 @@
 {
-  "name": "mindbuffer-tmp",
-  "productName": "mindbuffer-tmp",
+  "name": "mindbuffer",
+  "productName": "MindBuffer",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
@@ -26,8 +26,10 @@
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@types/lodash": "^4.14.202",
     "@types/react": "^18.2.60",
     "@types/react-dom": "^18.2.19",
+    "@types/webpack-node-externals": "^3.0.4",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "@vercel/webpack-asset-relocator-loader": "1.7.3",
@@ -37,12 +39,16 @@
     "eslint": "^8.0.1",
     "eslint-plugin-import": "^2.25.0",
     "fork-ts-checker-webpack-plugin": "^7.2.13",
+    "lodash": "^4.17.21",
     "node-loader": "^2.0.0",
+    "sequelize-cli": "^6.6.2",
     "style-loader": "^3.0.0",
     "ts-loader": "^9.2.2",
-    "ts-node": "^10.0.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
-    "typescript": "~4.5.4"
+    "typescript": "~4.5.4",
+    "webpack-cli": "^5.1.4"
   },
   "keywords": [],
   "author": {
@@ -52,8 +58,12 @@
   "license": "MIT",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^8.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.22.1"
+    "react-router-dom": "^6.22.1",
+    "sequelize": "^6.37.1",
+    "sqlite3": "^5.1.7",
+    "umzug": "^3.7.0"
   }
 }
