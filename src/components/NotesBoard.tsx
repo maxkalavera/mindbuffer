@@ -9,7 +9,7 @@ function NotesBoard() {
   const { dispatch, boardNotes } = useContext()
 
   useEffect(() => {
-    dispatch({type: 'notes/findAll'})
+    dispatch({type: 'notes/boardQuery'})
   }, [])
 
   return (

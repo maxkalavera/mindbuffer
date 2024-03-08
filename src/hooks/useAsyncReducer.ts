@@ -12,6 +12,10 @@ export default function useAsyncReducer(
   const dispatch = async (action: {type: string, payload?: any}) => {
     try {
       actionFunction = await actions[action.type]
+      if (actionFunction === undefined) {
+        console.error(`Can't find action: (${action.type})`)
+        return
+      }
     } catch (error) {
       console.error(`Can't find action: ${action.type}`)
       return
@@ -19,7 +23,8 @@ export default function useAsyncReducer(
 
     try {
       const clone = _.cloneDeep(state)
-      setState(await actionFunction(clone, action.payload))
+      await actionFunction(clone, action.payload)
+      setState(clone)
     } catch (error) {
       console.error(error)
     }

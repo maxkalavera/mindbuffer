@@ -7,6 +7,7 @@
   display: none;
   position: absolute;
   right: calc(calc(0.25 * var(--frame-xsm)) - var(--gap-sm));
+  transform: translate(-90%, -5%);
   box-sizing: border-box;
   min-height: var(--row-sm);
   min-width: calc(0.5 * var(--frame-xsm));

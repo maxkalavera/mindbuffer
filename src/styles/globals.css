@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Work+Sans|Roboto|PT+Serif&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Work+Sans|Roboto|Glegoo&display=swap');
 
 :root {
   --black: #000000;
@@ -33,7 +33,7 @@
   --row-lg: 8rem;    /* ~128px */
   --row-xl: 12rem;   /* ~192px */
   --row-xxl: 16rem;  /* ~256px */
-  --frame-xsm: 12.0rem; /* ~192px */
+  --frame-xs: 12.0rem; /* ~192px */
   --frame-sm: 16.0rem;  /* ~256px */
   --frame-md: 24.0rem;  /* ~384px */
   --frame-lg: 36.0rem;  /* ~576px */
@@ -51,6 +51,10 @@
   --content-container-padding: var(--gap-md);
   --content-container-min-height: calc(100vh - var(--header-height) - var(--footer-height));
   --content-height: calc(var(--content-container-min-height) - calc(2 * var(--content-container-padding)));
+
+  --primary-font: 'Work Sans', sans-serif;
+  --secondary-font: 'Roboto', serif;
+  --tertiary-font: 'Glegoo', monospace;
 }
 
 body, h1, h2, h3, h4, h5, p, small {
@@ -66,7 +70,7 @@ body, html {
 }
 
 .primary-h1 {
-  font-family: 'Work Sans', sans-serif;
+  font-family: var(--primary-font);
   font-style: normal;
   font-weight: 700;
   font-size: 2.5rem;
@@ -75,91 +79,140 @@ body, html {
 }
 
 .primary-h2 {
-  font-family: 'Work Sans', sans-serif;
+  font-family: var(--primary-font);
   font-style: normal;
   font-weight: 700;
   font-size: 2.0rem;
 }
 
 .primary-h3 {
-  font-family: 'Work Sans', sans-serif;
+  font-family: var(--primary-font);
   font-style: normal;
   font-weight: 700;
   font-size: 1.5rem;
 }
 
 .primary-h4 {
-  font-family: 'Work Sans', sans-serif;
+  font-family: var(--primary-font);
   font-style: normal;
   font-weight: 700;
   font-size: 1.0rem;
 }
 
 .primary-h5 {
-  font-family: 'Work Sans', sans-serif;
+  font-family: var(--primary-font);
   font-style: normal;
   font-weight: 700;
   font-size: 0.75rem;
 }
 
 .primary-p {
-  font-family: 'Work Sans', sans-serif;
+  font-family: var(--primary-font);
   font-style: normal;
   font-weight: 400;
   font-size: 1.0rem;
 }
 
 .primary-small {
-  font-family: 'Work Sans', sans-serif;
+  font-family: var(--primary-font);
   font-style: normal;
   font-weight: 400;
   font-size: 0.75rem;
 }
 
 .secondary-h1 {
-  font-family: 'Roboto', serif;
+  font-family: var(--secondary-font);
   font-style: normal;
   font-weight: 700;
   font-size: 2.5rem;
 }
 
 .secondary-h2 {
-  font-family: 'Roboto', serif;
+  font-family: var(--secondary-font);
   font-style: normal;
   font-weight: 700;
   font-size: 2.0rem;
 }
 
 .secondary-h3 {
-  font-family: 'Roboto', serif;
+  font-family: var(--secondary-font);
   font-style: normal;
   font-weight: 700;
   font-size: 1.5rem;
 }
 
 .secondary-h4 {
-  font-family: 'Roboto', serif;
+  font-family: var(--secondary-font);
   font-style: normal;
   font-weight: 700;
   font-size: 1.0rem;
 }
 
 .secondary-h5 {
-  font-family: 'Roboto';
+  font-family: var(--secondary-font);
   font-style: normal;
   font-weight: 700;
   font-size: 0.75rem;
 }
 
 .secondary-p {
-  font-family: 'Roboto', serif;
+  font-family: var(--secondary-font);
   font-style: normal;
   font-weight: 400;
   font-size: 1.0rem;
 }
 
 .secondary-small {
-  font-family: 'Roboto', serif;
+  font-family: var(--secondary-font);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.75rem;
+}
+
+.tertiary-h1 {
+  font-family: var(--tertiary-font);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 2.5rem;
+}
+
+.tertiary-h2 {
+  font-family: var(--tertiary-font);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 2.0rem;
+}
+
+.tertiary-h3 {
+  font-family: var(--tertiary-font);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.tertiary-h4 {
+  font-family: var(--tertiary-font);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.0rem;
+}
+
+.tertiary-h5 {
+  font-family: var(--tertiary-font);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.tertiary-p {
+  font-family: var(--tertiary-font);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.0rem;
+}
+
+.tertiary-small {
+  font-family: var(--tertiary-font);
   font-style: normal;
   font-weight: 400;
   font-size: 0.75rem;

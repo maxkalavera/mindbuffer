@@ -16,7 +16,7 @@
   width: fit-content;
   height: fit-content;
   min-width: var(--frame-sm);
-  min-height: var(--frame-xs);
+  min-height: var(--gap-md);
   max-width: 90%;
   max-height: 90%;
   padding: var(--gap-sm) var(--gap-md);

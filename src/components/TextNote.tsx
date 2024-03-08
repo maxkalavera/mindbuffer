@@ -4,7 +4,9 @@ import { faEllipsisVertical, faCopy, faTrash } from '@fortawesome/free-solid-svg
 import ModalContent from '@components/ModalContent'
 import DropdownMenu from "@components/DropdownMenu"
 import IconButton from '@components/IconButton'
+import { useAlert } from '@providers/Alert'
 import { useModal } from '@providers/Modal'
+import { useContext } from '@providers/Context'
 import styles from "@styles/text-note.module.css"
 
 function TextNote({
@@ -14,6 +16,8 @@ function TextNote({
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const { showModal, closeModal } = useModal()
+  const { showAlert } = useAlert()
+  const { dispatch } = useContext()
 
   useEffect(() => {
     if (textareaRef.current)
@@ -35,7 +39,10 @@ function TextNote({
             {
               label: 'Copy',
               icon: faCopy,
-              onClick: () => navigator.clipboard.writeText(note.dataValues.content)
+              onClick: () => {
+                navigator.clipboard.writeText(note.dataValues.content) 
+                showAlert('Copied to the clipboard')
+              }
             },
             {
               label: 'Delete',
@@ -46,7 +53,12 @@ function TextNote({
                   primary={{
                     label: 'Delete',
                     onClick: () => {
-
+                      dispatch({
+                        type: 'notes/delete',
+                        payload: note.dataValues.id
+                      })
+                      closeModal()
+                      showAlert('Note deleted!')
                     }
                   }}
                   secondary={{

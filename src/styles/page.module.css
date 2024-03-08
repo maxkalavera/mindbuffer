@@ -3,7 +3,7 @@
   height: calc(1.25 * var(--row-sm));
   width: 100%;
   margin: 0rem;
-  padding: var(--gap-xsm) var(--gap-sm);
+  padding: var(--gap-xs) var(--gap-sm);
   background-color: var(--primary-10);
   cursor: pointer;
   border-radius: calc(1.5 * var(--border-radius));
