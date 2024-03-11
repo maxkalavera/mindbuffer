@@ -1,4 +1,5 @@
 import { app, ipcMain } from 'electron'
+import { Op } from 'sequelize'
 
 import database from '@utils/database'
 
@@ -35,38 +36,34 @@ app.on('ready', () => {
     } 
   })
 
-  ipcMain.handle('database.notes:boardQuery', async (
+  ipcMain.handle('database.notes:queryBoardNotes', async (
     event, 
-    kwargs: { 
+    {
+      page = 1,
+      search = ''
+    }: {
       page?: number,
-      search?: string,
-    } = {}
-  ) => {
-    kwargs = Object.create({
-      page: 1,
-      search: ''
-    }, kwargs)
-    const pageOffset = 20
-    if (kwargs.page < 1) kwargs.page = 1
+      search?: string
+    }) => {
+    const paginationOffset = 20
+    if (page < 1) page = 1
     try {
-      if (kwargs.search === '') {
-        return await database.models.Note.findAll({ 
-          order: [['updatedAt', 'DESC']],
-          limit: pageOffset,
-          offset: pageOffset * (kwargs.page - 1),
-        })
-      }
-        return await database.models.Note.findAll({ 
-          order: [['updatedAt', 'DESC']],
-          limit: pageOffset,
-          offset: pageOffset * (kwargs.page - 1),
-          where: {
-            content: {
-              
-            }
-          }
-        })
-
+      const searchKeywords = search.toLowerCase().split(/\s+/)
+      const notes = await database.sequelize.query(`
+        SELECT * FROM "notes"
+        WHERE
+        ${
+          searchKeywords
+            .map((item) => `"content" LIKE "%${item}%"`)
+            .join(' OR ')
+        }
+        ORDER BY "createdAt" DESC
+        LIMIT ${paginationOffset} OFFSET ${paginationOffset * (page - 1)};
+      `, {
+        model: database.models.Note,
+        mapToModel: true
+      })
+      return notes.reverse()
     } catch (error) {
       console.error(error)
       return []

@@ -29,11 +29,12 @@ function Searchbar({
   const clearSearch = () => {
     setInputValue('')
     setSearch('')
+    dispatch({ type: 'notes/clearSearch' })
   }
 
   const useSearchButton = inputValue === '' || inputValue !== search;
   return (
-    <div className={styles.container}>
+    <div className={`${className} ${styles.container}`}>
       <input
         type="text"
         placeholder="Search..."

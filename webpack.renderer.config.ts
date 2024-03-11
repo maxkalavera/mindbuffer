@@ -1,3 +1,4 @@
+import { app } from 'electron'
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 
 import type { Configuration } from 'webpack';
@@ -7,7 +8,19 @@ import { plugins } from './webpack.plugins';
 
 rules.push({
   test: /\.css$/,
-  use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+  use: [
+    { 
+      loader: 'style-loader' 
+    }, 
+    { 
+      loader: 'css-loader',
+      options: {
+        modules: {
+          localIdentName: app && app.isPackaged ? '[hash:base64:5]' : '[local]_[hash:base64:5]'
+        }
+     }
+    }
+  ],
 });
 
 export const rendererConfig: Configuration = {

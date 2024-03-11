@@ -9,7 +9,7 @@ function DropdownMenu ({
   className= '',
   options=[]
 }: {
-  children?: ReactElement[]
+  children?: ReactElement[] | ReactElement | null
   className?: string
   options?: {
     label: string

@@ -10,8 +10,10 @@ import { useContext } from '@providers/Context'
 import styles from "@styles/text-note.module.css"
 
 function TextNote({
+  className='',
   note,
 }: {
+  className?: string,
   note: {[key: string]: any}
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -41,7 +43,7 @@ function TextNote({
               icon: faCopy,
               onClick: () => {
                 navigator.clipboard.writeText(note.dataValues.content) 
-                showAlert('Copied to the clipboard')
+                showAlert('Text copied to clipboard')
               }
             },
             {

@@ -8,6 +8,12 @@ contextBridge.exposeInMainWorld('database', {
     create: (content: string) => ipcRenderer.invoke('database.notes:create', content),
     findAll: () => ipcRenderer.invoke('database.notes:findAll'),
     delete: (id: number) => ipcRenderer.invoke('database.notes:delete', id),
-    boardQuery: () => ipcRenderer.invoke('database.notes:boardQuery'),
+    queryBoardNotes: ({
+      page = 1,
+      search = ''
+    }: {
+      page?: number,
+      search?: string
+    }) => ipcRenderer.invoke('database.notes:queryBoardNotes', { page, search}),
   }
 })

@@ -11,19 +11,10 @@ export const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: app && app.isPackaged ? 
     path.resolve(app.getPath('userData'), settings.get('dbFilename') as string) :
-    path.join(settings.get('rootDir') as string, '.webpack', settings.get('dbFilename') as string)
+    path.join(settings.get('rootDir') as string, '.run', settings.get('dbFilename') as string)
 })
 
 const umzug = migrator(sequelize)
-
-/*
-const umzug = new Umzug({
-  migrations: { glob: settings.get('migrationsGlob') },
-  context: sequelize.getQueryInterface(),
-  storage: new SequelizeStorage({ sequelize }),
-  logger: console,
-})
-*/
 
 const modelDefiners: ((sequelize: Sequelize) => void)[] = [
   require('@models/Note.model').definer

@@ -4,7 +4,7 @@ import { useState } from "react"
 type state = {[key: string]: any}
 
 export default function useAsyncReducer(
-  actions: {[key: string]: (clone: state, payload: any) => state},
+  actions: {[key: string]: (clone: state, payload: any) => any},
     initState: {[key: string]: any}
   ) {
   const [state, setState] = useState(initState)

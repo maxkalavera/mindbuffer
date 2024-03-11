@@ -29,8 +29,12 @@ function Home() {
         <div className={styles['notes-frame-container']}>
         <AlertBox />
         <div className={styles['notes-frame']}>
-          <NotesBoard />
-          <AddNoteInput />
+          <NotesBoard 
+            className={styles['notes-board']}
+          />
+          <AddNoteInput 
+            className={styles['add-note-input']}
+          />
         </div>
         </div>
       </div>

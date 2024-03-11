@@ -4,25 +4,28 @@ import { useContext } from '@providers/Context'
 import AddNoteButtonCarrousel from "@components/AddNoteButtonCarousel"
 import styles from "@styles/add-note-input.module.css"
 
-function AddNoteInput() {
-  const { dispatch } = useContext()
-  const [value, setValue] = useState('')
+function AddNoteInput({
+  className=''
+}: {
+  className?: string
+}) {
+  const { dispatch, textInput } = useContext()
 
   const saveNote = async () => {
-    dispatch({type: 'notes/create', payload: value})
+    dispatch({type: 'notes/create'})
   }
 
   return (
-    <div className={styles.container}>
+    <div className={`${className} ${styles.container}`}>
       <textarea
         placeholder="Add some thoughts..."
         className={`${styles.textarea}`}
-        value={value}
-        onChange={e => setValue(e.target.value)}
+        value={textInput}
+        onChange={e => dispatch({type: 'context/updateTextInput', payload: e.target.value})}
       />
       <AddNoteButtonCarrousel 
         onSave={() => saveNote()}
-        isSaveActive={value !== ''}
+        isSaveActive={textInput !== ''}
       />
     </div>
   );

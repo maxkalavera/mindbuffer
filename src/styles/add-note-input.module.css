@@ -1,7 +1,7 @@
 .container {
   box-sizing: border-box;
-  height: fit-content;
-  width: 100%;
+  height: var(--row-sm);
+  max-height: var(--row-sm);
 
   display: flex;
   flex-direction: row;
@@ -9,6 +9,7 @@
   justify-content: flex-start;
   align-items: flex-end;
   gap: var(--gap-sm);
+  transition: height 0.75s, max-height 0.75s;
 }
 
 .textarea {
@@ -32,6 +33,12 @@
   font-weight: 400;
   font-size: 1rem;
   color: var(--text-color);
+}
+
+.container:hover,
+.container:focus-within {
+  height: var(--frame-sm);
+  max-height: var(--frame-sm);
 }
 
 .textarea:hover,
