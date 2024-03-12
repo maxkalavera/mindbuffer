@@ -1,16 +1,17 @@
 .container {
   box-sizing: border-box;
   padding: var(--gap-sm);
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: flex-end;
   gap: var(--gap-sm);
-  overflow-x: hidden;
 }
 
 .textnote {
   width: max-content;
   max-width: 90%;
+  height: fit-content;
 }

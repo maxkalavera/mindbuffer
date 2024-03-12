@@ -1,4 +1,5 @@
 .container {
+  position: relative;
   width: fit-content;
   height: fit-content;
 }
@@ -6,7 +7,6 @@
 .content {
   display: none;
   position: absolute;
-  right: calc(calc(0.25 * var(--frame-xsm)) - var(--gap-sm));
   transform: translate(-90%, -5%);
   box-sizing: border-box;
   min-height: var(--row-sm);
@@ -16,9 +16,10 @@
   user-select: none;
   -webkit-user-drag: none;
   float: right;
-  z-index: 1;
+  overflow: visible;
   flex-direction: column;
   gap: var(--gap-xs);
+  z-index: 9;
 }
 
 .container:hover .content {

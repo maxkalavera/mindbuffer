@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Work+Sans|Roboto|Glegoo&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Work+Sans|Roboto|Glegoo|Nanum+Gothic+Coding&display=swap');
 
 :root {
   --black: #000000;
@@ -55,6 +55,7 @@
   --primary-font: 'Work Sans', sans-serif;
   --secondary-font: 'Roboto', serif;
   --tertiary-font: 'Glegoo', monospace;
+  --quaternary-font: 'Nanum Gothic Coding', monospace;
 }
 
 body, h1, h2, h3, h4, h5, p, small {
@@ -252,3 +253,5 @@ html, body, #root {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--gray-400);
 }
+
+
