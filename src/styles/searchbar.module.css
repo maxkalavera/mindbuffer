@@ -17,7 +17,7 @@
 .container:hover,
 .container:focus {
   outline: 1px solid var(--primary-70);
-  box-shadow: 0px 0px 2px 1px var(--gray-400);
+  box-shadow: 0px 0px 2px 1px var(--text-color);
 }
 
 .input {
@@ -41,9 +41,5 @@
   width: fit-content;
   border-radius: var(--border-radius);
   margin-right: var(--gap-xs);
-}
-
-.button svg {
-  width: 1.25rem;
-  height: 1.25rem;
+  font-size: 1.2rem;
 }

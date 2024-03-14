@@ -1,11 +1,12 @@
-import React from 'react'
-import { faEllipsisH, faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
+import React from "react"
+import { faEllipsisH, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 import DropdownMenu from "@components/DropdownMenu"
+import Page from '@components/Page'
 import IconButton from '@components/IconButton'
-import styles from '@styles/page.module.css'
+import styles from '@styles/notepad.module.css'
 
-export default function Page ({
+export default function Denotepad ({
   className='',
   data={}
 }: {
@@ -14,20 +15,13 @@ export default function Page ({
 }) {
   return (
     <div className={`${className} ${styles.container}`}>
-        <div className={styles['vertical-line']}></div>
-        <p className={`secondary-p ${styles.label}`}>
-          {data.name}
-        </p>
+      <div className={styles.header}>
+        <h4 className={`secondary-h4 ${styles.label}`}>
+          { data.name }
+        </h4>
         <DropdownMenu
           type='clickable'
           options={[
-            {
-              label: 'Edit',
-              icon: faPen,
-              onClick: () => {
-
-              }
-            },
             {
               label: 'Delete',
               icon: faTrash,
@@ -42,6 +36,18 @@ export default function Page ({
             icon={faEllipsisH}
           />
         </DropdownMenu>
+      </div>
+
+      <div className={styles.content}>
+        {
+          data.pages.map((item: any, index: number) => (
+            <Page 
+              key={index} 
+              data={item} 
+            />
+          ))
+        }
+      </div>
     </div>
   )
 }

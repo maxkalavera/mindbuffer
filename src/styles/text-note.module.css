@@ -8,6 +8,7 @@
   justify-content: flex-start;
   align-items: stretch;
   gap: var(--gap-xs);
+  -webkit-user-drag: none;
 }
 
 .content {
@@ -33,7 +34,7 @@
 .textarea {
   box-sizing: border-box;
   width: 100%;
-  color: var(--gray-400);
+  color: var(--text-color);
   background-color: transparent;
   resize: none;
   overflow: hidden;
@@ -41,7 +42,7 @@
 }
 
 .icon {
-  color: var(--gray-400);
+  color: var(--text-color);
   cursor: pointer;
 }
 

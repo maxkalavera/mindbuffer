@@ -25,10 +25,11 @@
   --primary-contrast: var(--white);
 
   --frame-background: var(--primary-10);
-  --text-color: var(--gray-400);
+  --text-color: var(--gray-300);
+  --text-color-highlight: var(--gray-100);
 
   font-size: 14px;
-  --row-sm: 2.5rem;    /* ~32px */
+  --row-sm: 3.0rem;    /* ~32px */
   --row-md: 5.5rem;    /* ~80px */
   --row-lg: 8rem;    /* ~128px */
   --row-xl: 12rem;   /* ~192px */
@@ -74,23 +75,21 @@ body, html {
   font-family: var(--primary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 2.5rem;
-  line-height: 2.75rem;
-  color: green;
+  font-size: 2.0rem;
 }
 
 .primary-h2 {
   font-family: var(--primary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 2.0rem;
+  font-size: 1.75rem;
 }
 
 .primary-h3 {
   font-family: var(--primary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
 .primary-h4 {
@@ -125,21 +124,21 @@ body, html {
   font-family: var(--secondary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 2.5rem;
+  font-size: 2.0rem;
 }
 
 .secondary-h2 {
   font-family: var(--secondary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 2.0rem;
+  font-size: 1.75rem;
 }
 
 .secondary-h3 {
   font-family: var(--secondary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
 .secondary-h4 {
@@ -174,21 +173,21 @@ body, html {
   font-family: var(--tertiary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 2.5rem;
+  font-size: 2.0rem;
 }
 
 .tertiary-h2 {
   font-family: var(--tertiary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 2.0rem;
+  font-size: 1.75rem;
 }
 
 .tertiary-h3 {
   font-family: var(--tertiary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
 .tertiary-h4 {
@@ -235,7 +234,8 @@ html, body, #root {
 
 /* width */
 ::-webkit-scrollbar {
-  width: var(--gap-sm);
+  width: var(--gap-xs);
+  height: var(--gap-xs);
 }
 
 /* Track */
@@ -254,4 +254,7 @@ html, body, #root {
   background: var(--gray-400);
 }
 
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
 

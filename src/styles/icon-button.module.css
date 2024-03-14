@@ -1,13 +1,11 @@
 .button {
   background-color: transparent;
-  color: var(--text-color);
+  color: var(--gray-400);
+  box-sizing: border-box;
   border: none;
   cursor: pointer;
-  height: 1.5rem;
-  width: 1.5rem;
 }
 
-.button svg {
-  height: 100%;
-  width: 100%;
+.button:active svg {
+  color: var(--primary-70);
 }

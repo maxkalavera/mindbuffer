@@ -1,61 +1,62 @@
 .markdown {
-  color: var(--gray-400)
+  color: var(--gray-400);
+  font-size: 12px;
 }
 
 .markdown h1 {
   font-family: var(--tertiary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 1.8rem;
-  color: var(--gray-400)
+  font-size: 1.8em;
+  color: var(--text-color)
 }
 
 .markdown h2 {
   font-family: var(--tertiary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 1.5rem;
-  color: var(--gray-400)
+  font-size: 1.5em;
+  color: var(--text-color)
 }
 
 .markdown h3 {
   font-family: var(--tertiary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 1.25rem;
-  color: var(--gray-400)
+  font-size: 1.25em;
+  color: var(--text-color)
 }
 
 .markdown h4 {
   font-family: var(--tertiary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 1.0rem;
-  color: var(--gray-400)
+  font-size: 1.0em;
+  color: var(--text-color)
 }
 
 .markdown h5 {
   font-family: var(--tertiary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 0.8rem;
-  color: var(--gray-400)
+  font-size: 0.8em;
+  color: var(--text-color)
 }
 
 .markdown h6 {
   font-family: var(--tertiary-font);
   font-style: normal;
   font-weight: 700;
-  font-size: 0.6rem;
-  color: var(--gray-400)
+  font-size: 0.6em;
+  color: var(--text-color)
 }
 
 .markdown p {
   font-family: var(--tertiary-font);
   font-style: normal;
   font-weight: normal;
-  font-size: 1.0rem;
-  color: var(--gray-400)
+  font-size: 1.0em;
+  color: var(--text-color)
 }
 
 .markdown strong {
@@ -71,7 +72,7 @@
   font-family: var(--tertiary-font);
   font-style: normal;
   font-weight: bold;
-  font-size: 1.0rem;
+  font-size: 1.0em;
   color: var(--primary-70)
 }
 
@@ -88,8 +89,8 @@
   font-family: var(--tertiary-font);
   font-style: normal;
   font-weight: normal;
-  font-size: 1.0rem;
-  color: var(--gray-400)
+  font-size: 1.0em;
+  color: var(--text-color)
 }
 
 .markdown pre {}
@@ -98,7 +99,7 @@
   font-family: var(--quaternary-font);
   font-style: normal;
   font-weight: bold;
-  font-size: 1.0rem;
+  font-size: 1.0em;
 }
 
 .markdown table {

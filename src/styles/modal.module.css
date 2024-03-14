@@ -44,7 +44,7 @@
 .close-button {
   width: fit-content;
   height: fit-content;
-  color: var(--gray-400);
+  color: var(--text-color);
 }
 
 .close-button svg {

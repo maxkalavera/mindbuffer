@@ -16,7 +16,8 @@ rules.push({
       loader: 'css-loader',
       options: {
         modules: {
-          localIdentName: app && app.isPackaged ? '[hash:base64:5]' : '[local]_[hash:base64:5]'
+          localIdentName: app && app.isPackaged ? '[hash:base64:5]' : '[local]_[hash:base64:5]',
+          auto: true,
         }
      }
     }

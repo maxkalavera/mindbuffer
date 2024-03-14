@@ -22,7 +22,11 @@
   z-index: 9;
 }
 
-.container:hover .content {
+.hoverable {
+
+}
+
+.hoverable:hover .content {
   display: flex;
 }
 
@@ -32,19 +36,19 @@
   gap: var(--gap-xs);
   padding: var(--gap-xs) var(--gap-sm);
   background-color: transparent;
-  color: var(--gray-400);
+  color: var(--text-color);
   border: none;
   outline: none;
   cursor: pointer;
 }
 
 .option:hover {
-  outline: 1px solid var(--gray-400);
+  outline: 1px solid var(--text-color);
 }
 
 .option:active {
-  outline: 1px solid var(--gray-400);
-  background-color: var(--gray-400);
+  outline: 1px solid var(--text-color);
+  background-color: var(--text-color);
   color: var(--gray-900);
 }
 

@@ -3,7 +3,7 @@ import { marked } from "marked"
 import DOMPurify from 'dompurify'
 import { faEllipsisVertical, faCopy, faTrash } from '@fortawesome/free-solid-svg-icons'
 
-import ModalContent from '@components/ModalContent'
+import DeleteNote from '@components/modals/DeleteNote'
 import DropdownMenu from "@components/DropdownMenu"
 import IconButton from '@components/IconButton'
 import { useAlert } from '@providers/Alert'
@@ -48,6 +48,7 @@ function TextNote({
       />
       <div className={styles.options}>
         <DropdownMenu
+          type='hoverable'
           options={[
             {
               label: 'Copy',
@@ -61,22 +62,17 @@ function TextNote({
               label: 'Delete',
               icon: faTrash,
               onClick: () => showModal(
-                <ModalContent 
-                  text='Are you sure you want to delete the note?'
-                  primary={{
-                    label: 'Delete',
-                    onClick: () => {
-                      dispatch({
-                        type: 'notes/delete',
-                        payload: note.dataValues.id
-                      })
-                      closeModal()
-                      showAlert('Note deleted!')
-                    }
+                <DeleteNote 
+                  onDelete={() => {
+                    dispatch({
+                      type: 'notes/delete',
+                      payload: note.dataValues.id
+                    })
+                    closeModal()
+                    showAlert('Note deleted!')
                   }}
-                  secondary={{
-                    label: 'Cancel',
-                    onClick: () => closeModal()
+                  onCancel={() => {
+                    closeModal()
                   }}
                 />
               )

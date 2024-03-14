@@ -1,7 +1,8 @@
 .container {
   box-sizing: border-box;
-  height: var(--row-sm);
-  max-height: var(--row-sm);
+  height: calc(var(--row-sm) + var(--gap-xs));
+  max-height: calc(var(--row-sm) + var(--gap-xs));
+  padding: var(--gap-xs);
 
   display: flex;
   flex-direction: row;
@@ -10,12 +11,13 @@
   align-items: flex-end;
   gap: var(--gap-sm);
   transition: height 0.75s, max-height 0.75s;
+  overflow: hidden;
 }
 
 .textarea {
   box-sizing: border-box;
   width: 100%;
-  height: var(--row-sm);
+  height: 100%;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -26,7 +28,7 @@
   resize: none;
   transition: height 0.75s;
 
-  padding: calc(var(--gap-sm) / 2) var(--gap-sm);
+  padding: var(--gap-xs) var(--gap-sm);
   border-radius: var(--border-radius);
   font-family: "Roboto", serif;
   font-style: normal;
@@ -43,7 +45,6 @@
 
 .textarea:hover,
 .textarea:focus {
-  height: var(--frame-sm);
   outline: 1px solid var(--primary-70);
   box-shadow: 0px 0px 2px 1px var(--gray-400);
 }
