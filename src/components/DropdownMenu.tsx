@@ -7,60 +7,79 @@ import styles from "@styles/dropdown-menu.module.css"
 function DropdownMenu ({
   children=[],
   className= '',
-  type='clickable',
   options=[]
 }: {
   children?: ReactElement[] | ReactElement | null,
   className?: string,
-  type?: 'clickable' | 'hoverable'
   options?: {
     label?: string
     onClick?: () => void
     icon?: IconProp
   }[]
 }) {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<any>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState<boolean>(false)
 
+  const closeDropdown = () => {
+    setIsVisible(false)
+    document.removeEventListener('click', closeDropdown)
+  }
+
+  const onClickOutside = (event: MouseEvent) => {
+    if (containerRef.current === null) return 
+    if (contentRef.current === null) return 
+
+    if (!containerRef.current.contains(event.target))
+      closeDropdown()
+  }
+
+  const openDropdown = () => {
+    if (containerRef.current === null) return 
+    if (contentRef.current === null) return 
+
+    setIsVisible(true)
+    const {left, top} = containerRef.current.getBoundingClientRect()
+    contentRef.current.style.left = `${left}px`
+    contentRef.current.style.top = `${top}px`
+
+    document.addEventListener('click', onClickOutside)
+  }
+
   useEffect(() => {
-    if (containerRef.current === null && type !== 'clickable') return
-    const focusOut = () => {
-      setIsVisible(false)
-    }
-    containerRef.current.addEventListener('focusout', focusOut)
-    return () => {
-      if (containerRef.current === null) return
-      containerRef.current.removeEventListener('focusout', focusOut)
-    }
-  }, [containerRef.current, type])
+    if (containerRef.current === null) return 
+
+    containerRef.current.addEventListener('click', openDropdown)
+  }, [containerRef.current])
 
   return (
     <div 
-      className={`${styles.container} ${type === 'hoverable' ? styles.hoverable : ''}`}
+      className={`${styles.container}`}
       ref={containerRef}
-      onClick={() => setIsVisible(true)}
     >
       { children }
+
       <div 
         className={`${styles.content}`}
-        style={{
-          display: type === 'clickable' ? (isVisible ? 'flex' : 'none') : null
-        }}
+        ref={contentRef}
+        style={{display: isVisible ? 'flex' : 'none'}}
       >
         {
           options.map((item, index) => (
             <button 
               key={index}
-              onClick={item.onClick}
+              onClick={() => {
+                item.onClick()
+                closeDropdown()
+              }}
               className={styles.option}
             >
-              <div className={styles['option-icon']}>
-                { 
-                  item.icon ? 
-                    <FontAwesomeIcon icon={item.icon} /> : 
-                    null 
-                }
-              </div>
+              { 
+                item.icon ? 
+                  <FontAwesomeIcon 
+                    icon={item.icon} 
+                  /> : null 
+              }
               <h5 className={`secondary-h5 ${styles['option-label']}`}>{ item.label }</h5>
             </button>
           ))

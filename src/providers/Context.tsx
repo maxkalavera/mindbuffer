@@ -30,24 +30,24 @@ function ContextProvider({
       state.textInput = payload
     },
     'notes/create': async (state) => {
-      const note = await (window as any).database.notes.create(state.textInput)
+      const note = await (window as any).electronAPI.notes.create(state.textInput)
       if (note !== undefined) {
         state.boardNotes.push(note)
         state.textInput = ''
       }
     },
     'notes/findAll': async (state) => {
-      const boardNotes = await (window as any).database.notes.findAll()
+      const boardNotes = await window.electronAPI.notes.findAll()
       if (boardNotes !== undefined) state.boardNotes = boardNotes
     },
     'notes/delete': async (state, payload) => {
-      const isDeleted = await (window as any).database.notes.delete(payload)
+      const isDeleted = await window.electronAPI.notes.delete(payload)
       if (isDeleted) {
         state.boardNotes = state.boardNotes.filter((item: any) => item.dataValues.id !== payload)
       }
     },
-    'notes/queryBoardNotes': async (state) => {
-      const boardNotes = await (window as any).database.notes.queryBoardNotes({
+    'notes/boardNotes': async (state) => {
+      const boardNotes = await window.electronAPI.notes.boardNotes({
         page: 1,
         search: ''
       })
@@ -59,7 +59,7 @@ function ContextProvider({
       }
     },
     'notes/search': async (state, payload) => {
-      const boardNotes = await (window as any).database.notes.queryBoardNotes({
+      const boardNotes = await window.electronAPI.notes.boardNotes({
         page: 1,
         search: payload
       })
@@ -71,7 +71,7 @@ function ContextProvider({
       }
     },
     'notes/clearSearch': async (state, payload) => {
-      const boardNotes = await (window as any).database.notes.queryBoardNotes({
+      const boardNotes = await window.electronAPI.notes.boardNotes({
         page: 1,
       })
       if (Array.isArray(boardNotes)) state.boardNotes = boardNotes
@@ -79,7 +79,7 @@ function ContextProvider({
     'notes/nextPage': async (state) => {
       if (!state.hasNextPage) return
 
-      const boardNotes = await (window as any).database.notes.queryBoardNotes({
+      const boardNotes = await window.electronAPI.notes.boardNotes({
         page: state.page + 1,
         search: state.search
       })

@@ -42,8 +42,9 @@
 .content {
   box-sizing: border-box;
   width: 100%;
+  height: 100%;
   max-width: 100%;
-  height: fit-content;
+  padding-right: 1rem;
 
   display: flex;
   flex-direction: column;
@@ -51,8 +52,4 @@
   align-items: stretch;
   gap: var(--gap-sm);
   overflow-y: auto;
-}
-
-.content * {
-  padding-right: 0.5rem;
 }

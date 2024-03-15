@@ -1,4 +1,5 @@
-declare module "*.module.css" {
-  const classes: { [key: string]: string };
-  export default classes;
+import { electronAPI } from "./main/preload";
+
+declare global {
+  interface Window {electronAPI: typeof electronAPI}
 }

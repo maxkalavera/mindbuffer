@@ -3,17 +3,26 @@
 
 import { contextBridge, ipcRenderer } from 'electron'
 
-contextBridge.exposeInMainWorld('database', {
+export const electronAPI = {
   notes: {
-    create: (content: string) => ipcRenderer.invoke('database.notes:create', content),
-    findAll: () => ipcRenderer.invoke('database.notes:findAll'),
-    delete: (id: number) => ipcRenderer.invoke('database.notes:delete', id),
-    queryBoardNotes: ({
-      page = 1,
-      search = ''
-    }: {
+    create: (payload: {content: string}) => {},
+    update: (id: number, payload: {content: string}) => {},
+    delete: (id: number) => {},
+    boardNotes: (payload: {
       page?: number,
       search?: string
-    }) => ipcRenderer.invoke('database.notes:queryBoardNotes', { page, search}),
+    }) => {},
+  },
+  notepads: {
+    create: (payload: {content: string}) => {},
+    update: (id: number, payload: {content: string}) => {},
+    delete: (id: number) => {},
+  },
+  pages: {
+    create: (payload: {content: string}) => {},
+    update: (id: number, payload: {content: string}) => {},
+    delete: (id: number) => {},
   }
-})
+}
+
+contextBridge.exposeInMainWorld('electronAPI', electronAPI)

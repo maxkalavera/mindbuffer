@@ -1,6 +1,9 @@
 import React from 'react'
 import { faEllipsisH, faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
 
+import { useModal } from '@providers/Modal'
+import UpdatePage from '@components/modals/UpdatePage'
+import DeletePage from '@components/modals/DeletePage'
 import DropdownMenu from "@components/DropdownMenu"
 import IconButton from '@components/IconButton'
 import styles from '@styles/page.module.css'
@@ -12,28 +15,40 @@ export default function Page ({
   className?: string,
   data: any
 }) {
+  const { showModal, closeModal } = useModal()
+
   return (
     <div className={`${className} ${styles.container}`}>
         <div className={styles['vertical-line']}></div>
         <p className={`secondary-p ${styles.label}`}>
-          {data.name}
+          { data.name }
         </p>
         <DropdownMenu
-          type='clickable'
           options={[
             {
               label: 'Edit',
               icon: faPen,
-              onClick: () => {
-
-              }
+              onClick: () => showModal(
+                <UpdatePage
+                  data={data}
+                  onSuccess={(payload: any) => {
+                    closeModal()
+                  }}
+                  onCancel={() => closeModal()}
+                />, 'Edit Page'
+              )
             },
             {
               label: 'Delete',
               icon: faTrash,
-              onClick: () => {
-
-              }
+              onClick: () => showModal(
+                <DeletePage 
+                  onSuccess={(payload: any) => {
+  
+                  }}
+                  onCancel={() => closeModal()}
+                />, 'Delete Page'
+              )
             }
           ]}
         >

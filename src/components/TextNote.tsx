@@ -41,14 +41,14 @@ function TextNote({
   }, [contentContainer.current, note.dataValues.content])
 
   return (
-    <div className={`${className} ${styles.container}`}>
+    <div className={`${className} ${styles.container}`}
+    >
       <div 
         className={`${mkStyles.markdown} ${styles.content}`} 
         ref={contentContainer}
       />
       <div className={styles.options}>
         <DropdownMenu
-          type='hoverable'
           options={[
             {
               label: 'Copy',
@@ -63,7 +63,7 @@ function TextNote({
               icon: faTrash,
               onClick: () => showModal(
                 <DeleteNote 
-                  onDelete={() => {
+                  onSuccess={() => {
                     dispatch({
                       type: 'notes/delete',
                       payload: note.dataValues.id
@@ -75,7 +75,7 @@ function TextNote({
                     closeModal()
                   }}
                 />
-              )
+              , 'Delete Note')
             }
           ]}
         >

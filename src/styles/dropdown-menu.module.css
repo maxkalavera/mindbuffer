@@ -1,45 +1,54 @@
 .container {
-  position: relative;
   width: fit-content;
   height: fit-content;
+
+  background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
 }
 
 .content {
-  display: none;
-  position: absolute;
-  transform: translate(-90%, -5%);
+  position: fixed;
+  transform: translate(-90%, 15%);
   box-sizing: border-box;
-  min-height: var(--row-sm);
+  width: fit-content;
   min-width: calc(0.5 * var(--frame-xsm));
+  height: fit-content;
+  min-height: 0px;
+  padding: 0px;
   background-color: var(--gray-900);
-  border: 1px solid var(--gray-700);
+  border: 1px solid var(--primary-10);
+  outline: none;
   user-select: none;
   -webkit-user-drag: none;
   float: right;
   overflow: visible;
-  flex-direction: column;
   gap: var(--gap-xs);
-  z-index: 9;
-}
 
-.hoverable {
-
-}
-
-.hoverable:hover .content {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: stretch;
 }
 
 .option {
-  display: flex;
-  flex-direction: row;
-  gap: var(--gap-xs);
+  width: 100%;
   padding: var(--gap-xs) var(--gap-sm);
   background-color: transparent;
   color: var(--text-color);
   border: none;
   outline: none;
   cursor: pointer;
+
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--gap-xs);
 }
 
 .option:hover {
@@ -69,8 +78,6 @@
 }
 
 .option-label {
-  display: flex;
   width: 100%;
   height: fit-content;
-  flex-direction: row;
 }

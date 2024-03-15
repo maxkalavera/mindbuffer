@@ -21,7 +21,7 @@ function NotesBoard({
   }
 
   useEffect(() => {
-    dispatch({type: 'notes/queryBoardNotes'})
+    dispatch({type: 'notes/boardNotes'})
   }, [])
 
   /*
