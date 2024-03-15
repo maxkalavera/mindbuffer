@@ -1,5 +1,5 @@
 ## Mindbuffer
-App to make annotations with the visualis of webchat
+App to make annotations with the visuals of a webchat.
 
 
 ## Migrations
