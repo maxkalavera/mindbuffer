@@ -12,6 +12,11 @@ export default (sequelize: Sequelize) => {
         up: require('@assets/migrations/00_initial').up,
         down: require('@assets/migrations/00_initial').down
       },
+      {
+        name: '01_groups',
+        up: require('@assets/migrations/01_groups').up,
+        down: require('@assets/migrations/01_groups').down
+      }
     ],
     context: sequelize.getQueryInterface(),
     storage: new SequelizeStorage({ sequelize }),

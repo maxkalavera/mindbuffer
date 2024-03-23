@@ -7,40 +7,36 @@ import { useState } from "react"
 
 function Searchbar({
   className = "",
-  value = "",
-  onChange = () => undefined
 }: {
   className?: string,
-  value?: string
-  onChange?: (value: string | undefined) => void
 }) {
-  const { dispatch } = useContext()
-  const [ inputValue, setInputValue ] = useState<string>('')
-  const [ search, setSearch ] = useState<string>('')
+  const { searchBar, board } = useContext()
 
   const sendSearch = () => {
-    setSearch(inputValue)
-    dispatch({
-      type: 'notes/search',
-      payload: inputValue
-    })
+    searchBar.activeSearch.update({ value: searchBar.value })
+    board.notes.clear()
+    board.notes.page.reset()
   }
 
   const clearSearch = () => {
-    setInputValue('')
-    setSearch('')
-    dispatch({ type: 'notes/clearSearch' })
+    searchBar.activeSearch.clear()
+    board.notes.clear()
+    board.notes.page.reset()
   }
 
-  const useSearchButton = inputValue === '' || inputValue !== search;
+  const onInputChange = (event: any) => {
+    searchBar.update({ value: event.target.value })
+  }
+
+  const useSearchButton = searchBar.value === '' || searchBar.value !== searchBar.activeSearch.value;
   return (
     <div className={`${className} ${styles.container}`}>
       <input
         type="text"
         placeholder="Search..."
         className={`${styles.input} ${className}`}
-        value={inputValue}
-        onChange={(event) => setInputValue(event.target.value)}
+        value={searchBar.value}
+        onChange={(event) => onInputChange(event)}
         onKeyDown={(event: any) => (event.code === "Enter") ? sendSearch() : null }
       ></input>
       <IconButton 

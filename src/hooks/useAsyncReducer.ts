@@ -1,36 +1,50 @@
 import _ from 'lodash'
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 type state = {[key: string]: any}
 
-export default function useAsyncReducer(
-  actions: {[key: string]: (clone: state, payload: any) => any},
-    initState: {[key: string]: any}
+export default function useAsyncReducer<T = any>(
+  actions: {[key: string]: (state: T, payload: any) => T | Promise<T>},
+    initState: T
   ) {
-  const [state, setState] = useState(initState)
-  let actionFunction = null
-  const dispatch = async (action: {type: string, payload?: any}) => {
+
+    
+
+}
+
+/*
+export default function useAsyncReducer<T = any>(
+  actions: {[key: string]: (state: T, payload: any) => T | Promise<T>},
+    initState: T
+  ) {
+  const [state, setState] = useState<T>(initState)
+  const dispatchRef = useRef(async (action: {type: string, payload?: any}) => {
+    let actionFunction
     try {
-      actionFunction = await actions[action.type]
+      actionFunction = actions[action.type]//await actionsRef.current[action.type]
       if (actionFunction === undefined) {
-        console.error(`Can't find action: (${action.type})`)
+        console.error(`Action undefined: (${action.type})`)
         return
       }
     } catch (error) {
-      console.error(`Can't find action: ${action.type}`)
+      console.error(error)
       return
     }
 
     try {
-      const clone = _.cloneDeep(state)
-      await actionFunction(clone, action.payload)
-      setState(clone)
+      setState(async (prevState) => {
+        console.log('SET STATE ASYNC')
+        return prevState
+        //return await actionFunction(prevState, action.payload)
+      })
     } catch (error) {
       console.error(error)
     }
+  })
 
-
-
-  }
-  return [state, dispatch]
+  console.log('ASYNC REDUCER STATE', state)
+  return [state, (action: {type: string, payload?: any}) => {
+    dispatchRef.current(action)
+  }]
 }
+*/

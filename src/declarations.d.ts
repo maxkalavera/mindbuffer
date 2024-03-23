@@ -1,5 +1,5 @@
-import { electronAPI } from "./main/preload";
+import type { ElectronAPI } from "preload"
 
 declare global {
-  interface Window {electronAPI: typeof electronAPI}
+  interface Window {electronAPI: ElectronAPI}
 }

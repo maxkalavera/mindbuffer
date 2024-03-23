@@ -1,29 +1,29 @@
-import Sequelize from "sequelize"
+import Sequelize, { DataTypes } from "sequelize"
 
-export async function up({ context: queryInterface }) {
+import type { QueryInterface } from "sequelize"
+
+export async function up({ context: queryInterface }: { context: QueryInterface}) {
 	await queryInterface.createTable('notes', {
 		id: {
-			type: Sequelize.INTEGER,
+			type: DataTypes.INTEGER,
 			allowNull: false,
 			primaryKey: true
 		},
-		content: {
-			type: Sequelize.STRING,
-			allowNull: false
-		},
 		createdAt: {
-			type: Sequelize.DATE,
+			type: DataTypes.DATE,
 			allowNull: false
 		},
 		updatedAt: {
-			type: Sequelize.DATE,
+			type: DataTypes.DATE,
 			allowNull: false
-		}
+		},
+		content: {
+			type: DataTypes.STRING,
+			allowNull: false
+		},
 	})
 }
 
-export async function down({ context: queryInterface }) {
+export async function down({ context: queryInterface }: { context: QueryInterface}) {
 	await queryInterface.dropTable('notes')
 }
-
-//module.exports = { up, down }

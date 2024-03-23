@@ -75,7 +75,7 @@ export default function Denotepad ({
 
       <div className={styles.content}>
         {
-          data.pages.map((item: any, index: number) => (
+          [].map((item: any, index: number) => (
             <Page 
               key={index} 
               data={item} 

@@ -1,18 +1,39 @@
-import React from 'react'
+import React, { useEffect, useReducer, useRef, useState } from 'react'
 import _ from 'lodash'
 
-import useAsyncReducer from '@hooks/useAsyncReducer'
+import type { ContextState, ReducerActions, ContextActions } from '@ts/providers/Context.types'
 
-const INITIAL_STATE: any = {
-  textInput: '',
-  boardNotes: [],
-  page: 1,
-  search: '',
-  hasNextPage: true,
-  dispatch: () => undefined as undefined,
+// ContextState
+const INITIAL_STATE: ContextState = {
+  notepads: {
+    values: [],
+    page: { value: 1},
+    hasNextPage: { value: true},
+  },
+  addNoteInput: {
+    value: ''
+  },
+  board: {
+    notes: {
+      values: [],
+      page: { value: 1 },
+      hasNextPage: { value: true}
+    },
+    scrollBottom: {
+      value: true
+    },
+  },
+  searchBar: {
+    value: '',
+    activeSearch: {
+      value: ''
+    },
+  }
 }
 
-const context = React.createContext(INITIAL_STATE)
+//const context = React.createContext<ContextActions & ContextState>(
+//  INITIAL_STATE as ContextActions & ContextState)
+const context = React.createContext<any>(INITIAL_STATE)
 
 function useContext() {
   return React.useContext(context)
@@ -25,77 +46,213 @@ function ContextProvider({
   children?: JSX.Element[] | JSX.Element
   initialState?: typeof INITIAL_STATE
 }): JSX.Element {
-  const [state, dispatch] = useAsyncReducer({
-    'context/updateTextInput': (state, payload) => {
-      state.textInput = payload
-    },
-    'notes/create': async (state) => {
-      const note = await (window as any).electronAPI.notes.create(state.textInput)
-      if (note !== undefined) {
-        state.boardNotes.push(note)
-        state.textInput = ''
-      }
-    },
-    'notes/findAll': async (state) => {
-      const boardNotes = await window.electronAPI.notes.findAll()
-      if (boardNotes !== undefined) state.boardNotes = boardNotes
-    },
-    'notes/delete': async (state, payload) => {
-      const isDeleted = await window.electronAPI.notes.delete(payload)
-      if (isDeleted) {
-        state.boardNotes = state.boardNotes.filter((item: any) => item.dataValues.id !== payload)
-      }
-    },
-    'notes/boardNotes': async (state) => {
-      const boardNotes = await window.electronAPI.notes.boardNotes({
-        page: 1,
-        search: ''
-      })
-      if (boardNotes !== undefined) {
-        state.boardNotes = boardNotes
-        state.page = 1
-        state.search = ''
-        state.hasNextPage = true
-      }
-    },
-    'notes/search': async (state, payload) => {
-      const boardNotes = await window.electronAPI.notes.boardNotes({
-        page: 1,
-        search: payload
-      })
-      if (Array.isArray(boardNotes)) {
-        state.boardNotes = boardNotes
-        state.page = 1
-        state.search = payload
-        state.hasNextPage = true
-      }
-    },
-    'notes/clearSearch': async (state, payload) => {
-      const boardNotes = await window.electronAPI.notes.boardNotes({
-        page: 1,
-      })
-      if (Array.isArray(boardNotes)) state.boardNotes = boardNotes
-    },
-    'notes/nextPage': async (state) => {
-      if (!state.hasNextPage) return
+  const [state, setState] = useState<ContextActions & ContextState>(
+    initialState as ContextActions & ContextState)
+  const actions = _.cloneDeep(state)
 
-      const boardNotes = await window.electronAPI.notes.boardNotes({
-        page: state.page + 1,
-        search: state.search
-      })
-      if (Array.isArray(boardNotes)) {
-        state.boardNotes = boardNotes.concat(state.boardNotes)
-        state.page = state.page + 1
-        if (boardNotes.length === 0) state.hasNextPage = false
+  actions.addNoteInput.update = (payload) => setState((prevState) => {
+    return {
+      ...prevState,
+      addNoteInput: {
+        ...prevState.addNoteInput,
+        value: payload.value
       }
     }
-  }, initialState)
+  })
+
+  actions.board.notes.add = (payload) => setState((prevState) => {
+    return {
+      ...prevState,
+      board: {
+        ...prevState.board,
+        notes: {
+          ...prevState.board.notes,
+          values: [...prevState.board.notes.values, ...payload.values]
+        }
+      }
+    }
+  })
+
+  actions.board.notes.remove = (payload) => setState((prevState) => {
+    return {
+      ...prevState,
+      board: {
+        ...prevState.board,
+        notes: {
+          ...prevState.board.notes,
+          values: prevState.board.notes.values.filter((item) => item.id !== payload.id)
+        }
+      }
+    }
+  })
+
+  actions.board.notes.clear = () => setState((prevState) => {
+    return {
+      ...prevState,
+      board: {
+        ...prevState.board,
+        notes: {
+          ...prevState.board.notes,
+          values: []
+        }
+      }
+    }
+  })
+
+  actions.board.notes.page.increase = () => setState((prevState) => {
+    return {
+      ...prevState,
+      board: {
+        ...prevState.board,
+        notes: {
+          ...prevState.board.notes,
+          page: {
+            ...prevState.board.notes.page,
+            value: prevState.board.notes.page.value + 1
+          }
+        }
+      }
+    }
+  })
+
+  actions.board.notes.page.reset = () => setState((prevState) => {
+    return {
+      ...prevState,
+      board: {
+        ...prevState.board,
+        notes: {
+          ...prevState.board.notes,
+          page: {
+            ...prevState.board.notes.page,
+            value: 1
+          }
+        }
+      }
+    }
+  })
+
+  actions.board.notes.hasNextPage.set = (payload) => setState((prevState) => {
+    return {
+      ...prevState,
+      board: {
+        ...prevState.board,
+        notes: {
+          ...prevState.board.notes,
+          hasNextPage: {
+            ...prevState.board.notes.hasNextPage,
+            value: payload.value
+          }
+        }
+      }
+    }
+  })
+
+  actions.board.scrollBottom.set = (payload) => setState((prevState) => {
+    return {
+      ...prevState,
+      board: {
+        ...prevState.board,
+        scrollBottom: {
+          ...prevState.board.scrollBottom,
+          value: payload.value
+        }
+      }
+    }
+  })
+
+  actions.searchBar.update = (payload) => setState((prevState) => {
+    return {
+      ...prevState,
+      searchBar: {
+        ...prevState.searchBar,
+        value: payload.value
+      }
+    }
+  })
+
+  actions.searchBar.activeSearch.update = (payload) => setState((prevState) => {
+    return ({
+      ...prevState,
+      searchBar: {
+        ...prevState.searchBar,
+        activeSearch: {
+          ...prevState.searchBar.activeSearch,
+          value: payload.value
+        }
+      }  
+    })
+  })
+
+  actions.searchBar.activeSearch.clear = () => setState((prevState) => {
+    return {
+      ...prevState,
+      searchBar: {
+        ...prevState.searchBar,
+        value: '',
+        activeSearch: {
+          ...prevState.searchBar.activeSearch,
+          value: ''
+        }
+      }
+    }
+  })
+
+  useEffect(() => {
+    const controller = new AbortController()
+    new Promise(async (resolve: any) => {
+      const notes = await window.electronAPI.notes.getAll({
+        page: state.board.notes.page.value,
+        search: state.searchBar.activeSearch.value
+      })
+      if (notes === undefined || controller.signal.aborted) return
+      
+      actions.board.notes.add({ values: notes.reverse() })
+      if (actions.board.notes.page.value === 1)
+        actions.board.scrollBottom.set({ value: true })
+      if (notes.length === 0)
+        actions.board.notes.hasNextPage.set({ value: false })
+      resolve()
+    })
+    return () => {
+      controller.abort()
+    }
+
+  }, [state.board.notes.page.value, state.searchBar.activeSearch.value])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    new Promise(async (resolve: any) => {
+      const notepads = await window.electronAPI.notepads.getAll({
+        page: 1,
+        search: '',
+      })
+      resolve()
+    })
+    return () => {
+      controller.abort()
+    }
+  }, [])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    new Promise(async (resolve: any) => {
+      const pages = await window.electronAPI.pages.getAll({
+        page: 1,
+        search: '',
+      })
+      console.log('RENDERER PAGES', pages)
+      resolve()
+    })
+    return () => {
+      controller.abort()
+    }
+  }, [])
 
   return (
     <context.Provider
       value={{
-        ...state,
-        dispatch,
+        ..._.merge(actions, state),
+        setState
       }}
     >
       {children}

@@ -1,7 +1,8 @@
-import React, { useState } from "react" 
+import React, { useEffect, useState } from "react" 
 import { faLayerGroup, faPlus, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 
 import CreateNotepad from '@components/modals/CreateNotepad'
+import { useContext } from "@providers/Context"
 import { useModal } from '@providers/Modal'
 import Notepad from '@components/Notepad'
 import IconButton from '@components/IconButton'
@@ -19,23 +20,11 @@ export default function Groups({
   resizableRef?: React.MutableRefObject<any> 
 }) {
   const { showModal, closeModal } = useModal()
+  const { notepads } = useContext()
 
-  const nodepads = [
-    {
-      name: 'Notes',
-      pages: [
-        { name: 'Main'},
-        { name: 'Pending tasks'},
-        { name: 'Useful links'},
-      ]
-    },
-    {
-      name: 'Ideas',
-      pages: [
-        { name: 'Daily' }
-      ]
-    },
-  ]
+  useEffect(() => {
+    //dispatch({ type: 'notepads/getAll' })
+  }, [])
 
   return (
     <div 
@@ -72,10 +61,10 @@ export default function Groups({
           className={`${openness === 0.0 ? styles.hide : null} ${styles.content}`}
         >
           {
-            nodepads.map((item, key) => (
+            notepads.values.map((item: any, key: number) => (
               <Notepad 
                 key={key}
-                data={item} 
+                data={item.dataValues} 
               />
             ))
           }

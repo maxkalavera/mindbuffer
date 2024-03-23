@@ -11,6 +11,7 @@ import { useModal } from '@providers/Modal'
 import { useContext } from '@providers/Context'
 import mkStyles from '@styles/markdown.module.css'
 import styles from "@styles/text-note.module.css"
+import { NoteID } from "@ts/models/Notes.types"
 
 marked.use({
   async: true,
@@ -29,16 +30,21 @@ function TextNote({
   const contentContainer = useRef<HTMLDivElement>(null)
   const { showModal, closeModal } = useModal()
   const { showAlert } = useAlert()
-  const { dispatch } = useContext()
+  const { board: { notes } } = useContext()
+
+  const destroyNote = (id: NoteID) => {
+    if (window.electronAPI.notes.destroy(id))
+      notes.remove({ id: id })
+  }
 
   useEffect(() => {
     if (!contentContainer.current) return
     (async () => {
-      const parsed = await marked.parse(note.dataValues.content)
+      const parsed = await marked.parse(note.content)
       const purified = DOMPurify.sanitize(parsed)
       contentContainer.current.innerHTML = purified
     })()
-  }, [contentContainer.current, note.dataValues.content])
+  }, [contentContainer.current, note.content])
 
   return (
     <div className={`${className} ${styles.container}`}
@@ -54,7 +60,7 @@ function TextNote({
               label: 'Copy',
               icon: faCopy,
               onClick: () => {
-                navigator.clipboard.writeText(note.dataValues.content) 
+                navigator.clipboard.writeText(note.content) 
                 showAlert('Text copied to clipboard')
               }
             },
@@ -64,10 +70,7 @@ function TextNote({
               onClick: () => showModal(
                 <DeleteNote 
                   onSuccess={() => {
-                    dispatch({
-                      type: 'notes/delete',
-                      payload: note.dataValues.id
-                    })
+                    destroyNote(note.id)
                     closeModal()
                     showAlert('Note deleted!')
                   }}

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState, useRef } from "react"
 
 import { useContext } from '@providers/Context'
 import AddNoteButtonCarrousel from "@components/AddNoteButtonCarousel"
@@ -9,10 +9,38 @@ function AddNoteInput({
 }: {
   className?: string
 }) {
-  const { dispatch, textInput } = useContext()
+  //const { dispatch, addNoteInput } = useContext()
+  const { addNoteInput, board } = useContext()
 
-  const saveNote = async () => {
-    dispatch({type: 'notes/create'})
+  const createNote = async () => {
+    if (addNoteInput.value.trim() === '') return
+
+    const note = await window.electronAPI.notes.create({
+      content: addNoteInput.value,
+      pageId: 1,
+    })
+    if (note !== undefined) {
+      board.notes.add({ values: [note]})
+      board.scrollBottom.set({ value: true })
+      addNoteInput.update({ value: '' })
+    }
+  }
+
+  const keyMap = useRef<{[key: number]: boolean}>({
+    18: false,
+    13: false,
+  })
+  const onKeyDown = (event: any) => {
+    if (event.keyCode in keyMap.current)
+      keyMap.current[event.keyCode] = true
+
+    if (Object.values(keyMap.current).every((item) => item))
+      createNote()
+  }
+  
+  const onKeyUp = (event: any) => {
+    if (event.keyCode in keyMap.current)
+      keyMap.current[event.keyCode] = false
   }
 
   return (
@@ -20,12 +48,16 @@ function AddNoteInput({
       <textarea
         placeholder="Add some thoughts..."
         className={`${styles.textarea}`}
-        value={textInput}
-        onChange={e => dispatch({type: 'context/updateTextInput', payload: e.target.value})}
+        value={addNoteInput.value}
+        onKeyDown={onKeyDown}
+        onKeyUp={onKeyUp}
+        onChange={
+          (e) => addNoteInput.update({ value: e.target.value})
+        }
       />
       <AddNoteButtonCarrousel 
-        onSave={() => saveNote()}
-        isSaveActive={textInput !== ''}
+        onSave={() => createNote()}
+        isSaveActive={addNoteInput.value !== ''}
       />
     </div>
   );

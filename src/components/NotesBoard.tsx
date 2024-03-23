@@ -5,68 +5,59 @@ import TextNote from "@components/TextNote"
 import styles from "@styles/notes-board.module.css"
 import { useEffect, useState } from 'react'
 
+import type { ContextState } from '@ts/providers/Context.types'
+
 function NotesBoard({
   className=''
 }: {
   className?: string
 }) {
-  const { dispatch, boardNotes, hasNextPage, page } = useContext()
-  const [scrollTopReached, setScrollTopReached] = useState<boolean>(false)
+  const { board, searchBar, setState } = useContext()
   const [scrollHeight, setScrollHeight] = useState<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const scrollBottom = () => {
     if (containerRef.current === null) return
-    containerRef.current.scrollTop = containerRef.current.scrollHeight    
+    containerRef.current.scrollTop = containerRef.current.scrollHeight
   }
 
   useEffect(() => {
-    dispatch({type: 'notes/boardNotes'})
-  }, [])
-
-  /*
-  useEffect(() => {
+    if (containerRef.current === null) return
+    if (!board.scrollBottom.value) return
     scrollBottom()
-  }, [containerRef.current])
-  */
+    board.scrollBottom.set({ value: false})
+  }, [containerRef.current, board.scrollBottom.value])
 
   useEffect(() => {
     if (containerRef.current === null) return
+    if (!board.notes.hasNextPage.value) return
+
     const listener = () => {
       const { scrollTop } = containerRef.current
-      if (!scrollTopReached && scrollTop <= 0) {
-        setScrollTopReached(true)
+      if (scrollTop <= 0) {
+        setScrollHeight(containerRef.current.scrollHeight)
+        board.notes.page.increase()
       }
     }
     containerRef.current.addEventListener('scroll', listener, {passive: true})
     return () => containerRef.current.removeEventListener('scroll', listener)
-  }, [containerRef.current, scrollTopReached])
-
-  useEffect(() => {
-    if (hasNextPage && scrollTopReached) {
-      setScrollHeight(containerRef.current.scrollHeight)
-      dispatch({type: 'notes/nextPage'})
-      setScrollTopReached(false)
-    }
-  }, [hasNextPage, scrollTopReached])
+  }, [containerRef.current, board.notes.hasNextPage.value])
 
   useEffect(() => {
     if (containerRef.current === null) return
-    if (page === 1) {
-      scrollBottom()
-    } else {
+    if (board.notes.page.value > 1) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight - scrollHeight
     }
-  }, [containerRef.current, page])
+  }, [containerRef.current, board.notes.page.value])
 
   return (
     <div className={`${styles.container} ${className}`}
       ref={containerRef}
     >
       {
-        boardNotes.map((item: typeof boardNotes[number], index: number) => (
+        board.notes.values.map((item: any, index: number) => (
           <TextNote 
-            key={item.dataValues.id}
+            key={index}
             className={styles.textnote}
             note={item}
           />
