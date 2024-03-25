@@ -8,23 +8,30 @@ import Notepad from '@components/Notepad'
 import IconButton from '@components/IconButton'
 import styles from "@styles/groups.module.css" 
 
+import type { NotepadPayload } from "@ts/models/Notepads.types"
+
 export default function Groups({ 
   className='', 
-  openness=0.0,
+  aperture=0.0,
   resizableRef=null,
   onOpenClick=()=>null
 }: { 
   className?: string,
-  openness?: number,
+  aperture?: number,
   onOpenClick?: () => any
   resizableRef?: React.MutableRefObject<any> 
 }) {
   const { showModal, closeModal } = useModal()
   const { notepads } = useContext()
 
-  useEffect(() => {
-    //dispatch({ type: 'notepads/getAll' })
-  }, [])
+  const createNotepad = (payload: { data: NotepadPayload }) => {
+    (async () => {
+      const notepad = await window.electronAPI.notepads.create(payload)
+      if (notepad === undefined) return
+      notepads.add({ values: [notepad]})
+      closeModal()
+    })()
+  }
 
   return (
     <div 
@@ -48,9 +55,7 @@ export default function Groups({
             icon={faPlus}
             onClick={() => showModal(
               <CreateNotepad 
-                onSuccess={(payload: any) => {
-
-                }}
+                onSuccess={createNotepad}
                 onCancel={() => closeModal()}
               />, 'New Notepad'
             )}
@@ -58,13 +63,13 @@ export default function Groups({
         </div>
 
         <div 
-          className={`${openness === 0.0 ? styles.hide : null} ${styles.content}`}
+          className={`${aperture === 0.0 ? styles.hide : null} ${styles.content}`}
         >
           {
             notepads.values.map((item: any, key: number) => (
               <Notepad 
                 key={key}
-                data={item.dataValues} 
+                data={item} 
               />
             ))
           }

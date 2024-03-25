@@ -23,8 +23,9 @@
 
 .header-title {
   width: 100%;
-  min-width: fit-content;
+  min-width: 0px;
   white-space: nowrap;
+  overflow: hidden;
 }
 
 .show-frame-button {

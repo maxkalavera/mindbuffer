@@ -7,3 +7,7 @@
 .vertical-line:hover {
   border-left: 6px solid var(--primary-70);
 }
+
+.with-transition {
+  transition: width 1s;
+}

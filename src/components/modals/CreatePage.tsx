@@ -16,6 +16,10 @@ export default function CreatePage ({
 }) {
   const [name, setName] = useState('')
 
+  const clearForm = () => {
+    setName('')
+  }
+
   return (
     <div className={`${className} ${styles.container}`}>
       <Input
@@ -27,13 +31,17 @@ export default function CreatePage ({
       <div className={styles.options}>
         <Button
           label={'Cancel'}
-          onClick={onCancel}
+          onClick={() => {
+            onCancel()
+            clearForm()
+          }}
         />
         <Button
           label={'Send'}
-          onClick={() => onSuccess({
-            name
-          })}
+          onClick={() => {
+            onSuccess({ name })
+            clearForm()
+          }}
         />
       </div>
     </div>

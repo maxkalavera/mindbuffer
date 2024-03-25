@@ -4,15 +4,14 @@ import styles from '@styles/vertical-dragable-line.module.css'
 
 export default function VerticalDragableLine ({
   className='',
-  openness=0.0,
-  isOpen=false,
-  onOpenessChange=() => null,
+  aperture=0.0,
+  onApertureChange=() => null,
   resizableRef
 }: {
   className?: string,
-  openness?:number,
+  aperture?:number,
   isOpen?: boolean,
-  onOpenessChange?: (value: number) => any
+  onApertureChange?: (value: number) => any
   resizableRef: React.MutableRefObject<any>
 }) {
   const verticalLineRef = useRef<HTMLDivElement>(null)
@@ -34,47 +33,59 @@ export default function VerticalDragableLine ({
   useEffect(() => {
     if (resizableRef.current === null) return
 
-    if (openness === 1.0) openFrame()
-    else if (openness === 0.0) closeFrame()
+    if (aperture === 1.0) openFrame()
+    else if (aperture === 0.0) closeFrame()
 
-  }, [resizableRef.current, openness])
+  }, [resizableRef.current, aperture])
 
   useEffect(() => {
     if (resizableRef.current === null) return
     const style = getComputedStyle(resizableRef.current)
     minWidthRef.current = parseFloat(style.minWidth.match(/\d/g).join(''))
     maxWidthRef.current = parseFloat(style.maxWidth.match(/\d/g).join(''))
+    resizableRef.current.classList.add(styles['with-transition'])
   }, [resizableRef.current])
 
   useEffect(() => {
+    // Resize based on aperture var
+    if (resizableRef.current === null) return
+    if (aperture < 0.0) aperture = 0.0
+    if (aperture > 1.0) aperture = 1.0
+    const width = minWidthRef.current + (aperture * (maxWidthRef.current - minWidthRef.current))
+    resizableRef.current.style.width = `${width}px`
+  }, [resizableRef.current, aperture])
+
+  useEffect(() => {
+    /**************************************************************************
+     * Set listeners
+    **************************************************************************/
     if (verticalLineRef.current === null) return
     if (resizableRef.current === null) return
 
     const origin = {
-      right: verticalLineRef.current.getBoundingClientRect().right
+      from: 0
     }
     const onMouseMove = (event: MouseEvent) => {
       event.preventDefault()
       if (verticalLineRef.current === null) return
-      const style = getComputedStyle(resizableRef.current)
-      const destination = event.clientX
-      origin.right = verticalLineRef.current.getBoundingClientRect().right
-      const { width } = resizableRef.current.getBoundingClientRect()
-      const resWidth = width + (destination - origin.right)
-      resizableRef.current.style.width = `${resWidth}px`
-
-      let norm = (resWidth - minWidthRef.current) / (maxWidthRef.current - minWidthRef.current)
-      if (norm < 0.0) norm = 0.0
-      if (norm > 1.0) norm = 1.0
-      onOpenessChange(norm)
-    }
-    const onMouseUp = () => {
-      document.removeEventListener('mousemove', onMouseMove)
-      document.removeEventListener('mouseup', onMouseUp)
+      const from = origin.from
+      const to = event.clientX
+      const apertureDiff = (to - from) / (maxWidthRef.current - minWidthRef.current)
+      let newAperture = aperture + apertureDiff
+      if (newAperture < 0.0) newAperture = 0.0
+      if (newAperture > 1.0) newAperture = 1.0
+      onApertureChange(newAperture)
     }
     const onMouseDown = () => {
+      resizableRef.current.classList.remove(styles['with-transition'])
+      origin.from = verticalLineRef.current.getBoundingClientRect().right
       document.addEventListener('mousemove', onMouseMove)
       document.addEventListener('mouseup', onMouseUp)
+    }
+    const onMouseUp = () => {
+      resizableRef.current.classList.add(styles['with-transition'])
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
     }
     verticalLineRef.current.addEventListener('mousedown', onMouseDown)
     return () => {

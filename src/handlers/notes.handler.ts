@@ -3,33 +3,30 @@ import { QueryTypes } from 'sequelize'
 
 import database from "@utils/database"
 
-import type { NoteID, NotePayload } from '@ts/models/Notes.types'
+import type { NoteID, NotePayload, NoteFiltersPayload } from '@ts/models/Notes.types'
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.notes:getAll',
     async function getAll (
       event: Electron.IpcMainInvokeEvent,
-      {
-        page=1,
-        search=''
-      } :
-      {
-        page: number,
-        search: string,
-      }
+      payload: NoteFiltersPayload,
     ): Promise<any> {
-      const paginationOffset = 20
-      if (page < 1) page = 1
+      const options = Object.assign({
+        search: '',
+        page: 1,
+        paginationOffset: 20
+      }, payload)
+      if (options.page < 1) options.page = 1
     
       try {
-        const searchKeywords = search.toLowerCase().split(/\s+/)
+        const searchKeywords = options.search.toLowerCase().split(/\s+/)
         const notes = await database.sequelize.query(`
           SELECT * FROM "notes"
           WHERE
           ${
             searchKeywords
-              .map((item) => `"content" LIKE "%${item}%"`)
+              .map((item: string) => `"content" LIKE "%${item}%"`)
               .join(' OR ')
           }
           ORDER BY "createdAt" DESC
@@ -37,8 +34,8 @@ app.on('ready', () => {
         `, {
           type: QueryTypes.SELECT,
           bind: {
-            limit: paginationOffset,
-            offset: paginationOffset * (page - 1),
+            limit: options.paginationOffset,
+            offset: options.paginationOffset * (options.page - 1),
           },
           raw: true,
         })
@@ -56,29 +53,13 @@ app.on('ready', () => {
     'database.notes:create',
     async function create (
       event: Electron.IpcMainInvokeEvent, 
-      payload: NotePayload
+      payload: { data: NotePayload }
     ): Promise<any> {
       try {
-        return database.models.Note.create({...payload})
+        return (await database.models.Note.create({ ...payload.data })).dataValues
       } catch (error) {
         console.error(error)
-      }
-    }
-  )
-})
-
-app.on('ready', () => {
-  ipcMain.handle(
-    'database.notes:update',
-    async function update (
-      event: Electron.IpcMainInvokeEvent, 
-      id: NoteID, 
-      payload: NotePayload
-    ): Promise<any> {
-      try {
-        return database.models.Note.update(payload, { where: { id: id } })
-      } catch (error) {
-        console.error(error)
+        return undefined
       }
     }
   )
@@ -89,14 +70,13 @@ app.on('ready', () => {
     'database.notes:destroy',
     async function destroy (
       event: Electron.IpcMainInvokeEvent, 
-      id: NoteID
+      payload: { id: NoteID }
     ) {
       try {
-        database.models.Note.destroy({ where: { id: id } })
-        return true
+        return await database.models.Note.destroy({ where: { id: payload.id } })
       } catch (error) {
         console.error(error)
-        return false
+        return 0
       }
     }
   )

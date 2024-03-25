@@ -7,7 +7,6 @@ import type { ContextState, ReducerActions, ContextActions } from '@ts/providers
 const INITIAL_STATE: ContextState = {
   notepads: {
     values: [],
-    page: { value: 1},
     hasNextPage: { value: true},
   },
   addNoteInput: {
@@ -31,9 +30,8 @@ const INITIAL_STATE: ContextState = {
   }
 }
 
-//const context = React.createContext<ContextActions & ContextState>(
-//  INITIAL_STATE as ContextActions & ContextState)
-const context = React.createContext<any>(INITIAL_STATE)
+const context = React.createContext<ContextActions & ContextState>(
+  INITIAL_STATE as ContextActions & ContextState)
 
 function useContext() {
   return React.useContext(context)
@@ -46,9 +44,41 @@ function ContextProvider({
   children?: JSX.Element[] | JSX.Element
   initialState?: typeof INITIAL_STATE
 }): JSX.Element {
-  const [state, setState] = useState<ContextActions & ContextState>(
-    initialState as ContextActions & ContextState)
+  const [state, setState] = useState<ContextState & ContextActions>(
+    initialState as ContextState & ContextActions)
   const actions = _.cloneDeep(state)
+
+  actions.notepads.add = (payload) => setState((prevState) => {
+    return {
+      ...prevState,
+      notepads: {
+        ...prevState.notepads,
+        values: [...payload.values, ...prevState.notepads.values]
+      }
+    }
+  })
+
+  actions.notepads.update = (payload) => setState((prevState) => {
+    const values = prevState.notepads.values.slice()
+    values.splice(values.findIndex((item) => item.id === payload.value.id), 1, payload.value)
+    return {
+      ...prevState,
+      notepads: {
+        ...prevState.notepads,
+        values
+      }
+    }
+  })
+
+  actions.notepads.destroy = (payload) => setState((prevState) => {
+    return {
+      ...prevState,
+      notepads: {
+        ...prevState.notepads,
+        values: prevState.notepads.values.filter((item) => item.id !== payload.id)
+      }
+    }
+  })
 
   actions.addNoteInput.update = (payload) => setState((prevState) => {
     return {
@@ -73,7 +103,7 @@ function ContextProvider({
     }
   })
 
-  actions.board.notes.remove = (payload) => setState((prevState) => {
+  actions.board.notes.destroy = (payload) => setState((prevState) => {
     return {
       ...prevState,
       board: {
@@ -204,7 +234,7 @@ function ContextProvider({
         page: state.board.notes.page.value,
         search: state.searchBar.activeSearch.value
       })
-      if (notes === undefined || controller.signal.aborted) return
+      if (notes === undefined || controller.signal.aborted) resolve()
       
       actions.board.notes.add({ values: notes.reverse() })
       if (actions.board.notes.page.value === 1)
@@ -226,33 +256,19 @@ function ContextProvider({
         page: 1,
         search: '',
       })
+      if (notepads === undefined || controller.signal.aborted) resolve()
+      actions.notepads.add({ values: notepads })
       resolve()
     })
     return () => {
       controller.abort()
     }
   }, [])
-
-  useEffect(() => {
-    const controller = new AbortController()
-    new Promise(async (resolve: any) => {
-      const pages = await window.electronAPI.pages.getAll({
-        page: 1,
-        search: '',
-      })
-      console.log('RENDERER PAGES', pages)
-      resolve()
-    })
-    return () => {
-      controller.abort()
-    }
-  }, [])
-
+  
   return (
     <context.Provider
       value={{
-        ..._.merge(actions, state),
-        setState
+        ...actions,
       }}
     >
       {children}

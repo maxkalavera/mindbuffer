@@ -9,15 +9,16 @@ function AddNoteInput({
 }: {
   className?: string
 }) {
-  //const { dispatch, addNoteInput } = useContext()
   const { addNoteInput, board } = useContext()
 
   const createNote = async () => {
     if (addNoteInput.value.trim() === '') return
 
     const note = await window.electronAPI.notes.create({
-      content: addNoteInput.value,
-      pageId: 1,
+      data: {
+        content: addNoteInput.value,
+        pageId: 1,
+      }
     })
     if (note !== undefined) {
       board.notes.add({ values: [note]})

@@ -1,12 +1,11 @@
 
-import type { NoteID } from "@ts/models/Notes.types"
+import { NotepadPayload, Notepad, NotepadID } from "@ts/models/Notepads.types"
+import { PagePayload, Page, PageID } from "@ts/models/Pages.types"
+import type { NotePayload, Note, NoteID } from "@ts/models/Notes.types"
 
 export interface ContextState {
   notepads: {
-    values: any[],
-    page: {
-      value: number
-    },
+    values: Notepad[],
     hasNextPage: {
       value: boolean
     },
@@ -16,7 +15,7 @@ export interface ContextState {
   },
   board: {
     notes: {
-      values: any[],
+      values: Note[],
       page: {
         value: number,
       },
@@ -37,13 +36,18 @@ export interface ContextState {
 }
 
 export interface ContextActions {
+  notepads: {
+    add: (payload: {values: Notepad[]}) => void,
+    update: (payload: { value: Notepad }) => void,
+    destroy: (payload: { id: NotepadID }) => void,
+  }
   addNoteInput: {
     update: (payload: {value: string}) => void,
   },
   board: {
     notes: {
-      add: (payload: {values: any[]}) => void,
-      remove: (payload: { id: NoteID }) => void,
+      add: (payload: {values: Note[]}) => void,
+      destroy: (payload: { id: NoteID }) => void,
       clear: () => void,
       page: {
         increase: () => void,

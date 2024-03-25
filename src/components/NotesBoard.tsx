@@ -5,14 +5,12 @@ import TextNote from "@components/TextNote"
 import styles from "@styles/notes-board.module.css"
 import { useEffect, useState } from 'react'
 
-import type { ContextState } from '@ts/providers/Context.types'
-
 function NotesBoard({
   className=''
 }: {
   className?: string
 }) {
-  const { board, searchBar, setState } = useContext()
+  const { board } = useContext()
   const [scrollHeight, setScrollHeight] = useState<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 

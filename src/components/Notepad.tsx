@@ -1,6 +1,7 @@
 import React from "react"
 import { faEllipsisH, faTrash, faPen, faPlus } from '@fortawesome/free-solid-svg-icons'
 
+import { useContext } from "@providers/Context"
 import UpdateNotepad from '@components/modals/UpdateNotepad'
 import DeleteNotepad from '@components/modals/DeleteNotepad'
 import { useModal } from '@providers/Modal'
@@ -10,14 +11,29 @@ import Page from '@components/Page'
 import IconButton from '@components/IconButton'
 import styles from '@styles/notepad.module.css'
 
-export default function Denotepad ({
+import type { Notepad, NotepadID } from "@ts/models/Notepads.types"
+
+export default function Notepad ({
+  data,
   className='',
-  data={}
 }: {
+  data: Notepad,
   className?: string,
-  data: any
 }) {
+  const { notepads } = useContext()
   const { showModal, closeModal } = useModal()
+
+  const updateNotepad = (payload: { value: Notepad }) => {
+    window.electronAPI.notepads.update(payload)
+    notepads.update(payload)
+    closeModal()
+  }
+
+  const destroyNotepad = (payload: { id: NotepadID}) => {
+    window.electronAPI.notepads.destroy(payload)
+    notepads.destroy(payload)
+    closeModal()
+  }
 
   return (
     <div className={`${className} ${styles.container}`}>
@@ -45,9 +61,7 @@ export default function Denotepad ({
               onClick: () => showModal(
                 <UpdateNotepad
                   data={data}
-                  onSuccess={(payload: any) => {
-  
-                  }}
+                  onSuccess={updateNotepad}
                   onCancel={() => closeModal()}
                 />, 'Edit Notepad'
               )
@@ -57,9 +71,7 @@ export default function Denotepad ({
               icon: faTrash,
               onClick: () => showModal(
                 <DeleteNotepad 
-                  onSuccess={(payload: any) => {
-  
-                  }}
+                  onSuccess={() => destroyNotepad({ id: data.id })}
                   onCancel={() => closeModal()}
                 />, 'Delete Notepad'
               )
@@ -75,7 +87,7 @@ export default function Denotepad ({
 
       <div className={styles.content}>
         {
-          [].map((item: any, index: number) => (
+          data.pages.map((item: any, index: number) => (
             <Page 
               key={index} 
               data={item} 

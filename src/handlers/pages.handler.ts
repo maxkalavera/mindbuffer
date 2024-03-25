@@ -24,7 +24,6 @@ app.on('ready', () => {
     
       try {
         const searchKeywords = search === '' ? [] : search.toLowerCase().split(/\s+/)
-        console.log('SEARCH', searchKeywords)
         const data = await database.sequelize.query(`
           SELECT
           ${
@@ -38,8 +37,8 @@ app.on('ready', () => {
               })
           }
           FROM "pages"
-          LEFT OUTER JOIN "notepads" 
-          on "pages".notepadId="notepads".id
+          LEFT OUTER JOIN "notepads"
+          ON "pages".notepadId="notepads".id
           ${
             searchKeywords.length > 0 ? 
               `

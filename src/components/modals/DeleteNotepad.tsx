@@ -17,7 +17,7 @@ export default function DeleteNotepad({
     <div className={`${className} ${styles.container}`}>
     <div className={styles.container}>
       <p className={`secondary-p ${styles.content}`}>
-        Are you sure you want to delete the notepad?
+        Are you sure you want to delete this notepad?
       </p>
       <div className={styles.options}>
         <Button

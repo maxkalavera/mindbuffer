@@ -9,10 +9,30 @@ import AddNoteInput from '@components/AddNoteInput'
 import SearchBar from '@components/SearchBar'
 //import IconButton from '@components/IconButton'
 import styles from '@styles/home.module.css'
+import { reject } from 'lodash'
 
 function Home() {
   const resizableRef = useRef<any>(null)
-  const [openness, setOpenness] = useState<number>(0.0)
+  const [aperture, setAperture] = useState<number | null>(null)
+
+  useEffect(() => {
+    let controler = new AbortController()
+    new Promise(async (resolve: any) => {
+      const aperture = await window.electronAPI.store.sidebarAperture.get()
+      if (controler.signal.aborted) 
+        resolve()
+      setAperture(aperture)
+      resolve()
+    }).then()
+    return () => controler.abort()
+  }, [])
+
+  useEffect(() => {
+    (async () => {
+      if (aperture === null) return
+      await window.electronAPI.store.sidebarAperture.set({ sidebarAperture: aperture })
+    })()
+  }, [aperture])
 
   return (
     <div className={styles.container}>
@@ -25,20 +45,22 @@ function Home() {
         */ }
       </div>
       <div className={styles['content-container']}>
-        <AlertBox className={styles.alert} />
+        <AlertBox 
+          className={styles.alert} 
+        />
         <div className={styles.content}>
           <Groups 
             className={styles.groups} 
             resizableRef={resizableRef}
-            openness={openness}
+            aperture={aperture === null ? 0.0 : aperture}
             onOpenClick={() => {
-              setOpenness((prevOpenness) => prevOpenness === 0.0 ? 1.0 : 0.0)
+              setAperture((prevAperture) => prevAperture === 0.0 ? 1.0 : 0.0)
             }}
           />
           <VerticalDragableLine 
             resizableRef={resizableRef}
-            openness={openness}
-            onOpenessChange={setOpenness}
+            aperture={aperture === null ? 0.0 : aperture}
+            onApertureChange={setAperture}
           />
           <div className={styles['notes-frame']}>
             <NotesBoard 

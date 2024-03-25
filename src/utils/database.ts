@@ -4,13 +4,13 @@ import { app } from 'electron'
 import { Model, Sequelize } from "sequelize"
 
 import migrator from '@utils/migrator'
-import settings from '@utils/settings'
+import store from '@utils/store'
 
 export const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: app && app.isPackaged ? 
-    path.resolve(app.getPath('userData'), settings.get('dbFilename') as string) :
-    path.join(settings.get('rootDir') as string, '.run', settings.get('dbFilename') as string)
+    path.resolve(app.getPath('userData'), store.get('dbFilename') as string) :
+    path.join(store.get('rootDir') as string, '.run', store.get('dbFilename') as string)
 })
 
 const umzug = migrator(sequelize)

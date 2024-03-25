@@ -33,8 +33,8 @@ function TextNote({
   const { board: { notes } } = useContext()
 
   const destroyNote = (id: NoteID) => {
-    if (window.electronAPI.notes.destroy(id))
-      notes.remove({ id: id })
+    if (window.electronAPI.notes.destroy({ id }))
+      notes.destroy({ id: id })
   }
 
   useEffect(() => {

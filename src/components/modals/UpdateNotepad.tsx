@@ -1,22 +1,27 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import Input from '@components/Input'
 import Button from "@components/Button"
-
 import styles from "@styles/update-notepad-modal.module.css"
 
+import type { Notepad, NotepadPayload } from "@ts/models/Notepads.types"
+
 export default function UpdateNotepad ({
+  data,
   className='',
-  data={},
   onSuccess=()=>null,
   onCancel=()=>null,
 }: {
+  data: Notepad,
   className?: string,
-  data: any,
-  onSuccess?: (payload: any, ...args: any[]) => any
+  onSuccess?: (payload: { value: NotepadPayload }, ...args: any[]) => any
   onCancel?: (...args: any[]) => any
 }) {
   const [name, setName] = useState(data.name)
+
+  useEffect(() => {
+    setName(data.name)
+  }, [data.name])
 
   return (
     <div className={`${className} ${styles.container}`}>
@@ -29,14 +34,20 @@ export default function UpdateNotepad ({
       <div className={styles.options}>
         <Button
           label={'Cancel'}
-          onClick={onCancel}
+          onClick={() => {
+            onCancel()
+          }}
         />
         <Button
           label={'Save'}
-          onClick={() => onSuccess({
-            ...data,
-            name
-          })}
+          onClick={() => {
+            onSuccess({
+              value: {
+                ...data,
+                name
+              }
+            })
+          }}
         />
       </div>
     </div>

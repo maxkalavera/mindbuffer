@@ -8,12 +8,14 @@ import DropdownMenu from "@components/DropdownMenu"
 import IconButton from '@components/IconButton'
 import styles from '@styles/page.module.css'
 
+import type { Page } from '@ts/models/Pages.types'
+
 export default function Page ({
+  data,
   className='',
-  data={}
 }: {
+  data: Page,
   className?: string,
-  data: any
 }) {
   const { showModal, closeModal } = useModal()
 

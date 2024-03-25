@@ -4,7 +4,7 @@ import Store from 'electron-store'
 const rootDir = path.dirname(path.dirname(path.dirname(__filename)))
 const srcDir = path.resolve(rootDir, 'src')
 
-const settings = new Store({
+const store = new Store({
   schema: {
     debug: {
       type: 'boolean',
@@ -18,6 +18,10 @@ const settings = new Store({
       type: 'string',
       default: srcDir
     },
+    sidebarAperture: {
+      type: 'number',
+      default: 0.0,
+    },
     migrationsGlob: {
       type: 'string',
       default: path.resolve(srcDir, 'assets/migrations/*.{js,cjs,mjs,ts,cts,mts,sql}')
@@ -29,12 +33,12 @@ const settings = new Store({
   }
 })
 
-settings.set('debug', (process.env.MINDBUFFER_DEBUG || '').toLowerCase() === 'true')
+store.set('debug', (process.env.MINDBUFFER_DEBUG || '').toLowerCase() === 'true')
 
-if ((process.env.MINDBUFFER_RESET_SETTINGS || '').toLowerCase() === 'true')  {
-  settings.clear()
-  console.log('Resetting settings...')
+if ((process.env.MINDBUFFER_RESET_STORE || '').toLowerCase() === 'true')  {
+  store.clear()
+  console.log('Resetting store...')
 }
-if (settings.get('debug')) console.log('Settings', settings.store)
+if (store.get('debug')) console.log('Settings', store.store)
 
-export default settings
+export default store

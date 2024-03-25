@@ -5,45 +5,66 @@ import getSelectFields from '@utils/database/getSelectFields'
 import groupByAssociations from '@utils/database/groupByAssociations'
 import database from "@utils/database"
 
-import type { NotepadID, NotepadPayload } from '@ts/models/Notepads.types'
+import type { NotepadID, NotepadPayload, Notepad, NotepadFiltersPayload } from '@ts/models/Notepads.types'
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.notepads:getAll',
     async function getAll (
       event: Electron.IpcMainInvokeEvent,
-      {
-        page = 1,
-        search = '',
-      }: {
-        page?: number,
-        search?: string,
-      }
+      payload: NotepadFiltersPayload
     ): Promise<any> {
-      const paginationOffset = 20
-      if (page < 1) page = 1
+      const options = Object.assign({
+        search: '',
+        page: 1,
+        paginationOffset: 20
+      }, payload)
+      if (options.page < 1) options.page = 1
     
       try {
-        const searchKeywords = search.toLowerCase().split(/\s+/)
+        const searchKeywords = options.search === '' ?
+          [] : 
+          options.search.toLowerCase().split(/\s+/)
         const data = await database.sequelize.query(`
-          SELECT
-          ${
-            getSelectFields(database.models.Notepad)
-          },
-          ${
-            getSelectFields(
-              database.models.Page, 
-              { as: ({ fieldName }) => `pages.${fieldName}`})
-          }
-          FROM "notepads"
-          LEFT OUTER JOIN "pages" on "notepads"."id"="pages"."notepadId"
-          ORDER BY "notepads"."createdAt" DESC
-          LIMIT ? OFFSET ?;
+        SELECT
+        ${
+          getSelectFields(database.models.Notepad)
+        },
+        ${
+          getSelectFields(
+            database.models.Page, 
+            {
+              as: ({ fieldName }) => `pages.${fieldName}`
+            })
+        }
+        FROM "notepads"
+        LEFT OUTER JOIN "pages"
+        ON "notepads".id="pages".notepadId
+        ${
+          searchKeywords.length > 0 ? 
+            `
+            WHERE
+              "pages".id in (
+                SELECT pageId FROM "notes"
+                WHERE
+                ${
+                  searchKeywords
+                    .map((item) => `"content" LIKE "%${item}%"`)
+                    .join(' OR ')
+                }
+              )
+            ` : 
+            ''
+        }
+        ORDER BY
+          "notepads".id DESC, 
+          "pages"."createdAt" DESC
+        LIMIT ? OFFSET ?;
         `, {
           type: QueryTypes.SELECT,
           replacements: [
-            paginationOffset,
-            paginationOffset * (page - 1),
+            options.paginationOffset,
+            options.paginationOffset * (options.page - 1),
           ],
           raw: true,
           nest: true,
@@ -62,12 +83,15 @@ app.on('ready', () => {
     'database.notepads:create',
     async function create (
       event: Electron.IpcMainInvokeEvent, 
-      payload: NotepadPayload
+      payload: { data: NotepadPayload }
     ): Promise<any> {
       try {
-        return database.models.Notepad.create({...payload})
+        const notepad = (await database.models.Notepad.create({ ...payload.data })).dataValues
+        notepad.pages = []
+        return notepad
       } catch (error) {
         console.error(error)
+        return undefined
       }
     }
   )
@@ -78,11 +102,13 @@ app.on('ready', () => {
     'database.notepads:update',
     async function update (
       event: Electron.IpcMainInvokeEvent,
-      id: NotepadID,
-      payload: NotepadPayload
+      payload: { value: Notepad }
     ): Promise<any> {
       try {
-        return database.models.Notepad.update(payload, { where: { id: id } })
+        return await database.models.Notepad.update(
+          payload.value, 
+          { where: { id: payload.value.id } }
+        )
       } catch (error) {
         console.error(error)
       }
@@ -95,12 +121,13 @@ app.on('ready', () => {
     'database.notepads:destroy',
     async function destroy (
       event: Electron.IpcMainInvokeEvent,
-      id: NotepadID
+      payload: { id: NotepadID }
     ): Promise<any> {
       try {
-        return database.models.Notepad.destroy({ where: { id: id } })
+        return await database.models.Notepad.destroy({ where: { id: payload.id } })
       } catch (error) {
         console.error(error)
+        return 0
       }
     }
   )
