@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react"
 
+import { useContext } from "@providers/Context"
+import { useModal } from '@providers/Modal'
 import Input from '@components/Input'
 import Button from "@components/Button"
 import styles from "@styles/update-notepad-modal.module.css"
@@ -14,14 +16,24 @@ export default function UpdateNotepad ({
 }: {
   data: Notepad,
   className?: string,
-  onSuccess?: (payload: { value: NotepadPayload }, ...args: any[]) => any
+  onSuccess?: (payload?: { value: NotepadPayload }, ...args: any[]) => any
   onCancel?: (...args: any[]) => any
 }) {
+  const { notepads } = useContext()
+  const { showModal, closeModal } = useModal()
   const [name, setName] = useState(data.name)
 
   useEffect(() => {
     setName(data.name)
   }, [data.name])
+
+  const updateNotepad = (payload: { value: Notepad }) => {
+    (async () => {
+      await window.electronAPI.notepads.update(payload)
+      notepads.update(payload)
+      closeModal()  
+    })()
+  }
 
   return (
     <div className={`${className} ${styles.container}`}>
@@ -36,17 +48,21 @@ export default function UpdateNotepad ({
           label={'Cancel'}
           onClick={() => {
             onCancel()
+            closeModal()
           }}
         />
         <Button
           label={'Save'}
           onClick={() => {
-            onSuccess({
+            const payload = {
               value: {
                 ...data,
                 name
               }
-            })
+            }
+            updateNotepad(payload)
+            onSuccess(payload)
+            closeModal()
           }}
         />
       </div>

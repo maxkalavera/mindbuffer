@@ -3,15 +3,15 @@ import { marked } from "marked"
 import DOMPurify from 'dompurify'
 import { faEllipsisVertical, faCopy, faTrash } from '@fortawesome/free-solid-svg-icons'
 
-import DeleteNote from '@components/modals/DeleteNote'
-import DropdownMenu from "@components/DropdownMenu"
-import IconButton from '@components/IconButton'
 import { useAlert } from '@providers/Alert'
 import { useModal } from '@providers/Modal'
 import { useContext } from '@providers/Context'
+import DeleteNote from '@components/modals/DeleteNote'
+import DropdownMenu from "@components/DropdownMenu"
+import IconButton from '@components/IconButton'
 import mkStyles from '@styles/markdown.module.css'
 import styles from "@styles/text-note.module.css"
-import { NoteID } from "@ts/models/Notes.types"
+import { Note, NoteID } from "@ts/models/Notes.types"
 
 marked.use({
   async: true,
@@ -22,29 +22,26 @@ marked.use({
 
 function TextNote({
   className='',
-  note,
+  data,
 }: {
   className?: string,
-  note: {[key: string]: any}
+  data: Note
 }) {
   const contentContainer = useRef<HTMLDivElement>(null)
   const { showModal, closeModal } = useModal()
-  const { showAlert } = useAlert()
   const { board: { notes } } = useContext()
+  const { showAlert } = useAlert()
 
-  const destroyNote = (id: NoteID) => {
-    if (window.electronAPI.notes.destroy({ id }))
-      notes.destroy({ id: id })
-  }
+
 
   useEffect(() => {
     if (!contentContainer.current) return
     (async () => {
-      const parsed = await marked.parse(note.content)
+      const parsed = await marked.parse(data.content)
       const purified = DOMPurify.sanitize(parsed)
       contentContainer.current.innerHTML = purified
     })()
-  }, [contentContainer.current, note.content])
+  }, [contentContainer.current, data.content])
 
   return (
     <div className={`${className} ${styles.container}`}
@@ -60,7 +57,7 @@ function TextNote({
               label: 'Copy',
               icon: faCopy,
               onClick: () => {
-                navigator.clipboard.writeText(note.content) 
+                navigator.clipboard.writeText(data.content) 
                 showAlert('Text copied to clipboard')
               }
             },
@@ -69,14 +66,7 @@ function TextNote({
               icon: faTrash,
               onClick: () => showModal(
                 <DeleteNote 
-                  onSuccess={() => {
-                    destroyNote(note.id)
-                    closeModal()
-                    showAlert('Note deleted!')
-                  }}
-                  onCancel={() => {
-                    closeModal()
-                  }}
+                  data={data}
                 />
               , 'Delete Note')
             }

@@ -8,8 +8,6 @@ import Notepad from '@components/Notepad'
 import IconButton from '@components/IconButton'
 import styles from "@styles/groups.module.css" 
 
-import type { NotepadPayload } from "@ts/models/Notepads.types"
-
 export default function Groups({ 
   className='', 
   aperture=0.0,
@@ -21,17 +19,8 @@ export default function Groups({
   onOpenClick?: () => any
   resizableRef?: React.MutableRefObject<any> 
 }) {
-  const { showModal, closeModal } = useModal()
+  const { showModal } = useModal()
   const { notepads } = useContext()
-
-  const createNotepad = (payload: { data: NotepadPayload }) => {
-    (async () => {
-      const notepad = await window.electronAPI.notepads.create(payload)
-      if (notepad === undefined) return
-      notepads.add({ values: [notepad]})
-      closeModal()
-    })()
-  }
 
   return (
     <div 
@@ -54,10 +43,8 @@ export default function Groups({
             className={styles['add-button']} 
             icon={faPlus}
             onClick={() => showModal(
-              <CreateNotepad 
-                onSuccess={createNotepad}
-                onCancel={() => closeModal()}
-              />, 'New Notepad'
+              <CreateNotepad />, 
+              'New Notepad'
             )}
           />
         </div>
@@ -76,4 +63,4 @@ export default function Groups({
          </div>
     </div> 
   ) 
-} 
+}

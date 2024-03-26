@@ -4,7 +4,7 @@ import { QueryTypes } from 'sequelize'
 import getSelectFields from '@utils/database/getSelectFields'
 import database from "@utils/database"
 
-import type { PageID, PagePayload } from '@ts/models/Pages.types'
+import type { PageID, PagePayload, Page } from '@ts/models/Pages.types'
 
 app.on('ready', () => {
   ipcMain.handle(
@@ -80,10 +80,14 @@ app.on('ready', () => {
     'database.pages:create',
     async function create (
       event: Electron.IpcMainInvokeEvent, 
-      payload: PagePayload
+      payload: { data: PagePayload }
     ): Promise<any> {
       try {
-        return database.models.Page.create({...payload})
+        const page = (await database.models.Page
+          .create({ ...payload.data as PagePayload }))
+          .dataValues
+        page.notes = []
+        return page
       } catch (error) {
         console.error(error)
       }
@@ -96,11 +100,13 @@ app.on('ready', () => {
     'database.pages:update',
     async function update (
       event: Electron.IpcMainInvokeEvent,
-      id: PageID,
-      payload: PagePayload
+      payload: { value: Page }
     ): Promise<any> {
       try {
-        return database.models.Page.update(payload, { where: { id: id } })
+        return (await database.models.Page.update(
+          payload.value as Page,
+          { where: { id: payload.value.id } }
+        ))
       } catch (error) {
         console.error(error)
       }
@@ -113,12 +119,15 @@ app.on('ready', () => {
     'database.pages:destroy',
     async function destroy (
       event: Electron.IpcMainInvokeEvent,
-      id: PageID
+      payload: { id: PageID }
     ): Promise<any> {
       try {
-        return database.models.Page.destroy({ where: { id: id } })
+        return await database.models.Page.destroy({ 
+          where: { id: payload.id as PageID } 
+        })
       } catch (error) {
         console.error(error)
+        return 0
       }
     }
   )

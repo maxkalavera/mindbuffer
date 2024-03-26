@@ -56,7 +56,9 @@ app.on('ready', () => {
       payload: { data: NotePayload }
     ): Promise<any> {
       try {
-        return (await database.models.Note.create({ ...payload.data })).dataValues
+        return (await database.models.Note
+          .create({ ...payload.data as NotePayload }))
+          .dataValues
       } catch (error) {
         console.error(error)
         return undefined
@@ -73,7 +75,9 @@ app.on('ready', () => {
       payload: { id: NoteID }
     ) {
       try {
-        return await database.models.Note.destroy({ where: { id: payload.id } })
+        return await database.models.Note.destroy({ 
+          where: { id: payload.id as NoteID } 
+        })
       } catch (error) {
         console.error(error)
         return 0

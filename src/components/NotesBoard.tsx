@@ -4,6 +4,7 @@ import { useContext } from '@providers/Context'
 import TextNote from "@components/TextNote"
 import styles from "@styles/notes-board.module.css"
 import { useEffect, useState } from 'react'
+import { Note } from '@ts/models/Notes.types'
 
 function NotesBoard({
   className=''
@@ -53,11 +54,11 @@ function NotesBoard({
       ref={containerRef}
     >
       {
-        board.notes.values.map((item: any, index: number) => (
+        board.notes.values.map((item: Note, index: number) => (
           <TextNote 
             key={index}
+            data={item}
             className={styles.textnote}
-            note={item}
           />
         ))
       }

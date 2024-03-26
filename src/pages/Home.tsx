@@ -17,12 +17,11 @@ function Home() {
 
   useEffect(() => {
     let controler = new AbortController()
-    new Promise(async (resolve: any) => {
+    new Promise(async () => {
       const aperture = await window.electronAPI.store.sidebarAperture.get()
-      if (controler.signal.aborted) 
-        resolve()
-      setAperture(aperture)
-      resolve()
+      if (!controler.signal.aborted) {
+        setAperture(aperture)
+      }
     }).then()
     return () => controler.abort()
   }, [])

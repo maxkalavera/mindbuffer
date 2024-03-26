@@ -10,12 +10,12 @@ import '@styles/globals.css'
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <React.StrictMode>
-    <AlertProvider>
-      <ModalProvider>
-        <ContextProvider>
+    <ContextProvider>
+      <AlertProvider>
+        <ModalProvider>
           <Router />
-        </ContextProvider>
-      </ModalProvider>
-    </AlertProvider>
+        </ModalProvider>
+      </AlertProvider>
+    </ContextProvider>
   </React.StrictMode>
 )

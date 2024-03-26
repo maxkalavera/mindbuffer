@@ -15,3 +15,9 @@ export interface PageData {
 }
 
 export type Page = Base & PageData
+
+export interface PageFiltersPayload {
+  page?: number,
+  search?: string,
+  paginationOffset?: number,
+}

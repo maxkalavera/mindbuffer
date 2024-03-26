@@ -1,7 +1,6 @@
 import React from "react"
 import { faEllipsisH, faTrash, faPen, faPlus } from '@fortawesome/free-solid-svg-icons'
 
-import { useContext } from "@providers/Context"
 import UpdateNotepad from '@components/modals/UpdateNotepad'
 import DeleteNotepad from '@components/modals/DeleteNotepad'
 import { useModal } from '@providers/Modal'
@@ -10,8 +9,7 @@ import DropdownMenu from "@components/DropdownMenu"
 import Page from '@components/Page'
 import IconButton from '@components/IconButton'
 import styles from '@styles/notepad.module.css'
-
-import type { Notepad, NotepadID } from "@ts/models/Notepads.types"
+import type { Notepad } from "@ts/models/Notepads.types"
 
 export default function Notepad ({
   data,
@@ -20,26 +18,13 @@ export default function Notepad ({
   data: Notepad,
   className?: string,
 }) {
-  const { notepads } = useContext()
-  const { showModal, closeModal } = useModal()
-
-  const updateNotepad = (payload: { value: Notepad }) => {
-    window.electronAPI.notepads.update(payload)
-    notepads.update(payload)
-    closeModal()
-  }
-
-  const destroyNotepad = (payload: { id: NotepadID}) => {
-    window.electronAPI.notepads.destroy(payload)
-    notepads.destroy(payload)
-    closeModal()
-  }
+  const { showModal } = useModal()
 
   return (
     <div className={`${className} ${styles.container}`}>
       <div className={styles.header}>
         <h4 className={`secondary-h4 ${styles.label}`}>
-          { data.name }
+          { data.name } 
         </h4>
         <DropdownMenu
           options={[
@@ -48,10 +33,7 @@ export default function Notepad ({
               icon: faPlus,
               onClick: () => showModal(
                 <CreatePage 
-                  onSuccess={(payload: any) => {
-  
-                  }}
-                  onCancel={() => closeModal()}
+                  notepad={data}
                 />, 'New Page'
               )
             },
@@ -61,9 +43,8 @@ export default function Notepad ({
               onClick: () => showModal(
                 <UpdateNotepad
                   data={data}
-                  onSuccess={updateNotepad}
-                  onCancel={() => closeModal()}
-                />, 'Edit Notepad'
+                />, 
+                'Edit Notepad'
               )
             },
             {
@@ -71,9 +52,9 @@ export default function Notepad ({
               icon: faTrash,
               onClick: () => showModal(
                 <DeleteNotepad 
-                  onSuccess={() => destroyNotepad({ id: data.id })}
-                  onCancel={() => closeModal()}
-                />, 'Delete Notepad'
+                  data={data}
+                />, 
+                'Delete Notepad'
               )
             }
           ]}

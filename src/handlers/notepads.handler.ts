@@ -57,8 +57,8 @@ app.on('ready', () => {
             ''
         }
         ORDER BY
-          "notepads".id DESC, 
-          "pages"."createdAt" DESC
+          "notepads".createdAt ASC, 
+          "pages"."createdAt" ASC
         LIMIT ? OFFSET ?;
         `, {
           type: QueryTypes.SELECT,
@@ -86,7 +86,9 @@ app.on('ready', () => {
       payload: { data: NotepadPayload }
     ): Promise<any> {
       try {
-        const notepad = (await database.models.Notepad.create({ ...payload.data })).dataValues
+        const notepad = (await database.models.Notepad
+          .create({ ...payload.data as NotepadPayload }))
+          .dataValues
         notepad.pages = []
         return notepad
       } catch (error) {
@@ -106,7 +108,7 @@ app.on('ready', () => {
     ): Promise<any> {
       try {
         return await database.models.Notepad.update(
-          payload.value, 
+          payload.value as Notepad, 
           { where: { id: payload.value.id } }
         )
       } catch (error) {
@@ -124,7 +126,9 @@ app.on('ready', () => {
       payload: { id: NotepadID }
     ): Promise<any> {
       try {
-        return await database.models.Notepad.destroy({ where: { id: payload.id } })
+        return await database.models.Notepad.destroy({ 
+          where: { id: payload.id as NotepadID } 
+        })
       } catch (error) {
         console.error(error)
         return 0

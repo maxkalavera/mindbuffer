@@ -33,11 +33,8 @@ export default function Page ({
               onClick: () => showModal(
                 <UpdatePage
                   data={data}
-                  onSuccess={(payload: any) => {
-                    closeModal()
-                  }}
-                  onCancel={() => closeModal()}
-                />, 'Edit Page'
+                />, 
+                'Edit Page'
               )
             },
             {
@@ -45,11 +42,9 @@ export default function Page ({
               icon: faTrash,
               onClick: () => showModal(
                 <DeletePage 
-                  onSuccess={(payload: any) => {
-  
-                  }}
-                  onCancel={() => closeModal()}
-                />, 'Delete Page'
+                  data={data}
+                />, 
+                'Delete Page'
               )
             }
           ]}

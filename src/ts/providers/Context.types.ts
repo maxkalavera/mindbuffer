@@ -40,6 +40,11 @@ export interface ContextActions {
     add: (payload: {values: Notepad[]}) => void,
     update: (payload: { value: Notepad }) => void,
     destroy: (payload: { id: NotepadID }) => void,
+    pages: {
+      add: (payload: {values: Page[]}) => void,
+      update: (payload: { value: Page }) => void,
+      destroy: (payload: { value: Page }) => void,
+    },
   }
   addNoteInput: {
     update: (payload: {value: string}) => void,

@@ -1,18 +1,34 @@
 import React from "react"
 
+import { useContext } from "@providers/Context"
+import { useModal } from '@providers/Modal'
 import Button from "@components/Button"
-
 import styles from "@styles/delete-page-modal.module.css"
 
+import type { Page } from "@ts/models/Pages.types"
+
 export default function DeletePage({
+  data,
   className='',
   onSuccess=()=>null,
   onCancel=()=>null,
 }: {
+  data: Page,
   onSuccess?: (...args: any[]) => any
   onCancel?: (...args: any[]) => any
   className?: string
 }) {
+  const { notepads } = useContext()
+  const { closeModal } = useModal()
+
+  const deletePage = () => {
+    (async () => {
+      const payload = { id: data.id }
+      await window.electronAPI.pages.destroy(payload)
+      notepads.pages.destroy({ value: data })
+    })()
+  }
+
   return (
     <div className={`${className} ${styles.container}`}>
     <div className={styles.container}>
@@ -22,11 +38,18 @@ export default function DeletePage({
       <div className={styles.options}>
         <Button
           label={'Cancel'}
-          onClick={onCancel}
+          onClick={() => {
+            onCancel()
+            closeModal()
+          }}
         />
         <Button
           label={'Delete'}
-          onClick={onSuccess}
+          onClick={() => {
+            deletePage()
+            onSuccess()
+            closeModal()
+          }}
         />
       </div>
     </div>
