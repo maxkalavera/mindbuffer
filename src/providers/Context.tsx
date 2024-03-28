@@ -8,6 +8,11 @@ const INITIAL_STATE: ContextState = {
   notepads: {
     values: [],
     hasNextPage: { value: true},
+    pages: {
+      paginateOver: {
+        values: []
+      }
+    }
   },
   addNoteInput: {
     value: ''
@@ -17,9 +22,6 @@ const INITIAL_STATE: ContextState = {
       values: [],
       page: { value: 1 },
       hasNextPage: { value: true}
-    },
-    scrollBottom: {
-      value: true
     },
   },
   searchBar: {
@@ -49,18 +51,6 @@ function ContextProvider({
   const actions = _.cloneDeep(state)
 
   actions.notepads.add = (payload) => setState((prevState) => {
-    const clonedNotepads = _.cloneDeep(prevState.notepads.values)
-    for (let i = 0; i < payload.values.length; i++) {
-      const notepad = clonedNotepads.find(
-        (item) => item.id == payload.values[i].id)
-      if (notepad) {
-        notepad.pages = notepad.pages.concat(payload.values[i].pages)
-      }
-      // const { notepadId: relatedNotepadId } = payload.values[i]
-      // const notepad = clonedNotepads.find((item) => item.id == relatedNotepadId)
-      // notepad.pages.push(payload.values[i])
-    }
-
     return {
       ...prevState,
       notepads: {
@@ -191,19 +181,6 @@ function ContextProvider({
     }
   })
 
-  actions.board.scrollBottom.set = (payload) => setState((prevState) => {
-    return {
-      ...prevState,
-      board: {
-        ...prevState.board,
-        scrollBottom: {
-          ...prevState.board.scrollBottom,
-          value: payload.value
-        }
-      }
-    }
-  })
-
   actions.searchBar.update = (payload) => setState((prevState) => {
     return {
       ...prevState,
@@ -241,14 +218,18 @@ function ContextProvider({
     }
   })
 
-  actions.notepads.pages = {} as any
+  //actions.notepads.pages = {} as any
 
   actions.notepads.pages.add = (payload) => setState((prevState) => {
     const clonedNotepads = _.cloneDeep(prevState.notepads.values)
     for (let i = 0; i < payload.values.length; i++) {
       const { notepadId: relatedNotepadId } = payload.values[i]
       const notepad = clonedNotepads.find((item) => item.id == relatedNotepadId)
-      notepad.pages.push(payload.values[i])
+      notepad.pages.values.push({
+        value: payload.values[i],
+        page: 1,
+        hasNextPage: false,
+      })
     }
 
     return {
@@ -264,9 +245,13 @@ function ContextProvider({
     const clonedNotepads = _.cloneDeep(prevState.notepads.values)
     const notepad = clonedNotepads.find((item) => item.id == payload.value.notepadId)
     if (notepad) {
-      const pageIndex = notepad.pages.findIndex((item) => item.id === payload.value.id)
+      const pageIndex = notepad.pages.values.findIndex((item) => item.value.id === payload.value.id)
       if (pageIndex > 0)
-        notepad.pages.splice(pageIndex, 1, payload.value)
+        notepad.pages.values.splice(pageIndex, 1, {
+          value: payload.value,
+          page: 1,
+          hasNextPage: false,
+        })
     }
 
     return {
@@ -283,7 +268,7 @@ function ContextProvider({
     const notepad = clonedNotepads.find(
       (item) => item.id == payload.value.notepadId)
     if (notepad) {
-      notepad.pages = notepad.pages.filter((item) => item.id !== payload.value.id)
+      notepad.pages.values = notepad.pages.values.filter((item) => item.value.id !== payload.value.id)
     }
 
     return {
@@ -304,8 +289,7 @@ function ContextProvider({
       })
       if (notes !== undefined && !controller.signal.aborted) {
         actions.board.notes.add({ values: notes.reverse() })
-        if (actions.board.notes.page.value === 1)
-          actions.board.scrollBottom.set({ value: true })
+
         if (notes.length === 0)
           actions.board.notes.hasNextPage.set({ value: false })
       }
@@ -318,19 +302,23 @@ function ContextProvider({
 
   useEffect(() => {
     const controller = new AbortController()
-    new Promise(async (resolve: any) => {
+    new Promise(async () => {
       const notepads = await window.electronAPI.notepads.getAll({
         page: 1,
         search: '',
       })
       if (notepads !== undefined && !controller.signal.aborted) {
+        notepads.forEach((notepad: any) => {
+          notepad.pages = {
+            values: notepad.pages.map((page: any) => ({
+              value: page,
+              page: 1,
+              hasNextPage: true,
+            }))
+          }  
+        })
         actions.notepads.add({ 
-          values: notepads.map(
-            (item: any) => ({
-              ...item,
-              pages: item.pages.reverse()
-            })
-          ).reverse() 
+          values: notepads
         })
       }
     })
@@ -338,7 +326,7 @@ function ContextProvider({
       controller.abort()
     }
   }, [])
-  
+
   return (
     <context.Provider
       value={{

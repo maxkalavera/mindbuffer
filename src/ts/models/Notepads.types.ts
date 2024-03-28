@@ -9,7 +9,13 @@ export interface NotepadPayload {
 
 export interface NotepadData {
   name: string
-  pages?: Page[]
+  pages?:{
+    values: {
+      value: Page,
+      page: number,
+      hasNextPage: boolean
+    }[]
+  }
 }
 
 export type Notepad = Base & NotepadData
@@ -18,4 +24,6 @@ export interface NotepadFiltersPayload {
   page?: number,
   search?: string,
   paginationOffset?: number,
+  associatedPage?: number,
+  associatedPaginationOffset?: number,
 }

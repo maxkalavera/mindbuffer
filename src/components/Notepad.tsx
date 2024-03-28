@@ -14,14 +14,18 @@ import type { Notepad } from "@ts/models/Notepads.types"
 export default function Notepad ({
   data,
   className='',
+  id='',
 }: {
   data: Notepad,
   className?: string,
+  id?: string,
 }) {
   const { showModal } = useModal()
 
   return (
-    <div className={`${className} ${styles.container}`}>
+    <div className={`${className} ${styles.container}`}
+      id={id}
+    >
       <div className={styles.header}>
         <h4 className={`secondary-h4 ${styles.label}`}>
           { data.name } 
@@ -68,10 +72,10 @@ export default function Notepad ({
 
       <div className={styles.content}>
         {
-          data.pages.map((item: any, index: number) => (
+          data.pages.values.map((item: any, index: number) => (
             <Page 
               key={index} 
-              data={item} 
+              data={item.value} 
             />
           ))
         }

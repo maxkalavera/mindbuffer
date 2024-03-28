@@ -17,7 +17,9 @@ app.on('ready', () => {
       const options = Object.assign({
         search: '',
         page: 1,
-        paginationOffset: 20
+        paginationOffset: 20,
+        associatedPage: 1,
+        associatedPaginationOffset: 20,
       }, payload)
       if (options.page < 1) options.page = 1
     
@@ -26,50 +28,47 @@ app.on('ready', () => {
           [] : 
           options.search.toLowerCase().split(/\s+/)
         const data = await database.sequelize.query(`
-        SELECT
-        ${
-          getSelectFields(database.models.Notepad)
-        },
-        ${
-          getSelectFields(
-            database.models.Page, 
-            {
-              as: ({ fieldName }) => `pages.${fieldName}`
-            })
-        }
-        FROM "notepads"
-        LEFT OUTER JOIN "pages"
-        ON "notepads".id="pages".notepadId
-        ${
-          searchKeywords.length > 0 ? 
-            `
-            WHERE
-              "pages".id in (
-                SELECT pageId FROM "notes"
-                WHERE
+        SELECT * 
+        FROM (
+            SELECT
+                ROW_NUMBER () OVER (
+                    PARTITION BY "notepads"."id"
+                    ORDER BY "pages"."createdAt"
+                ) as notepadsRowNumber,
                 ${
-                  searchKeywords
-                    .map((item) => `"content" LIKE "%${item}%"`)
-                    .join(' OR ')
+                  getSelectFields(database.models.Notepad)
+                },
+                ${
+                  getSelectFields(
+                    database.models.Page, 
+                    {
+                      as: ({ fieldName }) => `pages.${fieldName}`
+                    })
                 }
-              )
-            ` : 
-            ''
-        }
-        ORDER BY
-          "notepads".createdAt ASC, 
-          "pages"."createdAt" ASC
-        LIMIT ? OFFSET ?;
+            FROM "notepads"
+            LEFT OUTER JOIN "pages" 
+            ON "notepads"."id"="pages"."notepadId"
+            WHERE
+                "notepads"."id" IN (
+                    SELECT id FROM "notepads" LIMIT ? OFFSET ?
+                )
+        )
+        WHERE
+            notepadsRowNumber > ? AND
+            notepadsRowNumber <= ?
         `, {
           type: QueryTypes.SELECT,
           replacements: [
             options.paginationOffset,
             options.paginationOffset * (options.page - 1),
+            options.associatedPaginationOffset * (options.associatedPage - 1),
+            options.associatedPaginationOffset * (options.associatedPage),
           ],
           raw: true,
           nest: true,
         })
-        return groupByAssociations(data, 'id', ['pages'])
+        const notepads = groupByAssociations(data, 'id', ['pages'])
+        return notepads
       } catch (error) {
         console.error(error)
         return []

@@ -3,12 +3,19 @@ import { NotepadPayload, Notepad, NotepadID } from "@ts/models/Notepads.types"
 import { PagePayload, Page, PageID } from "@ts/models/Pages.types"
 import type { NotePayload, Note, NoteID } from "@ts/models/Notes.types"
 
+const n = new Map<string, {page: number, hasNextPage: boolean}>()
+
 export interface ContextState {
   notepads: {
     values: Notepad[],
     hasNextPage: {
       value: boolean
     },
+    pages: {
+      paginateOver: {
+        values: NotepadID[]
+      }
+    }
   },
   addNoteInput: {
     value: string
@@ -22,9 +29,6 @@ export interface ContextState {
       hasNextPage: {
         value: boolean
       },
-    },
-    scrollBottom: {
-      value: boolean
     },
   },
   searchBar: {

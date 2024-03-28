@@ -9,7 +9,6 @@ import AddNoteInput from '@components/AddNoteInput'
 import SearchBar from '@components/SearchBar'
 //import IconButton from '@components/IconButton'
 import styles from '@styles/home.module.css'
-import { reject } from 'lodash'
 
 function Home() {
   const resizableRef = useRef<any>(null)
