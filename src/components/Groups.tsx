@@ -21,7 +21,7 @@ export default function Groups({
   resizableRef?: React.MutableRefObject<any> 
 }) {
   const { showModal } = useModal()
-  const { notepads } = useContext()
+  const { state, actions } = useContext()
 
   return (
     <div 
@@ -55,13 +55,18 @@ export default function Groups({
         className={`${aperture === 0.0 ? styles.hide : null} ${styles.content}`}
         hasMore={false}
         next={() => {
-          
+          actions.models.notepads.increasePagination()
         }}
         scrolledOver={(elements) => {
-          console.log('SCROLLED OVER', elements.map((item) => item.id))
+          //console.log('SCROLLED OVER', elements.map((item) => item.id))
+          actions.models.pages.increasePagination({
+            values:  elements.map((item) => ({
+              id: parseInt(item.id)
+            }))
+          })
         }}
         items={
-          notepads.values.map((item: any, key: number) => (
+          state.models.notepads.values.map((item: any, key: number) => (
             <Notepad 
               id={`${item.id}`}
               key={key}

@@ -4,7 +4,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
 import type { NoteID, NotePayload, Note, NoteFiltersPayload } from '@ts/models/Notes.types'
-import type { PageID, PagePayload, Page } from '@ts/models/Pages.types'
+import type { PageID, PagePayload, Page, PageFiltersPayload } from '@ts/models/Pages.types'
 import type { NotepadID, NotepadPayload, Notepad, NotepadFiltersPayload } from '@ts/models/Notepads.types'
 
 export const electronAPI = {
@@ -48,6 +48,9 @@ export const electronAPI = {
     },
     destroy: (payload: { id: PageID }) => {
       return ipcRenderer.invoke('database.pages:destroy', payload)
+    },
+    getAll: (payload: PageFiltersPayload) => {
+      return ipcRenderer.invoke('database.pages:getAll', payload)
     }
   }
 }

@@ -72,10 +72,10 @@ export default function Notepad ({
 
       <div className={styles.content}>
         {
-          data.pages.values.map((item: any, index: number) => (
+          data.pages.map((item: any, index: number) => (
             <Page 
               key={index} 
-              data={item.value} 
+              data={item} 
             />
           ))
         }

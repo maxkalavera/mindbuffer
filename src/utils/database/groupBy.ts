@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-export default function groupByWidthAssociations (
+export function groupByWidthAssociations (
   data: {[key: string | number]: any}[],
   by: any,
   associations: string[]

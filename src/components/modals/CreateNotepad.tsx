@@ -55,7 +55,7 @@ export default function CreateNotepad ({
           onClick={() => {
             const payload = {
               data: {
-                name
+                name,
               }
             }
             createNotepad(payload)

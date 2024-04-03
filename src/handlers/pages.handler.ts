@@ -1,76 +1,65 @@
 import { app, ipcMain } from 'electron'
 import { QueryTypes } from 'sequelize'
 
+import { groupByWidthAssociations } from '@utils/database/groupBy'
 import getSelectFields from '@utils/database/getSelectFields'
 import database from "@utils/database"
 
-import type { PageID, PagePayload, Page } from '@ts/models/Pages.types'
+import type { PageID, PagePayload, Page, PageFiltersPayload } from '@ts/models/Pages.types'
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.pages:getAll',
     async function getAll (
       event: Electron.IpcMainInvokeEvent,
-      {
-        page = 1,
-        search = '',
-      }: {
-        page?: number,
-        search?: string,
-      }
+      payload: PageFiltersPayload
     ): Promise<any> {
-      const paginationOffset = 20
-      if (page < 1) page = 1
-    
-      try {
-        const searchKeywords = search === '' ? [] : search.toLowerCase().split(/\s+/)
-        const data = await database.sequelize.query(`
-          SELECT
-          ${
-            getSelectFields(database.models.Page)
-          },
-          ${
-            getSelectFields(
-              database.models.Notepad, 
-              {
-                as: ({ fieldName }) => `notepad.${fieldName}`
-              })
-          }
-          FROM "pages"
-          LEFT OUTER JOIN "notepads"
-          ON "pages".notepadId="notepads".id
-          ${
-            searchKeywords.length > 0 ? 
-              `
-              WHERE
-                "pages".id in (
-                  SELECT pageId FROM "notes"
-                  WHERE
-                  ${
-                    searchKeywords
-                      .map((item) => `"content" LIKE "%${item}%"`)
-                      .join(' OR ')
-                  }
-                )
-              ` : 
-              ''
-          }
-          ORDER BY "pages"."createdAt" DESC
-          LIMIT ? OFFSET ?;
-        `, {
-          type: QueryTypes.SELECT,
-          replacements: [
-            paginationOffset,
-            paginationOffset * (page - 1),
-          ],
-          raw: true,
-          nest: true,
-        })
-        return data
-      } catch (error) {
-        console.error(error)
+      const options = Object.assign({
+        search: '',
+        paginationOffset: 20,
+      }, payload)    
+      options.notepads.map((item) => item.page < 1 ?
+        {
+          ...item,
+          page: 1
+        } :
+        item
+      )
+      if (options.notepads.length === 0)
         return []
-      } 
+
+      const data = await database.sequelize.query(`
+        ${
+          options.notepads.map((notepad) => 
+            `
+            SELECT *
+            FROM (
+              SELECT
+                ROW_NUMBER () OVER (
+                  ORDER BY "pages"."createdAt"
+                ) as rowNumber,
+                ${getSelectFields(database.models.Page, {
+                  as: ({ tableName, fieldName }) => fieldName === 'notepadId' ?
+                    `${fieldName}` :
+                    `${tableName}.${fieldName}`
+                })}
+              FROM "pages" 
+              WHERE "pages"."notepadId"=${notepad.id}
+            )
+            WHERE
+              rowNumber > ${options.paginationOffset * (notepad.page - 1)} AND
+              rowNumber <= ${options.paginationOffset * (notepad.page)}
+            `
+          ).join(' UNION ')
+        }
+      `, {
+        type: QueryTypes.SELECT,
+        replacements: [],
+        raw: true,
+        nest: true,
+      })
+
+      return groupByWidthAssociations(data, 'notepadId', ['pages'])
     }
   )
 })

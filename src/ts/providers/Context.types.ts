@@ -1,84 +1,125 @@
 
+import { MutableRefObject } from "react"
+
 import { NotepadPayload, Notepad, NotepadID } from "@ts/models/Notepads.types"
 import { PagePayload, Page, PageID } from "@ts/models/Pages.types"
 import type { NotePayload, Note, NoteID } from "@ts/models/Notes.types"
 
-const n = new Map<string, {page: number, hasNextPage: boolean}>()
+export type Payload = {
+  [key: string]: any
+}
+
+export type ContextRef = {
+  models: {
+    pages: {
+      paginationMap: Map<NotepadID, {
+        page: number,
+        hasNextPage: boolean,
+      }>
+    }
+  }
+}
+
+export type Action<T extends Payload=undefined> = (
+  state: ContextState, 
+  payload?: T,
+  ContextRef?: MutableRefObject<ContextRef>,
+) => ContextState
+
+export type Dispatcher<T extends Payload=undefined> =
+  T extends undefined ? 
+    () => void : 
+    (payload: T) => void
+
+export type DispatcherBuilder<T extends Payload = undefined> = 
+  (
+    action: Action<T>
+  ) => Dispatcher<T> | Dispatcher<undefined>
 
 export interface ContextState {
-  notepads: {
-    values: Notepad[],
-    hasNextPage: {
-      value: boolean
-    },
-    pages: {
-      paginateOver: {
-        values: NotepadID[]
-      }
-    }
+  commons: {
+    search: string,
+    activeSearch: string,
+    noteInput: string,
   },
-  addNoteInput: {
-    value: string
-  },
-  board: {
+  models: {
     notes: {
       values: Note[],
-      page: {
-        value: number,
-      },
-      hasNextPage: {
-        value: boolean
-      },
+      page: number,
+      hasNextPage: boolean,
     },
-  },
-  searchBar: {
-    value: string,
-    activeSearch: {
-      value: string
-    }
+    notepads: {
+      values: Notepad[],
+      page: number,
+      hasNextPage: boolean,
+    },
+    pages: {
+      pendingPagesFetching: {
+        id: NotepadID,
+      }[],
+      pendingPagesFetchingCount: number,
+    },
   }
 }
 
 export interface ContextActions {
-  notepads: {
-    add: (payload: {values: Notepad[]}) => void,
-    update: (payload: { value: Notepad }) => void,
-    destroy: (payload: { id: NotepadID }) => void,
-    pages: {
-      add: (payload: {values: Page[]}) => void,
-      update: (payload: { value: Page }) => void,
-      destroy: (payload: { value: Page }) => void,
+  commons: {
+    search: {
+      set: Dispatcher<{ value: string }>
     },
-  }
-  addNoteInput: {
-    update: (payload: {value: string}) => void,
-  },
-  board: {
-    notes: {
-      add: (payload: {values: Note[]}) => void,
-      destroy: (payload: { id: NoteID }) => void,
-      clear: () => void,
-      page: {
-        increase: () => void,
-        reset: () => void,
-      },
-      hasNextPage: {
-        set: (payload: {value: boolean}) => void
-      },
-    },
-    scrollBottom: {
-      set: (payload: {value: boolean}) => void
-    }
-  }
-  searchBar: {
-    update: (payload: {value: string}) => void,
     activeSearch: {
-      update: (payload: {value: string}) => void,
-      clear: () => void,
+      set: Dispatcher<{ value: string }>
+    },
+    noteInput: {
+      set: Dispatcher<{ value: string }>
+    },
+  },
+  models: {
+    notes: {
+      set: Dispatcher<{ values: Note[] }>,
+      add: Dispatcher<{ values: Note[] }>,
+      update: Dispatcher<{ values: Note[] }>,
+      destroy: Dispatcher<{ values: Note[] }>,
+      increasePagination: Dispatcher,
+      resetPagination: Dispatcher,
+      setNextPage: Dispatcher<{ value: boolean }>,
+    },
+    notepads: {
+      set: Dispatcher<{ values: Note[] }>,
+      add: Dispatcher<{ values: Note[] }>,
+      update: Dispatcher<{ values: Note[] }>,
+      destroy: Dispatcher<{ values: Note[] }>,
+      increasePagination: Dispatcher,
+      resetPagination: Dispatcher,
+      setNextPage: Dispatcher<{ value: boolean }>,
+    }
+    pages: {
+      set: Dispatcher<{ values: Note[] }>,
+      add: Dispatcher<{ values: Note[] }>,
+      update: Dispatcher<{ values: Note[] }>,
+      destroy: Dispatcher<{ values: Note[] }>,
+      increasePagination: Dispatcher<{
+        values: {
+          id: NotepadID
+        }[]
+      }>,
+      resetPagination: Dispatcher<{
+        values: {
+          id: NotepadID
+        }[]
+      }>,
+      setNextPage: Dispatcher<{ 
+        values: {
+          id: NotepadID,
+          hasNextPage: boolean,
+        }[]
+      }>,
+      resetPendingPagination: Dispatcher,
     }
   }
 }
 
-export interface ReducerActions {
-  [key: string]: (state: any, payload: { [key: string | number | symbol]: any }) => ContextState
+export type IntegralContext = {
+  state: ContextState,
+  actions: ContextActions
 }

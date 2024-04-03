@@ -29,7 +29,7 @@ function TextNote({
 }) {
   const contentContainer = useRef<HTMLDivElement>(null)
   const { showModal, closeModal } = useModal()
-  const { board: { notes } } = useContext()
+  const { state: { models: { notes } } } = useContext()
   const { showAlert } = useAlert()
 
 

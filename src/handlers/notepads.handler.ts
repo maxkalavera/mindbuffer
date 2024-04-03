@@ -2,7 +2,7 @@ import { app, ipcMain } from 'electron'
 import { QueryTypes } from 'sequelize'
 
 import getSelectFields from '@utils/database/getSelectFields'
-import groupByAssociations from '@utils/database/groupByAssociations'
+import { groupByWidthAssociations } from '@utils/database/groupBy'
 import database from "@utils/database"
 
 import type { NotepadID, NotepadPayload, Notepad, NotepadFiltersPayload } from '@ts/models/Notepads.types'
@@ -67,8 +67,7 @@ app.on('ready', () => {
           raw: true,
           nest: true,
         })
-        const notepads = groupByAssociations(data, 'id', ['pages'])
-        return notepads
+        return groupByWidthAssociations(data, 'id', ['pages'])
       } catch (error) {
         console.error(error)
         return []

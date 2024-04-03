@@ -6,9 +6,11 @@ import { Model, Sequelize } from "sequelize"
 import migrator from '@utils/migrator'
 import store from '@utils/store'
 
+const IS_PRODUCTION = app && app.isPackaged 
+
 export const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: app && app.isPackaged ? 
+  storage: IS_PRODUCTION ? 
     path.resolve(app.getPath('userData'), store.get('dbFilename') as string) :
     path.join(store.get('rootDir') as string, '.run', store.get('dbFilename') as string)
 })

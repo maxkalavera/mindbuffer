@@ -9,21 +9,20 @@ function AddNoteInput({
 }: {
   className?: string
 }) {
-  const { addNoteInput, board } = useContext()
+  const { state: { commons: { noteInput } }, actions } = useContext()
 
   const createNote = async () => {
-    if (addNoteInput.value.trim() === '') return
+    if (noteInput.trim() === '') return
 
     const note = await window.electronAPI.notes.create({
       data: {
-        content: addNoteInput.value,
+        content: noteInput,
         pageId: 1,
       }
     })
     if (note !== undefined) {
-      board.notes.add({ values: [note]})
-      board.scrollBottom.set({ value: true })
-      addNoteInput.update({ value: '' })
+      //# board.notes.add({ values: [note]})
+      actions.commons.noteInput.set({ value: '' })
     }
   }
 
@@ -49,16 +48,16 @@ function AddNoteInput({
       <textarea
         placeholder="Add some thoughts..."
         className={`${styles.textarea}`}
-        value={addNoteInput.value}
+        value={noteInput}
         onKeyDown={onKeyDown}
         onKeyUp={onKeyUp}
         onChange={
-          (e) => addNoteInput.update({ value: e.target.value})
+          (e) => actions.commons.noteInput.set({ value: e.target.value })
         }
       />
       <AddNoteButtonCarrousel 
         onSave={() => createNote()}
-        isSaveActive={addNoteInput.value !== ''}
+        isSaveActive={noteInput !== ''}
       />
     </div>
   );

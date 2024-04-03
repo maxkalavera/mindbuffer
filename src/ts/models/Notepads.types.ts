@@ -5,17 +5,12 @@ export type NotepadID = number
 
 export interface NotepadPayload {
   name: string
+  pages: Page[]
 }
 
 export interface NotepadData {
   name: string
-  pages?:{
-    values: {
-      value: Page,
-      page: number,
-      hasNextPage: boolean
-    }[]
-  }
+  pages: Page[]
 }
 
 export type Notepad = Base & NotepadData

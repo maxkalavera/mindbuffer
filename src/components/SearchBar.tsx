@@ -10,32 +10,33 @@ function Searchbar({
 }: {
   className?: string,
 }) {
-  const { searchBar, board } = useContext()
+  const { state, actions } = useContext()
 
   const sendSearch = () => {
-    searchBar.activeSearch.update({ value: searchBar.value })
-    board.notes.clear()
-    board.notes.page.reset()
+    actions.commons.activeSearch.set({ value: state.commons.search })
+    //# board.notes.clear()
+    //# board.notes.page.reset()
   }
 
   const clearSearch = () => {
-    searchBar.activeSearch.clear()
-    board.notes.clear()
-    board.notes.page.reset()
+    actions.commons.activeSearch.set({ value: '' })
+    //# board.notes.clear()
+    //# board.notes.page.reset()
   }
 
   const onInputChange = (event: any) => {
-    searchBar.update({ value: event.target.value })
+    actions.commons.search.set({ value: event.target.value })
   }
 
-  const useSearchButton = searchBar.value === '' || searchBar.value !== searchBar.activeSearch.value;
+  const useSearchButton = state.commons.search === '' || 
+    state.commons.search  !== state.commons.activeSearch;
   return (
     <div className={`${className} ${styles.container}`}>
       <input
         type="text"
         placeholder="Search..."
         className={`${styles.input} ${className}`}
-        value={searchBar.value}
+        value={state.commons.search}
         onChange={(event) => onInputChange(event)}
         onKeyDown={(event: any) => (event.code === "Enter") ? sendSearch() : null }
       ></input>

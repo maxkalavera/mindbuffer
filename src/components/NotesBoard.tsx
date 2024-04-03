@@ -12,18 +12,21 @@ function NotesBoard({
 }: {
   className?: string
 }) {
-  const { board } = useContext()
+  const { 
+    state,
+    actions
+  } = useContext()
 
   return (
     <InifiniteScroll
       className={`${styles.container} ${className}`}
-      hasMore={board.notes.hasNextPage.value}
+      hasMore={state.models.notes.hasNextPage}
       inverse={true}
       next={() => {
-        board.notes.page.increase()
+        actions.models.notes.increasePagination()
       }}
       items={
-        board.notes.values.map((item: Note) => (
+        state.models.notes.values.map((item: Note) => (
           <TextNote 
             key={item.id}
             data={item}

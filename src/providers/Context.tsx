@@ -1,39 +1,56 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import _ from 'lodash'
 
-import type { ContextState, ReducerActions, ContextActions } from '@ts/providers/Context.types'
+import * as commons from '@actions/commons'
+import * as notepads from '@actions/notepads'
+import * as notes from '@actions/notes'
+import * as pages from '@actions/pages'
 
-// ContextState
+import type { Notepad, NotepadID } from '@ts/models/Notepads.types'
+import type { 
+  ContextState, 
+  Action, 
+  ContextActions,
+  DispatcherBuilder, 
+  IntegralContext, 
+  Payload,
+  ContextRef,
+} from '@ts/providers/Context.types'
+
 const INITIAL_STATE: ContextState = {
-  notepads: {
-    values: [],
-    hasNextPage: { value: true},
-    pages: {
-      paginateOver: {
-        values: []
-      }
-    }
+  commons: {
+    search: '',
+    activeSearch: '',
+    noteInput: '',
   },
-  addNoteInput: {
-    value: ''
-  },
-  board: {
+  models: {
     notes: {
       values: [],
-      page: { value: 1 },
-      hasNextPage: { value: true}
+      page: 1,
+      hasNextPage: true,
     },
-  },
-  searchBar: {
-    value: '',
-    activeSearch: {
-      value: ''
+    notepads: {
+      values: [],
+      page: 1,
+      hasNextPage: true,
     },
+    pages: {
+      pendingPagesFetching: Array(),
+      pendingPagesFetchingCount: 1,
+    }
   }
 }
 
-const context = React.createContext<ContextActions & ContextState>(
-  INITIAL_STATE as ContextActions & ContextState)
+const INITIAL_CONTEXT_REF: ContextRef = {
+  models: {
+    pages: {
+      paginationMap: new Map()
+    }
+  }
+}
+
+
+const context = React.createContext<IntegralContext>(undefined)
 
 function useContext() {
   return React.useContext(context)
@@ -46,291 +63,148 @@ function ContextProvider({
   children?: JSX.Element[] | JSX.Element
   initialState?: typeof INITIAL_STATE
 }): JSX.Element {
-  const [state, setState] = useState<ContextState & ContextActions>(
-    initialState as ContextState & ContextActions)
-  const actions = _.cloneDeep(state)
+  const [state, setState] = useState<ContextState>(initialState)
+  const contextRef = useRef(INITIAL_CONTEXT_REF)
+  const buildDispatcher: DispatcherBuilder = ((action: Action<Payload>) => {
+    return (payload: Payload) => {
+      setState((prevState) => action(prevState, payload, contextRef))
+    }
+  }) as DispatcherBuilder
 
-  actions.notepads.add = (payload) => setState((prevState) => {
-    return {
-      ...prevState,
+  const actions: ContextActions = {
+    commons: {
+      search: {
+        set: buildDispatcher(commons.setSearch)
+      },
+      activeSearch: {
+        set: buildDispatcher(commons.setActiveSearch)
+      },
+      noteInput: {
+        set: buildDispatcher(commons.setNoteInput)
+      },
+    },
+    models: {
+      notes: {
+        set: buildDispatcher(notes.setNotes),
+        add: buildDispatcher(notes.addNotes),
+        update: buildDispatcher(notes.updateNotes),
+        destroy: buildDispatcher(notes.destroyNotes),
+        increasePagination: buildDispatcher(notes.increasePagination),
+        resetPagination: buildDispatcher(notes.resetPagination),
+        setNextPage: buildDispatcher(notes.setNextPage),
+      },
       notepads: {
-        ...prevState.notepads,
-        values: [...prevState.notepads.values, ...payload.values]
+        set: buildDispatcher(notepads.setNotepads),
+        add: buildDispatcher(notepads.addNotepads),
+        update: buildDispatcher(notepads.updateNotepads),
+        destroy: buildDispatcher(notepads.destroyNotepads),
+        increasePagination: buildDispatcher(notepads.increasePagination),
+        resetPagination: buildDispatcher(notepads.resetPagination),
+        setNextPage: buildDispatcher(notepads.setNextPage),
+      },
+      pages: {
+        set: buildDispatcher(pages.setPages),
+        add: buildDispatcher(pages.addPages),
+        update: buildDispatcher(pages.updatePages),
+        destroy: buildDispatcher(pages.destroyPages),
+        increasePagination: buildDispatcher(pages.increasePagination),
+        resetPagination: buildDispatcher(pages.resetPagination),
+        setNextPage: buildDispatcher(pages.setNextPage),
+        resetPendingPagination: buildDispatcher(pages.resetPendingPagination),
       }
     }
-  })
-
-  actions.notepads.update = (payload) => setState((prevState) => {
-    const values = prevState.notepads.values.slice()
-    const notepadIndex = values.findIndex((item) => item.id === payload.value.id)
-    if(notepadIndex > 0)
-      values.splice(notepadIndex, 1, payload.value)
-    return {
-      ...prevState,
-      notepads: {
-        ...prevState.notepads,
-        values
-      }
-    }
-  })
-
-  actions.notepads.destroy = (payload) => setState((prevState) => {
-    return {
-      ...prevState,
-      notepads: {
-        ...prevState.notepads,
-        values: prevState.notepads.values.filter((item) => item.id !== payload.id)
-      }
-    }
-  })
-
-  actions.addNoteInput.update = (payload) => setState((prevState) => {
-    return {
-      ...prevState,
-      addNoteInput: {
-        ...prevState.addNoteInput,
-        value: payload.value
-      }
-    }
-  })
-
-  actions.board.notes.add = (payload) => setState((prevState) => {
-    return {
-      ...prevState,
-      board: {
-        ...prevState.board,
-        notes: {
-          ...prevState.board.notes,
-          values: [...prevState.board.notes.values, ...payload.values]
-        }
-      }
-    }
-  })
-
-  actions.board.notes.destroy = (payload) => setState((prevState) => {
-    return {
-      ...prevState,
-      board: {
-        ...prevState.board,
-        notes: {
-          ...prevState.board.notes,
-          values: prevState.board.notes.values.filter((item) => item.id !== payload.id)
-        }
-      }
-    }
-  })
-
-  actions.board.notes.clear = () => setState((prevState) => {
-    return {
-      ...prevState,
-      board: {
-        ...prevState.board,
-        notes: {
-          ...prevState.board.notes,
-          values: []
-        }
-      }
-    }
-  })
-
-  actions.board.notes.page.increase = () => setState((prevState) => {
-    return {
-      ...prevState,
-      board: {
-        ...prevState.board,
-        notes: {
-          ...prevState.board.notes,
-          page: {
-            ...prevState.board.notes.page,
-            value: prevState.board.notes.page.value + 1
-          }
-        }
-      }
-    }
-  })
-
-  actions.board.notes.page.reset = () => setState((prevState) => {
-    return {
-      ...prevState,
-      board: {
-        ...prevState.board,
-        notes: {
-          ...prevState.board.notes,
-          page: {
-            ...prevState.board.notes.page,
-            value: 1
-          }
-        }
-      }
-    }
-  })
-
-  actions.board.notes.hasNextPage.set = (payload) => setState((prevState) => {
-    return {
-      ...prevState,
-      board: {
-        ...prevState.board,
-        notes: {
-          ...prevState.board.notes,
-          hasNextPage: {
-            ...prevState.board.notes.hasNextPage,
-            value: payload.value
-          }
-        }
-      }
-    }
-  })
-
-  actions.searchBar.update = (payload) => setState((prevState) => {
-    return {
-      ...prevState,
-      searchBar: {
-        ...prevState.searchBar,
-        value: payload.value
-      }
-    }
-  })
-
-  actions.searchBar.activeSearch.update = (payload) => setState((prevState) => {
-    return ({
-      ...prevState,
-      searchBar: {
-        ...prevState.searchBar,
-        activeSearch: {
-          ...prevState.searchBar.activeSearch,
-          value: payload.value
-        }
-      }  
-    })
-  })
-
-  actions.searchBar.activeSearch.clear = () => setState((prevState) => {
-    return {
-      ...prevState,
-      searchBar: {
-        ...prevState.searchBar,
-        value: '',
-        activeSearch: {
-          ...prevState.searchBar.activeSearch,
-          value: ''
-        }
-      }
-    }
-  })
-
-  //actions.notepads.pages = {} as any
-
-  actions.notepads.pages.add = (payload) => setState((prevState) => {
-    const clonedNotepads = _.cloneDeep(prevState.notepads.values)
-    for (let i = 0; i < payload.values.length; i++) {
-      const { notepadId: relatedNotepadId } = payload.values[i]
-      const notepad = clonedNotepads.find((item) => item.id == relatedNotepadId)
-      notepad.pages.values.push({
-        value: payload.values[i],
-        page: 1,
-        hasNextPage: false,
-      })
-    }
-
-    return {
-      ...prevState,
-      notepads: {
-        ...prevState.notepads,
-        values: clonedNotepads
-      }
-    }
-  })
-
-  actions.notepads.pages.update = (payload) => setState((prevState) => {
-    const clonedNotepads = _.cloneDeep(prevState.notepads.values)
-    const notepad = clonedNotepads.find((item) => item.id == payload.value.notepadId)
-    if (notepad) {
-      const pageIndex = notepad.pages.values.findIndex((item) => item.value.id === payload.value.id)
-      if (pageIndex > 0)
-        notepad.pages.values.splice(pageIndex, 1, {
-          value: payload.value,
-          page: 1,
-          hasNextPage: false,
-        })
-    }
-
-    return {
-      ...prevState,
-      notepads: {
-        ...prevState.notepads,
-        values: clonedNotepads
-      }
-    }
-  })
-
-  actions.notepads.pages.destroy = (payload) => setState((prevState) => {
-    const clonedNotepads = _.cloneDeep(prevState.notepads.values)
-    const notepad = clonedNotepads.find(
-      (item) => item.id == payload.value.notepadId)
-    if (notepad) {
-      notepad.pages.values = notepad.pages.values.filter((item) => item.value.id !== payload.value.id)
-    }
-
-    return {
-      ...prevState,
-      notepads: {
-        ...prevState.notepads,
-        values: clonedNotepads
-      }
-    }
-  })
+  }
 
   useEffect(() => {
+    // Fetch notes from database, re do query if filters change
     const controller = new AbortController()
     new Promise(async (resolve: any) => {
       const notes = await window.electronAPI.notes.getAll({
-        page: state.board.notes.page.value,
-        search: state.searchBar.activeSearch.value
+        page: state.models.notes.page,
+        search: state.commons.activeSearch
       })
       if (notes !== undefined && !controller.signal.aborted) {
-        actions.board.notes.add({ values: notes.reverse() })
+        actions.models.notes.add({ values: notes.reverse() })
 
-        if (notes.length === 0)
-          actions.board.notes.hasNextPage.set({ value: false })
+        if (notes.length === 0) {
+          actions.models.notes.setNextPage({ value: false })
+        }
       }
     })
     return () => {
       controller.abort()
     }
-
-  }, [state.board.notes.page.value, state.searchBar.activeSearch.value])
+  }, [
+    state.commons.activeSearch, 
+    state.models.notes.page
+  ])
 
   useEffect(() => {
+    // Fetch notepads from database, re do query if filters change
     const controller = new AbortController()
     new Promise(async () => {
       const notepads = await window.electronAPI.notepads.getAll({
-        page: 1,
-        search: '',
+        page: state.models.notes.page,
+        search: state.commons.activeSearch
       })
       if (notepads !== undefined && !controller.signal.aborted) {
-        notepads.forEach((notepad: any) => {
-          notepad.pages = {
-            values: notepad.pages.map((page: any) => ({
-              value: page,
-              page: 1,
-              hasNextPage: true,
-            }))
-          }  
-        })
-        actions.notepads.add({ 
-          values: notepads
-        })
+        actions.models.notepads.add({ values: notepads })
+        
+        if (notepads.length === 0) {
+          actions.models.notes.setNextPage({ value: false })
+        }
       }
     })
     return () => {
       controller.abort()
     }
-  }, [])
+  }, [
+    state.commons.activeSearch, 
+    state.models.notes.page
+  ])
+
+  useEffect(() => {
+    const { models: { pages: { paginationMap } } } = contextRef.current
+    const { pendingPagesFetching } = state.models.pages
+    const controller = new AbortController()
+    new Promise(async () => {      
+
+
+      
+      // Fetch more elements from database requested in pendingPagesFetching var
+      const pagesByNotepad = await window.electronAPI.pages.getAll({
+        notepads: pendingPagesFetching.map(item => {
+          const pagination = paginationMap.get(item.id)
+          pagination.page += 1
+          paginationMap.set(item.id, pagination)
+          return {
+            id: item.id,
+            page: pagination.page
+          }
+        })
+      })
+      // If not page is returned by given notepad set flag to show there is no more pages
+      pendingPagesFetching.forEach(({ id }) => {
+        if (pagesByNotepad.findIndex((item: any) => item.notepadId === id) === -1) {
+          const pagination = paginationMap.get(id)
+          pagination.hasNextPage = false
+          paginationMap.set(id, pagination)
+        }
+      })
+      actions.models.pages.resetPendingPagination()
+    })
+    return () => {
+      controller.abort()
+    }
+  }, [
+    state.models.pages.pendingPagesFetchingCount
+  ])
 
   return (
     <context.Provider
       value={{
-        ...actions,
+        state,
+        actions,
       }}
     >
       {children}
