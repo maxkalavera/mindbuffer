@@ -20,12 +20,12 @@ export default function DeleteNote({
   className?: string
 }) {
   const { closeModal } = useModal()
-  const { board: { notes } } = useContext()
+  const { } = useContext()
   const { showAlert } = useAlert()
 
   const destroyNote = () => {
     if (window.electronAPI.notes.destroy({ id: data.id })) {
-      notes.destroy({ id: data.id })
+      //# notes.destroy({ id: data.id })
       showAlert('Note deleted!')
     }
   }

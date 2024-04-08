@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react"
 
-import { useContext } from '@providers/Context'
+import notesSlice from "@actions/notes.slice"
+import commonsSlice from "@actions/commons.slice"
+import store from "@src/store"
 import AddNoteButtonCarrousel from "@components/AddNoteButtonCarousel"
 import styles from "@styles/add-note-input.module.css"
 
@@ -9,21 +11,35 @@ function AddNoteInput({
 }: {
   className?: string
 }) {
-  const { state: { commons: { noteInput } }, actions } = useContext()
+  const [context, setContext] = useState<{ value: string }>({ value: '' })
+
+  useEffect(() => {
+    store.monitor(
+      (state) => state.commons.noteInput,
+      (state) => { setContext({ value: state.commons.noteInput }) }
+    )
+  }, [])
 
   const createNote = async () => {
-    if (noteInput.trim() === '') return
+    if (context.value.trim() === '') return
 
     const note = await window.electronAPI.notes.create({
       data: {
-        content: noteInput,
+        content: context.value,
         pageId: 1,
       }
     })
     if (note !== undefined) {
-      //# board.notes.add({ values: [note]})
-      actions.commons.noteInput.set({ value: '' })
+      const { setNoteInput } = commonsSlice.actions
+      const { addBotom: addNotes } = notesSlice.actions
+      store.dispatch(setNoteInput({ value: '' }))
+      store.dispatch(addNotes({ values: [note] }))
     }
+  }
+
+  const updateInputValue = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { setNoteInput } = commonsSlice.actions
+    store.dispatch(setNoteInput({ value: event.target.value }))
   }
 
   const keyMap = useRef<{[key: number]: boolean}>({
@@ -48,16 +64,14 @@ function AddNoteInput({
       <textarea
         placeholder="Add some thoughts..."
         className={`${styles.textarea}`}
-        value={noteInput}
+        value={context.value}
         onKeyDown={onKeyDown}
         onKeyUp={onKeyUp}
-        onChange={
-          (e) => actions.commons.noteInput.set({ value: e.target.value })
-        }
+        onChange={updateInputValue}
       />
       <AddNoteButtonCarrousel 
         onSave={() => createNote()}
-        isSaveActive={noteInput !== ''}
+        isSaveActive={context.value.trim() !== ''}
       />
     </div>
   );

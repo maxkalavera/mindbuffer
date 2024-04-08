@@ -20,7 +20,7 @@ export const addNotes: Action<{ values: Note[] }> = (state, payload) => ({
     ...state.models,
     notes: {
       ...state.models.notes,
-      values: [...state.models.notes.values, ...payload.values]
+      values: [...payload.values, ...state.models.notes.values]
     }
   }
 })

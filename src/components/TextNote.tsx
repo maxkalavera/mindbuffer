@@ -29,10 +29,8 @@ function TextNote({
 }) {
   const contentContainer = useRef<HTMLDivElement>(null)
   const { showModal, closeModal } = useModal()
-  const { state: { models: { notes } } } = useContext()
   const { showAlert } = useAlert()
-
-
+    //const { state: { models: { notes } } } = useContext()
 
   useEffect(() => {
     if (!contentContainer.current) return

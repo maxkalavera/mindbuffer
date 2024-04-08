@@ -1,21 +1,25 @@
 import path from "path"
-// @ts-ignore
 import { app } from 'electron'
 import { Model, Sequelize } from "sequelize"
 
-import migrator from '@utils/migrator'
-import store from '@utils/store'
+import buildSeeder from "@utils/database/seeder"
+import buildMigrator from '@utils/database/migrator'
+import settings from '@utils/settings'
 
+const MINDBUFFER_APPLY_TESTING_DATA = (process.env.MINDBUFFER_APPLY_TESTING_DATA || '').toLowerCase() === 'true'
 const IS_PRODUCTION = app && app.isPackaged 
 
 export const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: IS_PRODUCTION ? 
-    path.resolve(app.getPath('userData'), store.get('dbFilename') as string) :
-    path.join(store.get('rootDir') as string, '.run', store.get('dbFilename') as string)
+  logging: settings.get('debug') as boolean,
+  storage: (IS_PRODUCTION ? 
+    path.resolve(app.getPath('userData'), settings.get('dbFilename') as string) :
+    path.join(settings.get('rootDir') as string, '.run', settings.get('dbFilename') as string)
+  ),
 })
 
-const umzug = migrator(sequelize)
+const umzug = buildMigrator(sequelize)
+const seeder = buildSeeder(sequelize)
 
 const modelDefiners: ((sequelize: Sequelize) => void)[] = [
   require('@models/Note.model').modelDefiner,
@@ -36,6 +40,10 @@ export default {
   models: sequelize.models,
   init: async function () {
     await umzug.up()
+    if (!IS_PRODUCTION && MINDBUFFER_APPLY_TESTING_DATA) {
+      await seeder.emptyDatabase()
+      await seeder.up()
+    }
   },
   testConnection: async function () {
     try {

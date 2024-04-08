@@ -1,4 +1,4 @@
-import store from '@utils/store'
+import store from '@utils/settings'
 import { app, ipcMain } from 'electron'
 
 app.on('ready', () => {

@@ -1,11 +1,11 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import _ from 'lodash'
-
+/*
 import * as commons from '@actions/commons'
 import * as notepads from '@actions/notepads'
 import * as notes from '@actions/notes'
 import * as pages from '@actions/pages'
-
+*/
 import type { Notepad, NotepadID } from '@ts/models/Notepads.types'
 import type { 
   ContextState, 
@@ -50,7 +50,7 @@ const INITIAL_CONTEXT_REF: ContextRef = {
 }
 
 
-const context = React.createContext<IntegralContext>(undefined)
+const context = React.createContext<any>(undefined)
 
 function useContext() {
   return React.useContext(context)
@@ -71,6 +71,7 @@ function ContextProvider({
     }
   }) as DispatcherBuilder
 
+  /*
   const actions: ContextActions = {
     commons: {
       search: {
@@ -114,6 +115,7 @@ function ContextProvider({
       }
     }
   }
+  */
 
   useEffect(() => {
     // Fetch notes from database, re do query if filters change
@@ -124,10 +126,10 @@ function ContextProvider({
         search: state.commons.activeSearch
       })
       if (notes !== undefined && !controller.signal.aborted) {
-        actions.models.notes.add({ values: notes.reverse() })
+        //actions.models.notes.add({ values: notes.reverse() })
 
         if (notes.length === 0) {
-          actions.models.notes.setNextPage({ value: false })
+          //actions.models.notes.setNextPage({ value: false })
         }
       }
     })
@@ -148,10 +150,10 @@ function ContextProvider({
         search: state.commons.activeSearch
       })
       if (notepads !== undefined && !controller.signal.aborted) {
-        actions.models.notepads.add({ values: notepads })
+        //actions.models.notepads.add({ values: notepads })
         
         if (notepads.length === 0) {
-          actions.models.notes.setNextPage({ value: false })
+          //actions.models.notes.setNextPage({ value: false })
         }
       }
     })
@@ -167,10 +169,7 @@ function ContextProvider({
     const { models: { pages: { paginationMap } } } = contextRef.current
     const { pendingPagesFetching } = state.models.pages
     const controller = new AbortController()
-    new Promise(async () => {      
-
-
-      
+    new Promise(async () => {
       // Fetch more elements from database requested in pendingPagesFetching var
       const pagesByNotepad = await window.electronAPI.pages.getAll({
         notepads: pendingPagesFetching.map(item => {
@@ -191,7 +190,7 @@ function ContextProvider({
           paginationMap.set(id, pagination)
         }
       })
-      actions.models.pages.resetPendingPagination()
+      //actions.models.pages.resetPendingPagination()
     })
     return () => {
       controller.abort()
@@ -204,7 +203,7 @@ function ContextProvider({
     <context.Provider
       value={{
         state,
-        actions,
+        //actions,
       }}
     >
       {children}

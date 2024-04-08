@@ -7,14 +7,12 @@ interface InifiniteScrollProps {
   hasMore?: boolean,
   inverse?: boolean,
   scrollThreshold?: number,
-  scrolledOver?: (scrolledOver: HTMLElement[], ...args: any[]) => any,
+  sourceHash?: string,
+  insertedStartHash?: string,
+  insertedEndHash?: string,
+  getItemIdentifier?: (...args: any[]) => string 
   next?: (...args: any[]) => any,
-}
-
-interface InifiniteScrollState {
-  hasData: boolean,
-  reachedEnd: boolean,
-  dataLength: number,
+  scrolledOver?: (scrolledOver: HTMLElement[], ...args: any[]) => any,
 }
 
 export default function InifiniteScroll ({
@@ -23,53 +21,123 @@ export default function InifiniteScroll ({
   hasMore=false,
   inverse=false,
   scrollThreshold=10,
+  insertedStartHash=undefined,
+  insertedEndHash=undefined,
+  getItemIdentifier=(item) => item.key === undefined ? item.toString() : item.key,
   next=()=>{},
   scrolledOver=null,
 }: InifiniteScrollProps) {
-  const [state, setState] = useState<InifiniteScrollState>({
-    hasData: false,
-    reachedEnd: false,
-    dataLength: 0,
-  })
   /*
   * Notes:
   * This infinite scroll can't be used with flex-direction: column-inverse
   */
   const containerRef = useRef<HTMLDivElement>()
 
-  useEffect(() => {
-    // Initial set up
-    if (
-      containerRef.current && 
-      items.length > 0 &&
-      !state.hasData
-    ) {
-      setState((prevState) => ({
-        ...prevState,
-        hasData: true,
-        dataLength: items.length
-      }))
+  const scrollBegining = () => {
+    // Position the scroll in the starting side
+    if (!containerRef.current)
+      return
 
+    if (inverse) {
+      containerRef.current.scroll({
+        top: containerRef.current.scrollHeight,
+        // @ts-ignore
+        behavior: 'instant',
+      })
+    } else {
+      containerRef.current.scroll({ 
+        top: 0,
+        // @ts-ignore
+        behavior: 'instant',
+      })
+    }
+  }
+
+  const adjustScroll = () => {
       // Position the scroll in the starting side
+      if (!containerRef.current)
+        return
+  
       if (inverse) {
-        containerRef.current.scrollTop = containerRef.current.scrollHeight
         containerRef.current.scroll({
-          top: containerRef.current.scrollHeight,
+          top: containerRef.current.scrollHeight - lastScrollHeightRef.current,
+          // @ts-ignore
           behavior: 'instant',
         })
       } else {
-        containerRef.current.scroll({ top: 0 })
+        containerRef.current.scroll({
+          top: lastScrollHeightRef.current,
+          // @ts-ignore
+          behavior: 'instant',
+        })
       }
+  }
+
+  const inseterdRef = useRef({
+    insertedStartHash: undefined,
+    insertedEndHash: undefined,
+  })
+  useEffect(() => {
+    if (!containerRef.current)
+      return
+
+    if (items.length > 0 && insertedStartHash !== inseterdRef.current.insertedStartHash) {
+      inseterdRef.current.insertedStartHash = insertedStartHash
+      scrollBegining()
+    } else if (items.length > 0 && insertedEndHash !== inseterdRef.current.insertedEndHash) {
+      inseterdRef.current.insertedEndHash = insertedEndHash
+      adjustScroll()
     }
-  }, [containerRef.current, items])
+  }, [
+    containerRef.current,
+    insertedStartHash,
+    insertedEndHash,
+    items.length,
+  ])
+
+  const lastScrollHeightRef = useRef<number>(0)
+  const itemsHash = JSON.stringify(items.map(getItemIdentifier))  
+  const ListenToScrollEnd = () => {
+    const { scrollTop, clientHeight, scrollHeight } = containerRef.current
+
+    lastScrollHeightRef.current = scrollHeight
+    if (
+      (inverse && scrollTop <= scrollThreshold) ||
+      (!inverse && scrollTop + clientHeight >= scrollHeight - scrollThreshold)  
+    ) {
+      containerRef.current.removeEventListener(
+        'scroll', ListenToScrollEnd)
+      next()
+    }
+  }
 
   useEffect(() => {
     // Checks if the scrolling has reached the end of the scrolling space
-    if (containerRef.current === null) return
+    if (!containerRef.current) 
+      return
 
-    const listener = () => {
-      const { scrollTop, clientHeight, scrollHeight } = containerRef.current
+    containerRef.current.addEventListener(
+      'scroll', ListenToScrollEnd, {passive: true})
+    return () => containerRef.current.removeEventListener(
+      'scroll', ListenToScrollEnd)
+  }, [
+    containerRef.current, 
+    itemsHash
+  ])
 
+  return (
+    <div
+      className={`${className}`}
+      ref={containerRef}
+    >
+      {
+       items
+      }
+    </div>
+  )
+}
+
+/*
       // Notify when a childelement has been scrolled over
       if (scrolledOver) {
         const { children, childElementCount } = containerRef.current
@@ -90,74 +158,4 @@ export default function InifiniteScroll ({
         }
         scrolledOver(references)
       }
-
-      if (
-        (
-          inverse &&
-          scrollTop <= scrollThreshold
-        ) ||
-        (
-          !inverse &&
-          scrollTop + clientHeight >= scrollHeight - scrollThreshold
-        )
-      ) {
-        setState((prev) => ({
-          ...prev,
-          reachedEnd: true,
-        }))
-      }
-    }
-    containerRef.current.addEventListener('scroll', listener, {passive: true})
-    return () => containerRef.current.removeEventListener('scroll', listener)
-  }, [containerRef.current])
-
-  useEffect(() => {
-    // Call Next function to fetch new items
-    if (
-      containerRef.current && 
-      hasMore &&
-      state.hasData && 
-      state.reachedEnd
-    ) {
-      next()
-    }
-  }, [containerRef.current, state.reachedEnd])
-
-  useEffect(() => {
-    if (
-      containerRef.current && 
-      hasMore &&
-      state.hasData && 
-      state.reachedEnd &&
-      state.dataLength !== items.length
-    ) {
-      setState((prev) => ({
-        ...prev,
-        reachedEnd: false,
-        dataLength: items.length
-      }))
-    }
-  }, [
-    containerRef.current, 
-    hasMore,
-    state.hasData, 
-    state.reachedEnd, 
-    items
-  ])
-
-  //console.log('-> ITEMS')
-  //console.log(items)
-
-  return (
-    <div
-      className={`${className}`}
-      ref={containerRef}
-    >
-      { 
-        inverse ? 
-          items.slice().reverse() :
-          items
-      }
-    </div>
-  )
-}
+*/

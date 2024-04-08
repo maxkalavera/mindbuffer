@@ -17,7 +17,7 @@ export default function UpdatePage ({
   onSuccess?: (payload?: any, ...args: any[]) => any
   onCancel?: (...args: any[]) => any
 }) {
-  const { notepads } = useContext()
+  const { } = useContext()
   const { closeModal } = useModal()
   const [name, setName] = useState(data.name)
 
@@ -32,7 +32,7 @@ export default function UpdatePage ({
         name
       } }
       await window.electronAPI.pages.update(payload)
-      notepads.pages.update(payload)
+      //# notepads.pages.update(payload)
     })()
   }
 

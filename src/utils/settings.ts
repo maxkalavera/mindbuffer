@@ -1,4 +1,5 @@
 import path from 'path'
+import { app } from 'electron'
 import Store from 'electron-store'
 
 const rootDir = path.dirname(path.dirname(path.dirname(__filename)))
@@ -8,7 +9,7 @@ const store = new Store({
   schema: {
     debug: {
       type: 'boolean',
-      default: false
+      default: true
     },
     rootDir: {
       type: 'string',
@@ -33,12 +34,15 @@ const store = new Store({
   }
 })
 
-store.set('debug', (process.env.MINDBUFFER_DEBUG || '').toLowerCase() === 'true')
+if (process.env.MINDBUFFER_DEBUG)
+  store.set('debug', (process.env.MINDBUFFER_DEBUG).toLowerCase() === 'true')
 
 if ((process.env.MINDBUFFER_RESET_STORE || '').toLowerCase() === 'true')  {
   store.clear()
   console.log('Resetting store...')
 }
-if (store.get('debug')) console.log('Settings', store.store)
+if (store.get('debug')) {
+  console.log(`Settings content: ${JSON.stringify(store.store , undefined, 2)}`)
+}
 
 export default store

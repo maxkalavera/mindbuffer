@@ -20,7 +20,7 @@ export default function CreatePage ({
   onSuccess?: (payload?: { data: PagePayload }, ...args: any[]) => any,
   onCancel?: (...args: any[]) => any,
 }) {
-  const { notepads } = useContext()
+  const { } = useContext()
   const { closeModal } = useModal()
   const [name, setName] = useState('')
 
@@ -31,7 +31,7 @@ export default function CreatePage ({
   const createPage = (payload: { data: PagePayload }) => {
     (async () => {
       const page = await window.electronAPI.pages.create(payload)
-      notepads.pages.add({ values: [page]})
+      //# notepads.pages.add({ values: [page]})
       closeModal()
     })()
   }

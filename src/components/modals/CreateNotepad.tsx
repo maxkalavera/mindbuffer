@@ -17,7 +17,7 @@ export default function CreateNotepad ({
   onCancel?: (...args: any[]) => any
   className?: string
 }) {
-  const { notepads } = useContext()
+  const { } = useContext()
   const { closeModal } = useModal()
   const [name, setName] = useState('')
 
@@ -29,7 +29,7 @@ export default function CreateNotepad ({
     (async () => {
       const notepad = await window.electronAPI.notepads.create(payload)
       if (notepad === undefined) return
-      notepads.add({ values: [notepad]})
+      //# notepads.add({ values: [notepad]})
     })()
   }
 
@@ -58,8 +58,8 @@ export default function CreateNotepad ({
                 name,
               }
             }
-            createNotepad(payload)
-            onSuccess(payload)
+            //# createNotepad(payload)
+            //# onSuccess(payload)
             clearForm()
             closeModal()
           }}

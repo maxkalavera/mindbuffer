@@ -1,45 +1,43 @@
 import React, { useRef, useEffect, useState } from "react"
 
+import store from "@src/store"
 import styles from '@styles/vertical-dragable-line.module.css'
 
 export default function VerticalDragableLine ({
   className='',
-  aperture=0.0,
-  onApertureChange=() => null,
   resizableRef
 }: {
   className?: string,
-  aperture?:number,
-  isOpen?: boolean,
-  onApertureChange?: (value: number) => any
   resizableRef: React.MutableRefObject<any>
 }) {
+  const [state, setState] = useState({ aperture: 1.0 })
+  const [context, setContext] = useState({ isSidebarOpen: true })
   const verticalLineRef = useRef<HTMLDivElement>(null)
   const minWidthRef = useRef<number>(null)
   const maxWidthRef = useRef<number>(null)
 
-  const openFrame = () => {
-    if (resizableRef.current === null) return
-    const style = getComputedStyle(resizableRef.current)
-    resizableRef.current.style.width = style.maxWidth
-  }
-
-  const closeFrame = () => {
-    if (resizableRef.current === null) return
-    const style = getComputedStyle(resizableRef.current)
-    resizableRef.current.style.width = style.minWidth
-  }
+  useEffect(() => {
+    store.monitor(
+      (state) => state.commons.isSidebarOpen,
+      (state) => setContext({ isSidebarOpen: state.commons.isSidebarOpen })
+    )
+  }, [])
 
   useEffect(() => {
-    if (resizableRef.current === null) return
+    if (!resizableRef.current) 
+      return
 
-    if (aperture === 1.0) openFrame()
-    else if (aperture === 0.0) closeFrame()
-
-  }, [resizableRef.current, aperture])
+    if (context.isSidebarOpen) {
+      setState({ aperture: 1.0 })
+    } else {
+      setState({ aperture: 0.0 })
+    }
+  }, [resizableRef.current, context.isSidebarOpen])
 
   useEffect(() => {
-    if (resizableRef.current === null) return
+    if (!resizableRef.current) 
+      return
+
     const style = getComputedStyle(resizableRef.current)
     minWidthRef.current = parseFloat(style.minWidth.match(/\d/g).join(''))
     maxWidthRef.current = parseFloat(style.maxWidth.match(/\d/g).join(''))
@@ -48,37 +46,42 @@ export default function VerticalDragableLine ({
 
   useEffect(() => {
     // Resize based on aperture var
-    if (resizableRef.current === null) return
+    if (!resizableRef.current) 
+      return
+
+    let { aperture } = state
     if (aperture < 0.0) aperture = 0.0
     if (aperture > 1.0) aperture = 1.0
+
     const width = minWidthRef.current + (aperture * (maxWidthRef.current - minWidthRef.current))
     resizableRef.current.style.width = `${width}px`
-  }, [resizableRef.current, aperture])
+  }, [resizableRef.current, state.aperture])
 
   useEffect(() => {
     /**************************************************************************
      * Set listeners
     **************************************************************************/
-    if (verticalLineRef.current === null) return
-    if (resizableRef.current === null) return
+    if (!verticalLineRef.current) 
+      return
+    if (!resizableRef.current) 
+      return
 
-    const origin = {
-      from: 0
-    }
+    const origin = { from: 0 }
     const onMouseMove = (event: MouseEvent) => {
       event.preventDefault()
-      if (verticalLineRef.current === null) return
-      const from = origin.from
-      const to = event.clientX
-      const apertureDiff = (to - from) / (maxWidthRef.current - minWidthRef.current)
-      let newAperture = aperture + apertureDiff
-      if (newAperture < 0.0) newAperture = 0.0
-      if (newAperture > 1.0) newAperture = 1.0
-      onApertureChange(newAperture)
+      if (!verticalLineRef.current) 
+        return
+
+      const { left } = resizableRef.current.getBoundingClientRect()
+      setState({
+        aperture:
+          (event.clientX - (2 * minWidthRef.current) - left) / 
+          (maxWidthRef.current - minWidthRef.current),
+      })
     }
     const onMouseDown = () => {
       resizableRef.current.classList.remove(styles['with-transition'])
-      origin.from = verticalLineRef.current.getBoundingClientRect().right
+      origin.from = verticalLineRef.current.getBoundingClientRect().left
       document.addEventListener('mousemove', onMouseMove)
       document.addEventListener('mouseup', onMouseUp)
     }
@@ -99,13 +102,13 @@ export default function VerticalDragableLine ({
     verticalLineRef.current, 
     resizableRef.current, 
     minWidthRef.current, 
-    maxWidthRef.current
+    maxWidthRef.current,
   ])
 
   return (
     <div
-      className={styles['vertical-line']}
+      className={`${className} ${styles['vertical-line']}`}
       ref={verticalLineRef}
-    ></div>
+    />
   )
 }

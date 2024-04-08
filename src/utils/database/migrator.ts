@@ -3,7 +3,7 @@ const { Umzug, SequelizeStorage } = require('umzug')
 
 import type { Sequelize } from 'sequelize'
 
-export default (sequelize: Sequelize) => {
+export default function buildMigrator (sequelize: Sequelize) {
   const umzug = new Umzug({
     migrations: [
       {
@@ -24,5 +24,3 @@ export default (sequelize: Sequelize) => {
   })
   return umzug 
 }
-
-

@@ -1,21 +1,11 @@
 ## Mindbuffer
-App to make annotations with the visuals of a webchat.
+App to make annotations with the visuals of a Webchat.
 
 
-## Migrations
+## Enviroment settings
 
-To create a new migration:
-```
-yarn migrator create --name descriptive-name.js
-```
-
-if needed add folder to store migrations:
-
-```
-yarn migrator create --name descriptive-name.js --folder src/assets/migrations
-```
-
-To apply migrations:
-```
-yarn migrator up
-```
+| Variables | Description | Type |
+|-|-|-|
+| MINDBUFFER_DEBUG | Show errors and extra information in the console | "true" or "false" |
+| MINDBUFFER_RESET_STORE | Resets the file that contains settings and runnning data to default values | "true" or "false" |
+| MINDBUFFER_APPLY_TESTING_DATA | Drops all database records and replenishes with test data (Only applicable in develoment enviroment)| "true" or "false" |

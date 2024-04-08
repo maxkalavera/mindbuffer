@@ -17,7 +17,7 @@ export default function DeleteNotepad({
   onCancel?: (...args: any[]) => any
   className?: string
 }) {
-  const { notepads } = useContext()
+  const { } = useContext()
   const { closeModal } = useModal()
 
   const destroyNotepad = () => {
@@ -26,7 +26,7 @@ export default function DeleteNotepad({
         id: data.id
       }
       await window.electronAPI.notepads.destroy(payload)
-      notepads.destroy(payload)
+      ///# notepads.destroy(payload)
       closeModal()
     })()
   }

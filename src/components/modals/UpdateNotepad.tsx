@@ -19,7 +19,7 @@ export default function UpdateNotepad ({
   onSuccess?: (payload?: { value: NotepadPayload }, ...args: any[]) => any
   onCancel?: (...args: any[]) => any
 }) {
-  const { notepads } = useContext()
+  const { } = useContext()
   const { showModal, closeModal } = useModal()
   const [name, setName] = useState(data.name)
 
@@ -30,7 +30,7 @@ export default function UpdateNotepad ({
   const updateNotepad = (payload: { value: Notepad }) => {
     (async () => {
       await window.electronAPI.notepads.update(payload)
-      notepads.update(payload)
+      //# notepads.update(payload)
       closeModal()  
     })()
   }

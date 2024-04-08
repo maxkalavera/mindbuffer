@@ -18,14 +18,14 @@ export default function DeletePage({
   onCancel?: (...args: any[]) => any
   className?: string
 }) {
-  const { notepads } = useContext()
+  const { } = useContext()
   const { closeModal } = useModal()
 
   const deletePage = () => {
     (async () => {
       const payload = { id: data.id }
       await window.electronAPI.pages.destroy(payload)
-      notepads.pages.destroy({ value: data })
+      //# notepads.pages.destroy({ value: data })
     })()
   }
 

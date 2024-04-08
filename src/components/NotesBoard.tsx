@@ -1,7 +1,10 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import _ from 'lodash'
 
+import store from '@src/store'
+import { fetchNotes } from '@actions/notes.slice'
 import InifiniteScroll from '@components/utils/InifiniteScroll'
-import { useContext } from '@providers/Context'
+//import { useContext } from '@providers/Context'
 import TextNote from "@components/TextNote"
 import styles from "@styles/notes-board.module.css"
 
@@ -12,21 +15,51 @@ function NotesBoard({
 }: {
   className?: string
 }) {
-  const { 
-    state,
-    actions
-  } = useContext()
+  const [context, setContext] = useState({ 
+    commons: {
+      search: '',
+    },
+    notes: {
+      values: [],
+      page: 1,
+      hasNextPage: true,
+      insertedTopHash: 0,
+      insertedBottomHash: 0,
+    }
+  })
+
+  useEffect(() => {
+    store.monitor(
+      (state) => ({
+        commons: { search: state.commons.search },
+        notes: state.notes
+      }),
+      (state) => {
+        setContext({
+          commons: { search: state.commons.search },
+          notes: state.notes
+        })
+      } 
+    )
+  }, [])
+
+  const onScrollNext = () => {
+    store.dispatch(fetchNotes({
+      page: context.notes.page + 1,
+      search: context.commons.search,
+    }))   
+  }
 
   return (
     <InifiniteScroll
       className={`${styles.container} ${className}`}
-      hasMore={state.models.notes.hasNextPage}
+      hasMore={context.notes.hasNextPage}
       inverse={true}
-      next={() => {
-        actions.models.notes.increasePagination()
-      }}
+      next={onScrollNext}
+      insertedStartHash={`${context.notes.insertedBottomHash}`}
+      insertedEndHash={`${context.notes.insertedTopHash}`}
       items={
-        state.models.notes.values.map((item: Note) => (
+        context.notes.values.map((item: Note) => (
           <TextNote 
             key={item.id}
             data={item}
