@@ -1,12 +1,13 @@
 import React from "react"
 
-import { useAlert } from '@providers/Alert'
+
+import { destroyNoteThunk } from "@src/actions/notes.slice"
+import store from "@src/store"
 import { useModal } from '@providers/Modal'
-import { useContext } from '@providers/Context'
 import Button from "@components/Button"
 import styles from "@styles/delete-note-modal.module.css"
 
-import type { Note, NoteID } from "@ts/models/Notes.types"
+import type { Note } from "@ts/models/Notes.types"
 
 export default function DeleteNote({
   data,
@@ -20,14 +21,20 @@ export default function DeleteNote({
   className?: string
 }) {
   const { closeModal } = useModal()
-  const { } = useContext()
-  const { showAlert } = useAlert()
 
   const destroyNote = () => {
-    if (window.electronAPI.notes.destroy({ id: data.id })) {
-      //# notes.destroy({ id: data.id })
-      showAlert('Note deleted!')
-    }
+    store.dispatch(destroyNoteThunk({ value: data }))
+  }
+
+  const onLocalSuccess = () => {
+    destroyNote()
+    onSuccess()
+    closeModal()
+  }
+
+  const onLocalCancel = () => {
+    onCancel()
+    closeModal()
   }
 
   return (
@@ -39,18 +46,11 @@ export default function DeleteNote({
       <div className={styles.options}>
         <Button
           label={'Cancel'}
-          onClick={() => {
-            onCancel()
-            closeModal()
-          }}
+          onClick={onLocalCancel}
         />
         <Button
           label={'Delete'}
-          onClick={() => {
-            destroyNote()
-            onSuccess()
-            closeModal()
-          }}
+          onClick={onLocalSuccess}
         />
       </div>
     </div>

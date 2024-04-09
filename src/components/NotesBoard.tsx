@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import _ from 'lodash'
 
 import store from '@src/store'
-import { fetchNotes } from '@actions/notes.slice'
+import { fetchNotesThunk } from '@actions/notes.slice'
 import InifiniteScroll from '@components/utils/InifiniteScroll'
 //import { useContext } from '@providers/Context'
 import TextNote from "@components/TextNote"
@@ -23,8 +23,8 @@ function NotesBoard({
       values: [],
       page: 1,
       hasNextPage: true,
-      insertedTopHash: 0,
-      insertedBottomHash: 0,
+      adjustScrollHash: 0,
+      scrollBeginingHash: 0,
     }
   })
 
@@ -32,19 +32,33 @@ function NotesBoard({
     store.monitor(
       (state) => ({
         commons: { search: state.commons.search },
-        notes: state.notes
+        notes: {
+          values: state.notes.values,
+          page: state.notes.page,
+          hasNextPage: state.notes.hasNextPage,
+          adjustScrollHash: state.notes.adjustScrollHash,
+          scrollBeginingHash: state.notes.scrollBeginingHash,
+        }
       }),
       (state) => {
         setContext({
-          commons: { search: state.commons.search },
-          notes: state.notes
+          commons: { 
+            search: state.commons.search 
+          },
+          notes: {
+            values: state.notes.values,
+            page: state.notes.page,
+            hasNextPage: state.notes.hasNextPage,
+            adjustScrollHash: state.notes.adjustScrollHash,
+            scrollBeginingHash: state.notes.scrollBeginingHash,
+          }
         })
       } 
     )
   }, [])
 
   const onScrollNext = () => {
-    store.dispatch(fetchNotes({
+    store.dispatch(fetchNotesThunk({
       page: context.notes.page + 1,
       search: context.commons.search,
     }))   
@@ -56,8 +70,8 @@ function NotesBoard({
       hasMore={context.notes.hasNextPage}
       inverse={true}
       next={onScrollNext}
-      insertedStartHash={`${context.notes.insertedBottomHash}`}
-      insertedEndHash={`${context.notes.insertedTopHash}`}
+      scrollBeginingHash={`${context.notes.scrollBeginingHash}`}
+      adjustScrollHash={`${context.notes.adjustScrollHash}`}
       items={
         context.notes.values.map((item: Note) => (
           <TextNote 

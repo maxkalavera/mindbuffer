@@ -7,9 +7,8 @@ interface InifiniteScrollProps {
   hasMore?: boolean,
   inverse?: boolean,
   scrollThreshold?: number,
-  sourceHash?: string,
-  insertedStartHash?: string,
-  insertedEndHash?: string,
+  adjustScrollHash?: string,
+  scrollBeginingHash?: string,
   getItemIdentifier?: (...args: any[]) => string 
   next?: (...args: any[]) => any,
   scrolledOver?: (scrolledOver: HTMLElement[], ...args: any[]) => any,
@@ -21,8 +20,8 @@ export default function InifiniteScroll ({
   hasMore=false,
   inverse=false,
   scrollThreshold=10,
-  insertedStartHash=undefined,
-  insertedEndHash=undefined,
+  adjustScrollHash=undefined,
+  scrollBeginingHash=undefined,
   getItemIdentifier=(item) => item.key === undefined ? item.toString() : item.key,
   next=()=>{},
   scrolledOver=null,
@@ -73,27 +72,17 @@ export default function InifiniteScroll ({
       }
   }
 
-  const inseterdRef = useRef({
-    insertedStartHash: undefined,
-    insertedEndHash: undefined,
-  })
   useEffect(() => {
-    if (!containerRef.current)
-      return
-
-    if (items.length > 0 && insertedStartHash !== inseterdRef.current.insertedStartHash) {
-      inseterdRef.current.insertedStartHash = insertedStartHash
-      scrollBegining()
-    } else if (items.length > 0 && insertedEndHash !== inseterdRef.current.insertedEndHash) {
-      inseterdRef.current.insertedEndHash = insertedEndHash
+    if (items.length > 0) {
       adjustScroll()
     }
-  }, [
-    containerRef.current,
-    insertedStartHash,
-    insertedEndHash,
-    items.length,
-  ])
+  }, [adjustScrollHash])
+
+  useEffect(() => {
+    if (items.length > 0) {
+      scrollBegining()
+    }
+  }, [scrollBeginingHash])
 
   const lastScrollHeightRef = useRef<number>(0)
   const itemsHash = JSON.stringify(items.map(getItemIdentifier))  
@@ -113,7 +102,7 @@ export default function InifiniteScroll ({
 
   useEffect(() => {
     // Checks if the scrolling has reached the end of the scrolling space
-    if (!containerRef.current) 
+    if (containerRef.current === undefined)
       return
 
     containerRef.current.addEventListener(
@@ -130,9 +119,7 @@ export default function InifiniteScroll ({
       className={`${className}`}
       ref={containerRef}
     >
-      {
-       items
-      }
+      { items }
     </div>
   )
 }

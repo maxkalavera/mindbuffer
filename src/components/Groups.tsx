@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react" 
 import { faLayerGroup, faPlus, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 
-import { fetchNotepads } from '@actions/notepads.slice'
+import { fetchNotepadsThunk } from '@actions/notepads.slice'
 import commonsSlice from "@actions/commons.slice"
 import store from "@src/store"
 import InifiniteScroll from '@components/utils/InifiniteScroll'
@@ -64,14 +64,12 @@ export default function Groups({
   })
 
   const toggleIsSidebarOpen = () => {
-    const { setSidebarAperture } = commonsSlice.actions
-    store.dispatch(setSidebarAperture({ 
-      value: context.commons.isSidebarOpen ? 0.0 : 1.0
-    }))
+    const { mutateSidebarToggleHash } = commonsSlice.actions
+    store.dispatch(mutateSidebarToggleHash())
   }
 
   const onScrollNext = () => {
-    store.dispatch(fetchNotepads({
+    store.dispatch(fetchNotepadsThunk({
       page: context.notepads.page + 1,
       search: context.commons.search,
     }))   

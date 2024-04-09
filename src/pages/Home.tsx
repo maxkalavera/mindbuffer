@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import store from '@src/store'
-import { fetchNotes } from '@actions/notes.slice'
-import { fetchNotepads } from '@actions/notepads.slice'
+import { fetchNotesThunk } from '@actions/notes.slice'
+import { fetchNotepadsThunk } from '@actions/notepads.slice'
 import ResizableSide from '@components/ResizableSide'
 import Groups from '@components/Groups'
 import AlertBox from '@components/AlertBox'
@@ -14,14 +14,14 @@ import styles from '@styles/home.module.css'
 export default function Home() {
 
   useEffect(() => {
-    const promise = store.dispatch(fetchNotes({ page: 1, search: '' }))
+    const promise = store.dispatch(fetchNotesThunk({ page: 1, search: '' }))
     return () => {
       promise.abort()
     }
   }, [])
 
   useEffect(() => {
-    const promise = store.dispatch(fetchNotepads({ page: 1, search: '' }))
+    const promise = store.dispatch(fetchNotepadsThunk({ page: 1, search: '' }))
     return () => {
       promise.abort()
     }

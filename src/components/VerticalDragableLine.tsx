@@ -4,6 +4,8 @@ import commonsSlice from "@actions/commons.slice"
 import store from "@src/store"
 import styles from '@styles/vertical-dragable-line.module.css'
 
+const APERTURE_BIAS = 0.025
+
 export default function VerticalDragableLine ({
   className='',
   resizableRef
@@ -13,7 +15,7 @@ export default function VerticalDragableLine ({
 }) {
   const [state, setState] = useState<{ aperture: number }>({ aperture: undefined })
   const [context, setContext] = useState({ 
-    sidebarAperture: undefined,
+    sidebarToggleHash: undefined,
   })
   const verticalLineRef = useRef<HTMLDivElement>(null)
   const minWidthRef = useRef<number>(null)
@@ -21,28 +23,41 @@ export default function VerticalDragableLine ({
 
   useEffect(() => {
     store.monitor(
-      (state) => state.commons.sidebarAperture,
-      (state) => setContext({ sidebarAperture: state.commons.sidebarAperture })
+      (state) => state.commons.sidebarToggleHash,
+      (state) => setContext({ sidebarToggleHash: state.commons.sidebarToggleHash })
     )
   }, [])
 
+  /*
   useEffect(() => {
+    console.log('context.sidebarAperture', context.sidebarAperture)
     if (context.sidebarAperture === undefined)
       return
 
     setState({ aperture: context.sidebarAperture })
   }, [context.sidebarAperture])
+  */
+
+  useEffect(() => {
+    if (context.sidebarToggleHash === undefined || state.aperture === undefined)
+      return
+
+    setState((prev) => ({
+      ...prev,
+      aperture: prev.aperture < APERTURE_BIAS ? 1.0 : 0.0
+    }))
+  }, [context.sidebarToggleHash])
 
   const isSidebarOpenRef = useRef<boolean>(undefined)
   useEffect(() => {
     if (!resizableRef.current) 
       return
 
-    if (isSidebarOpenRef.current !== false && state.aperture < 0.025) {
+    if (isSidebarOpenRef.current !== false && state.aperture < APERTURE_BIAS) {
       const { setIsSidebarOpen } = commonsSlice.actions
       store.dispatch(setIsSidebarOpen({ value: false }))
       isSidebarOpenRef.current = false
-    } else if (isSidebarOpenRef.current !== true && state.aperture >= 0.025) {
+    } else if (isSidebarOpenRef.current !== true && state.aperture >= APERTURE_BIAS) {
       const { setIsSidebarOpen } = commonsSlice.actions
       store.dispatch(setIsSidebarOpen({ value: true }))
       isSidebarOpenRef.current = true

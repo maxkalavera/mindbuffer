@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 
 import database from '@utils/database'
-import store from '@utils/settings'
+import '@handlers/commons.handler'
 import '@handlers/notepads.handler'
 import '@handlers/pages.handler'
 import '@handlers/notes.handler'

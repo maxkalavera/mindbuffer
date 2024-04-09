@@ -1,11 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 interface NotesSliceState {
   search: string,
-  noteInput: string,
   isSidebarOpen: boolean,
-  sidebarAperture: number,
+  sidebarToggleHash: number,
+  platform: string,
 }
 
 function setSearch (
@@ -15,13 +15,6 @@ function setSearch (
   state.search = action.payload.value
 }
 
-function setNoteInput (
-  state: NotesSliceState, 
-  action: PayloadAction<{ value: string }>
-) {
-  state.noteInput = action.payload.value
-}
-
 function setIsSidebarOpen (
   state: NotesSliceState, 
   action: PayloadAction<{ value: boolean }>
@@ -29,27 +22,26 @@ function setIsSidebarOpen (
   state.isSidebarOpen = action.payload.value
 }
 
-function setSidebarAperture (
-  state: NotesSliceState, 
-  action: PayloadAction<{ value: number }>
+function mutateSidebarToggleHash (
+  state: NotesSliceState,
 ) {
-  state.sidebarAperture = action.payload.value
+  state.sidebarToggleHash += 1
 }
 
 const commonsSlice = createSlice({
   name: 'commons',
   initialState: {
     search: '',
-    noteInput: '',
     isSidebarOpen: true,
-    sidebarAperture: undefined,
+    sidebarToggleHash: 0,
+    platform: '',
   } as NotesSliceState,
   reducers: {
     setSearch,
-    setNoteInput,
     setIsSidebarOpen,
-    setSidebarAperture,
+    mutateSidebarToggleHash,
   },
+  extraReducers: (builder) => {}
 })
 
 export default commonsSlice

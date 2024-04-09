@@ -1,6 +1,5 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
-
 import { contextBridge, ipcRenderer } from 'electron'
 
 import type { NoteID, NotePayload, Note, NoteFiltersPayload } from '@ts/models/Notes.types'
@@ -8,6 +7,9 @@ import type { PageID, PagePayload, Page, PageFiltersPayload } from '@ts/models/P
 import type { NotepadID, NotepadPayload, Notepad, NotepadFiltersPayload } from '@ts/models/Notepads.types'
 
 export const electronAPI = {
+  commons: {
+    getPlatform: () => ipcRenderer.invoke('commons:getPlatform')
+  },
   store: {
     sidebarAperture: {
       get: () => ipcRenderer.invoke('store.sidebarAperture:get'),
