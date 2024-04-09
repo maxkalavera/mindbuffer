@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react" 
 import { faLayerGroup, faPlus, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 
+import { fetchNotepads } from '@actions/notepads.slice'
 import commonsSlice from "@actions/commons.slice"
 import store from "@src/store"
 import InifiniteScroll from '@components/utils/InifiniteScroll'
 import CreateNotepad from '@components/modals/CreateNotepad'
-import { useContext } from "@providers/Context"
 import { useModal } from '@providers/Modal'
 import Notepad from '@components/Notepad'
 import IconButton from '@components/IconButton'
@@ -17,25 +17,69 @@ export default function Groups({
   className?: string,
 }) {
   const [context, setContext] = useState({
-    isSidebarOpen: true,
+    commons: {
+      isSidebarOpen: true,
+      search: '',
+    },
+    notepads: {
+      values: [],
+      page: 1,
+      hasNextPage: true,
+      insertedTopHash: 0,
+      insertedBottomHash: 0,
+    }
   })
   const { showModal } = useModal()
+
   useEffect(() => {
     store.monitor(
-      (state) => state.commons.isSidebarOpen,
-      (state) => setContext({ isSidebarOpen: state.commons.isSidebarOpen })
+      (state) => ({
+        isSidebarOpen: state.commons.isSidebarOpen,
+        search: state.commons.search,
+      }),
+      (state) => setContext((prev) => ({
+        ...prev,
+        commons: {
+          isSidebarOpen: state.commons.isSidebarOpen,
+          search: state.commons.search,
+        }
+      }))
     )
   }, [])
 
+  useEffect(() => {
+    store.monitor(
+      (state) => ({
+        values: state.notepads.values,
+        page: state.notepads.values,
+        hasNextPage: state.notepads.hasNextPage,
+        insertedTopHash: state.notepads.insertedTopHash,
+        insertedBottomHash: state.notepads.insertedBottomHash,
+      }),
+      (state) => setContext((prev) => ({
+        ...prev,
+        notepads: state.notepads
+      }))
+    )
+  })
+
   const toggleIsSidebarOpen = () => {
-    const { setIsSidebarOpen } = commonsSlice.actions
-    store.dispatch(setIsSidebarOpen({ value: !context.isSidebarOpen }))
+    const { setSidebarAperture } = commonsSlice.actions
+    store.dispatch(setSidebarAperture({ 
+      value: context.commons.isSidebarOpen ? 0.0 : 1.0
+    }))
+  }
+
+  const onScrollNext = () => {
+    store.dispatch(fetchNotepads({
+      page: context.notepads.page + 1,
+      search: context.commons.search,
+    }))   
   }
 
   return (
     <div 
       className={`${className} ${styles.container}`} 
-      //ref={resizableRef} 
     >
       <div
         className={styles.header}
@@ -61,11 +105,9 @@ export default function Groups({
       </div>
 
       <InifiniteScroll
-        className={`${context.isSidebarOpen ? null : styles.hide } ${styles.content}`}
+        className={`${context.commons.isSidebarOpen ? null : styles.hide } ${styles.content}`}
         hasMore={false}
-        next={() => {
-          //actions.models.notepads.increasePagination()
-        }}
+        next={onScrollNext}
         scrolledOver={(elements) => {
           //console.log('SCROLLED OVER', elements.map((item) => item.id))
           /*
@@ -76,16 +118,14 @@ export default function Groups({
           })
           */
         }}
-        items={ []
-          /*
-          state.models.notepads.values.map((item: any, key: number) => (
+        items={
+          context.notepads.values.map((item: any, key: number) => (
             <Notepad 
               id={`${item.id}`}
               key={key}
               data={item} 
             />
           ))
-          */
         }
       />
     </div> 

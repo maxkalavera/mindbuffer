@@ -52,6 +52,8 @@
   --content-container-padding: var(--gap-md);
   --content-container-min-height: calc(100vh - var(--header-height) - var(--footer-height));
   --content-height: calc(var(--content-container-min-height) - calc(2 * var(--content-container-padding)));
+  --sidebar-min-width: var(--gap-md); /* Should be rem units */
+  --sidebar-max-width: var(--frame-md); /* Should be rem units */
 
   --primary-font: 'Work Sans', sans-serif;
   --secondary-font: 'Roboto', serif;

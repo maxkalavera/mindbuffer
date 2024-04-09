@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react"
 
+import commonsSlice from "@actions/commons.slice"
 import store from "@src/store"
 import styles from '@styles/vertical-dragable-line.module.css'
 
@@ -10,57 +11,77 @@ export default function VerticalDragableLine ({
   className?: string,
   resizableRef: React.MutableRefObject<any>
 }) {
-  const [state, setState] = useState({ aperture: 1.0 })
-  const [context, setContext] = useState({ isSidebarOpen: true })
+  const [state, setState] = useState<{ aperture: number }>({ aperture: undefined })
+  const [context, setContext] = useState({ 
+    sidebarAperture: undefined,
+  })
   const verticalLineRef = useRef<HTMLDivElement>(null)
   const minWidthRef = useRef<number>(null)
   const maxWidthRef = useRef<number>(null)
 
   useEffect(() => {
     store.monitor(
-      (state) => state.commons.isSidebarOpen,
-      (state) => setContext({ isSidebarOpen: state.commons.isSidebarOpen })
+      (state) => state.commons.sidebarAperture,
+      (state) => setContext({ sidebarAperture: state.commons.sidebarAperture })
     )
   }, [])
 
   useEffect(() => {
-    if (!resizableRef.current) 
+    if (context.sidebarAperture === undefined)
       return
 
-    if (context.isSidebarOpen) {
-      setState({ aperture: 1.0 })
-    } else {
-      setState({ aperture: 0.0 })
-    }
-  }, [resizableRef.current, context.isSidebarOpen])
+    setState({ aperture: context.sidebarAperture })
+  }, [context.sidebarAperture])
 
+  const isSidebarOpenRef = useRef<boolean>(undefined)
   useEffect(() => {
     if (!resizableRef.current) 
       return
 
-    const style = getComputedStyle(resizableRef.current)
-    minWidthRef.current = parseFloat(style.minWidth.match(/\d/g).join(''))
-    maxWidthRef.current = parseFloat(style.maxWidth.match(/\d/g).join(''))
+    if (isSidebarOpenRef.current !== false && state.aperture < 0.025) {
+      const { setIsSidebarOpen } = commonsSlice.actions
+      store.dispatch(setIsSidebarOpen({ value: false }))
+      isSidebarOpenRef.current = false
+    } else if (isSidebarOpenRef.current !== true && state.aperture >= 0.025) {
+      const { setIsSidebarOpen } = commonsSlice.actions
+      store.dispatch(setIsSidebarOpen({ value: true }))
+      isSidebarOpenRef.current = true
+    }
+  }, [
+    resizableRef.current,
+    state.aperture,
+  ])
+
+  useEffect(() => {
+    if (resizableRef.current === undefined) 
+      return
+
+    const style = getComputedStyle(document.body)
+    minWidthRef.current = 
+      parseFloat(style.getPropertyValue('--sidebar-min-width')) * parseInt(style.fontSize)
+    maxWidthRef.current = 
+      parseFloat(style.getPropertyValue('--sidebar-max-width')) * parseInt(style.fontSize)
     resizableRef.current.classList.add(styles['with-transition'])
   }, [resizableRef.current])
 
   useEffect(() => {
     // Resize based on aperture var
-    if (!resizableRef.current) 
+    if (resizableRef.current === undefined || state.aperture === undefined)
       return
 
     let { aperture } = state
     if (aperture < 0.0) aperture = 0.0
     if (aperture > 1.0) aperture = 1.0
-
     const width = minWidthRef.current + (aperture * (maxWidthRef.current - minWidthRef.current))
     resizableRef.current.style.width = `${width}px`
   }, [resizableRef.current, state.aperture])
 
+
+  /**************************************************************************
+  * Set listeners
+  **************************************************************************/
   useEffect(() => {
-    /**************************************************************************
-     * Set listeners
-    **************************************************************************/
+
     if (!verticalLineRef.current) 
       return
     if (!resizableRef.current) 
@@ -104,6 +125,35 @@ export default function VerticalDragableLine ({
     minWidthRef.current, 
     maxWidthRef.current,
   ])
+
+  /**************************************************************************
+  * Store sidebar position in settings storage
+  **************************************************************************/
+  useEffect(() => {
+    const controller = new AbortController();
+    new Promise<number>(async (resolve, reject) => {
+      const result = await window.electronAPI.store.sidebarAperture.get()
+      if (!controller.signal.aborted) {
+        resolve(result)
+      }
+      reject('Sidebar aperture could not be retrived from storage')
+    }).then((aperture) => {
+      setState({ aperture })
+    }).catch((reason) => {
+      console.error(reason)
+      setState({ aperture: 1.0 })
+    })
+  }, [])
+
+  useEffect(() => {
+    if (state.aperture === undefined)
+      return
+
+    (async () => {
+      await window.electronAPI.store.sidebarAperture
+      .set({ sidebarAperture: state.aperture })
+    })()
+  }, [state.aperture])
 
   return (
     <div

@@ -1,20 +1,20 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-import type { Note } from "@ts/models/Notes.types"
+import type { Notepad } from '@ts/models/Notepads.types'
 
-export interface NotesSliceState {
-  values: Note[],
+export interface NotepadsSliceState {
+  values: Notepad[],
   page: number,
   hasNextPage: boolean,
   insertedTopHash: number,
   insertedBottomHash: number,
 }
 
-export const fetchNotes = createAsyncThunk(
-  'notes/fetchNotes',
+export const fetchNotepads = createAsyncThunk(
+  'notepads/fetchNotepads',
   async (payload: { page: number, search: string}, thunkAPI) => {
-    const response = await window.electronAPI.notes.getAll({
+    const response = await window.electronAPI.notepads.getAll({
       page: payload.page,
       search: payload.search
     })
@@ -27,10 +27,10 @@ export const fetchNotes = createAsyncThunk(
   },
 )
 
-export const searchNotes = createAsyncThunk(
-  'notes/searchNotes',
+export const searchNotepads = createAsyncThunk(
+  'notepads/searchNotepads',
   async (payload: { search: string }, thunkAPI) => {
-    const response = await window.electronAPI.notes.getAll({
+    const response = await window.electronAPI.notepads.getAll({
       page: 1,
       search: payload.search
     })
@@ -44,15 +44,15 @@ export const searchNotes = createAsyncThunk(
 )
 
 function set (
-  state: NotesSliceState, 
-  action: PayloadAction<{ values: Note[] }>
+  state: NotepadsSliceState, 
+  action: PayloadAction<{ values: Notepad[] }>
 ) {
   state.values = action.payload.values
 }
 
 function addTop (
-  state: NotesSliceState, 
-  action: PayloadAction<{ values: Note[] }>
+  state: NotepadsSliceState, 
+  action: PayloadAction<{ values: Notepad[] }>
 ) {
   state.values = 
     [...action.payload.values, ...state.values]
@@ -60,8 +60,8 @@ function addTop (
 }
 
 function addBotom (
-  state: NotesSliceState, 
-  action: PayloadAction<{ values: Note[] }>
+  state: NotepadsSliceState, 
+  action: PayloadAction<{ values: Notepad[] }>
 ) {
   state.values = 
     [...state.values, ...action.payload.values]
@@ -70,8 +70,8 @@ function addBotom (
 
 
 function update (
-  state: NotesSliceState, 
-  action: PayloadAction<{ values: Note[] }>
+  state: NotepadsSliceState, 
+  action: PayloadAction<{ values: Notepad[] }>
 ) {
   state.values = state.values.map((item) => 
     action.payload.values.find((paylodItem) => paylodItem.id === item.id) || 
@@ -80,23 +80,23 @@ function update (
 }
 
 function destroy (
-  state: NotesSliceState, 
-  action: PayloadAction<{ values: Note[] }>
+  state: NotepadsSliceState, 
+  action: PayloadAction<{ values: Notepad[] }>
 ) {
   state.values = state.values.filter((item) =>
     !action.payload.values.some((payloadItem) => payloadItem.id === item.id)
   )
 }
 
-const notesSlice = createSlice({
-  name: 'notes',
+const notepadsSlice = createSlice({
+  name: 'notepads',
   initialState: {
     values: [],
     page: 1,
     hasNextPage: true,
     insertedTopHash: 0,
     insertedBottomHash: 0,
-  } as NotesSliceState,
+  } as NotepadsSliceState,
   reducers: {
     set,
     addTop,
@@ -105,14 +105,14 @@ const notesSlice = createSlice({
     destroy,
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchNotes.fulfilled, (state, action) => {
-      addTop(
+    builder.addCase(fetchNotepads.fulfilled, (state, action) => {
+      addBotom(
         state, 
         {
           ...action, 
           payload: {
             ...action.payload,
-            values: action.payload.values.reverse()
+            values: action.payload.values
           }
         }
       )
@@ -121,8 +121,8 @@ const notesSlice = createSlice({
         state.hasNextPage = false
       }
     })
-    builder.addCase(searchNotes.fulfilled, (state, action) => {
-      state.values = action.payload.values.reverse()
+    builder.addCase(searchNotepads.fulfilled, (state, action) => {
+      state.values = action.payload.values
       state.page = 1
       state.hasNextPage = true
       state.insertedBottomHash += 1
@@ -130,4 +130,4 @@ const notesSlice = createSlice({
   }
 })
 
-export default notesSlice
+export default notepadsSlice

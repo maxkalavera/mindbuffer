@@ -56,8 +56,6 @@
 
 .groups {
   width: var(--frame-sm);
-  min-width: var(--gap-md);
-  max-width: var(--frame-md);
   max-height: 100%;
 }
 

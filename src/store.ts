@@ -1,14 +1,18 @@
-import { useMemo } from 'react'
 import _ from 'lodash'
-import { createSlice, configureStore } from '@reduxjs/toolkit'
+import { configureStore } from '@reduxjs/toolkit'
 
-import notesSlice from '@actions/notes.slice'
 import commonsSlice from '@actions/commons.slice'
+import notesSlice from '@actions/notes.slice'
+import notepadsSlice from '@actions/notepads.slice'
+import pagesSlice from '@actions/pages.slice'
+
 
 const store = configureStore({
   reducer: {
     notes: notesSlice.reducer,
     commons: commonsSlice.reducer,
+    notepads: notepadsSlice.reducer,
+    pages: pagesSlice.reducer,
   },
 })
 
