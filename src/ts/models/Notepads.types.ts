@@ -1,11 +1,10 @@
 import type { Page } from '@ts/models/Pages.types'
-import type { Base } from '@ts/models/Base.types'
+import type { BaseModel } from '@src/ts/models/BaseModel.types'
 
 export type NotepadID = number
 
 export interface NotepadPayload {
   name: string
-  pages: Page[]
 }
 
 export interface NotepadData {
@@ -13,7 +12,7 @@ export interface NotepadData {
   pages: Page[]
 }
 
-export type Notepad = Base & NotepadData
+export type Notepad = BaseModel & NotepadData
 
 export interface NotepadFiltersPayload {
   page?: number,

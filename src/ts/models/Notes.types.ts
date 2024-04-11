@@ -1,4 +1,4 @@
-import { Base } from '@ts/models/Base.types'
+import { BaseModel } from '@src/ts/models/BaseModel.types'
 import type { Page, PageID } from '@ts/models/Pages.types'
 
 export type NoteID = number
@@ -14,7 +14,7 @@ export interface NoteData {
   page?: Page,
 }
 
-export type Note = Base & NoteData
+export type Note = BaseModel & NoteData
 
 export interface NoteFiltersPayload {
   page?: number,

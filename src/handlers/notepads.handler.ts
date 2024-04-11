@@ -5,15 +5,23 @@ import getSelectFields from '@utils/database/getSelectFields'
 import { groupByWidthAssociations } from '@utils/database/groupBy'
 import database from "@utils/database"
 
-import type { NotepadID, NotepadPayload, Notepad, NotepadFiltersPayload } from '@ts/models/Notepads.types'
+import type { 
+  QueryHandler,
+  CreateHandler,
+  UpdateHandler,
+  DestroyHandler,
+} from '@src/ts/handlers.types'
+import type { 
+  NotepadID, 
+  NotepadPayload, 
+  Notepad, 
+  NotepadFiltersPayload 
+} from '@ts/models/Notepads.types'
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.notepads:getAll',
-    async function getAll (
-      event: Electron.IpcMainInvokeEvent,
-      payload: NotepadFiltersPayload
-    ): Promise<any> {
+    async function getAll (_, payload) {
       const options = Object.assign({
         search: '',
         page: 1,
@@ -67,70 +75,69 @@ app.on('ready', () => {
           raw: true,
           nest: true,
         })
-        return groupByWidthAssociations(data, 'id', ['pages'])
+        return {
+          values: groupByWidthAssociations(data, 'id', ['pages'])
+        }
       } catch (error) {
         console.error(error)
-        return []
       } 
-    }
+    } as QueryHandler<NotepadFiltersPayload, Notepad>
   )
 })
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.notepads:create',
-    async function create (
-      event: Electron.IpcMainInvokeEvent, 
-      payload: { data: NotepadPayload }
-    ): Promise<any> {
+    async function create (_, payload) {
       try {
-        const notepad = (await database.models.Notepad
-          .create({ ...payload.data as NotepadPayload }))
-          .dataValues
-        notepad.pages = []
-        return notepad
+        const response = await database.models.Notepad.bulkCreate(payload.data as any)
+        return {
+          values: response.map((item) => ({
+            ...item.dataValues,
+            pages: [],
+          }))
+        }
       } catch (error) {
         console.error(error)
-        return undefined
       }
-    }
+    } as CreateHandler<NotepadPayload, Notepad>
   )
 })
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.notepads:update',
-    async function update (
-      event: Electron.IpcMainInvokeEvent,
-      payload: { value: Notepad }
-    ): Promise<any> {
+    async function update (_, payload) {
       try {
-        return await database.models.Notepad.update(
-          payload.value as Notepad, 
+        const response = await database.models.Notepad.update(
+          payload.value, 
           { where: { id: payload.value.id } }
         )
+
+        if (response[0] === 1) {
+          return { value: payload.value }
+        }
       } catch (error) {
         console.error(error)
       }
-    }
+    } as UpdateHandler<Notepad>
   )
 })
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.notepads:destroy',
-    async function destroy (
-      event: Electron.IpcMainInvokeEvent,
-      payload: { id: NotepadID }
-    ): Promise<any> {
+    async function destroy (_, payload) {
       try {
-        return await database.models.Notepad.destroy({ 
-          where: { id: payload.id as NotepadID } 
+        const response = await database.models.Notepad.destroy({ 
+          where: { id: payload.value.id } 
         })
+        if (response === 1) {
+          return { value: payload.value }
+        }
       } catch (error) {
         console.error(error)
-        return 0
       }
-    }
+    } as DestroyHandler<Notepad>
   )
 })

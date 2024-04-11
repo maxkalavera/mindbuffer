@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react"
 
-import { useContext } from "@providers/Context"
 import { useModal } from '@providers/Modal'
 import Input from '@components/Input'
 import Button from "@components/Button"
@@ -14,26 +13,32 @@ export default function UpdatePage ({
 }: {
   className?: string,
   data: any,
-  onSuccess?: (payload?: any, ...args: any[]) => any
+  onSuccess?: (...args: any[]) => any
   onCancel?: (...args: any[]) => any
 }) {
-  const { } = useContext()
   const { closeModal } = useModal()
-  const [name, setName] = useState(data.name)
+  const [state, setState] = useState({
+    name: '',
+  })
 
   useEffect(() => {
-    setName(data.name)
-  }, [data.name])
+    setState({
+      name: data.name,
+    })
+  }, [JSON.stringify(data)])
 
   const updatePage = () => {
-    (async () => {
-      const payload = { value: {
-        ...data,
-        name
-      } }
-      await window.electronAPI.pages.update(payload)
-      //# notepads.pages.update(payload)
-    })()
+  }
+
+  const _onCancel = () => {
+    onCancel()
+    closeModal()
+  }
+
+  const _onSuccess = () => {
+    updatePage()
+    onSuccess()
+    closeModal()
   }
 
   return (
@@ -41,24 +46,19 @@ export default function UpdatePage ({
       <Input
         className={styles.input}
         label={'Name:'}
-        value={name} 
-        onChange={(event) => setName(event.target.value)}
+        value={state.name} 
+        onChange={(event) => setState({
+          name: event.target.value
+        })}
       />
       <div className={styles.options}>
         <Button
           label={'Cancel'}
-          onClick={() => {
-            onCancel()
-            closeModal()
-          }}
+          onClick={_onCancel}
         />
         <Button
           label={'Save'}
-          onClick={() => {
-            updatePage()
-            onSuccess()
-            closeModal()
-          }}
+          onClick={_onSuccess}
         />
       </div>
     </div>

@@ -3,15 +3,23 @@ import { QueryTypes } from 'sequelize'
 
 import database from "@utils/database"
 
-import type { NoteID, NotePayload, NoteFiltersPayload } from '@ts/models/Notes.types'
+import type { 
+  QueryHandler,
+  CreateHandler,
+  UpdateHandler,
+  DestroyHandler,
+} from '@src/ts/handlers.types'
+import type { 
+  NoteID, 
+  NotePayload, 
+  NoteFiltersPayload, 
+  Note 
+} from '@ts/models/Notes.types'
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.notes:getAll',
-    async function getAll (
-      event: Electron.IpcMainInvokeEvent,
-      payload: NoteFiltersPayload,
-    ): Promise<any> {
+    async function getAll (_, payload) {
       const options = Object.assign({
         search: '',
         page: 1,
@@ -39,49 +47,66 @@ app.on('ready', () => {
           },
           raw: true,
         })
-        return notes
+        return {
+          values: notes
+        }
       } catch (error) {
         console.error(error)
-        return []
       } 
-    }
+    }  as QueryHandler<NoteFiltersPayload, Note>
   )
 })
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.notes:create',
-    async function create (
-      event: Electron.IpcMainInvokeEvent, 
-      payload: { data: NotePayload }
-    ): Promise<any> {
+    async function create (_, payload) {
       try {
-        return (await database.models.Note
-          .create({ ...payload.data as NotePayload }))
-          .dataValues
+        const response = await database.models.Note.bulkCreate(payload.data as any)
+        return {
+          values: response.map((item) => item.dataValues)
+        }
       } catch (error) {
         console.error(error)
-        return undefined
       }
-    }
+    } as CreateHandler<NotePayload, Note>
+  )
+})
+
+app.on('ready', () => {
+  ipcMain.handle(
+    'database.note:update',
+    async function update (_, payload) {
+      try {
+        const response = await database.models.Note.update(
+          payload.value, 
+          { where: { id: payload.value.id } }
+        )
+
+        if (response[0] === 1) {
+          return { value: payload.value }
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    } as UpdateHandler<Note>
   )
 })
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.notes:destroy',
-    async function destroy (
-      event: Electron.IpcMainInvokeEvent, 
-      payload: { id: NoteID }
-    ) {
+    async function destroy (_, payload) {
       try {
-        return await database.models.Note.destroy({ 
-          where: { id: payload.id as NoteID } 
+        const response = await database.models.Note.destroy({ 
+          where: { id: payload.value.id } 
         })
+        if (response === 1) {
+          return { value: payload.value }
+        }
       } catch (error) {
         console.error(error)
-        return 0
       }
-    }
+    } as DestroyHandler<Note>
   )
 })

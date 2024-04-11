@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
 
-import store from "@src/store"
 import styles from "@styles/resizable-side.module.css" 
 
 import VerticalDragableLine from '@components/VerticalDragableLine'

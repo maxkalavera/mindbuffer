@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-import type { Note, NoteID, NotePayload } from "@ts/models/Notes.types"
+import type { Note, NotePayload } from "@ts/models/Notes.types"
 
 export interface NotesSliceState {
   values: Note[],
@@ -26,8 +26,8 @@ export const fetchNotesThunk = createAsyncThunk(
       throw 'fc9a41ad-b038-42f9-b83a-7a78f3ef226e'
 
     return {
+      ...response,
       page: payload.page,
-      values: response
     }
   },
 )
@@ -47,8 +47,8 @@ export const searchNotesThunk = createAsyncThunk(
       throw 'db30e09f-40d0-48f2-8b6a-6c9605174ff8'
 
     return {
+      ...response,
       page: 1,
-      values: response
     }
   },
 )
@@ -57,7 +57,7 @@ export const createNoteThunk = createAsyncThunk(
   'notes/createNote',
   async (payload: NotePayload, thunkAPI) => {
     const response = await window.electronAPI.notes.create({
-      data: payload
+      data: [payload]
     })
 
     if (thunkAPI.signal.aborted)
@@ -70,20 +70,35 @@ export const createNoteThunk = createAsyncThunk(
   },
 )
 
+export const updateNoteThunk = createAsyncThunk(
+  'notepads/updateNote',
+  async (payload: { value: Note }, thunkAPI) => {
+    const response = await window.electronAPI.notes.update(payload)
+
+    if (thunkAPI.signal.aborted)
+      throw '8429c2e4-cdba-48d6-bcf1-c8258cc6ad79'
+
+    if (response === undefined)
+      throw '14c01fd9-677a-4c24-be60-a046cfea6e1c'
+
+    return response
+  },
+)
+
 export const destroyNoteThunk = createAsyncThunk(
   'notes/destroyNote',
   async (payload: { value: Note }, thunkAPI) => {
     const response = await window.electronAPI.notes.destroy({
-      id: payload.value.id
+      value: payload.value
     })
 
     if (thunkAPI.signal.aborted)
       throw '213b4d4f-38f3-40e6-be9f-2b4f9220696b'
 
-    if (response === 0)
+    if (response === undefined)
       throw 'd729bde1-aca9-4551-9c83-2d1377cd4d7a'
 
-    return payload.value
+    return payload
   },
 )
 
@@ -172,11 +187,15 @@ const notesSlice = createSlice({
       state.scrollBeginingHash += 1
     })
     builder.addCase(createNoteThunk.fulfilled, (state, action) => {
-      addBotom(state, {...action, payload: { values: [action.payload] }})
+      addBotom(state, {...action, payload: { values: action.payload.values }})
+      state.scrollBeginingHash += 1
+    })
+    builder.addCase(updateNoteThunk.fulfilled, (state, action) => {
+      addBotom(state, {...action, payload: { values: [action.payload.value] }})
       state.scrollBeginingHash += 1
     })
     builder.addCase(destroyNoteThunk.fulfilled, (state, action) => {
-      destroy(state, {...action, payload: { values: [action.payload] }})
+      destroy(state, {...action, payload: { values: [action.payload.value] }})
     })
   }
 })

@@ -1,10 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
-import _ from 'lodash'
+import React, { useEffect, useState } from 'react'
 
 import store from '@src/store'
 import { fetchNotesThunk } from '@actions/notes.slice'
 import InifiniteScroll from '@components/utils/InifiniteScroll'
-//import { useContext } from '@providers/Context'
 import TextNote from "@components/TextNote"
 import styles from "@styles/notes-board.module.css"
 

@@ -26,14 +26,14 @@ export default function DeleteNote({
     store.dispatch(destroyNoteThunk({ value: data }))
   }
 
-  const onLocalSuccess = () => {
-    destroyNote()
-    onSuccess()
+  const _onCancel = () => {
+    onCancel()
     closeModal()
   }
 
-  const onLocalCancel = () => {
-    onCancel()
+  const _onSuccess = () => {
+    destroyNote()
+    onSuccess()
     closeModal()
   }
 
@@ -41,16 +41,16 @@ export default function DeleteNote({
     <div className={`${className} ${styles.container}`}>
     <div className={styles.container}>
       <p className={`secondary-p ${styles.content}`}>
-        Are you sure you want to delete the note?
+        Are you sure you want to delete the item?
       </p>
       <div className={styles.options}>
         <Button
           label={'Cancel'}
-          onClick={onLocalCancel}
+          onClick={_onCancel}
         />
         <Button
           label={'Delete'}
-          onClick={onLocalSuccess}
+          onClick={_onSuccess}
         />
       </div>
     </div>

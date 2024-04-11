@@ -25,8 +25,8 @@ export default function Groups({
       values: [],
       page: 1,
       hasNextPage: true,
-      insertedTopHash: 0,
-      insertedBottomHash: 0,
+      adjustScrollHash: 0,
+      scrollBeginingHash: 0,
     }
   })
   const { showModal } = useModal()
@@ -53,8 +53,8 @@ export default function Groups({
         values: state.notepads.values,
         page: state.notepads.values,
         hasNextPage: state.notepads.hasNextPage,
-        insertedTopHash: state.notepads.insertedTopHash,
-        insertedBottomHash: state.notepads.insertedBottomHash,
+        adjustScrollHash: state.notes.adjustScrollHash,
+        scrollBeginingHash: state.notes.scrollBeginingHash,
       }),
       (state) => setContext((prev) => ({
         ...prev,
@@ -106,6 +106,8 @@ export default function Groups({
         className={`${context.commons.isSidebarOpen ? null : styles.hide } ${styles.content}`}
         hasMore={false}
         next={onScrollNext}
+        scrollBeginingHash={`${context.notepads.scrollBeginingHash}`}
+        adjustScrollHash={`${context.notepads.adjustScrollHash}`}
         scrolledOver={(elements) => {
           //console.log('SCROLLED OVER', elements.map((item) => item.id))
           /*

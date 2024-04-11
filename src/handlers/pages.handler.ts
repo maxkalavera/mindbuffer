@@ -5,15 +5,18 @@ import { groupByWidthAssociations } from '@utils/database/groupBy'
 import getSelectFields from '@utils/database/getSelectFields'
 import database from "@utils/database"
 
+import type { 
+  QueryHandler,
+  CreateHandler,
+  UpdateHandler,
+  DestroyHandler,
+} from '@src/ts/handlers.types'
 import type { PageID, PagePayload, Page, PageFiltersPayload } from '@ts/models/Pages.types'
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.pages:getAll',
-    async function getAll (
-      event: Electron.IpcMainInvokeEvent,
-      payload: PageFiltersPayload
-    ): Promise<any> {
+    async function getAll (_, payload) {
       const options = Object.assign({
         search: '',
         paginationOffset: 20,
@@ -59,65 +62,65 @@ app.on('ready', () => {
         nest: true,
       })
 
-      return groupByWidthAssociations(data, 'notepadId', ['pages'])
-    }
+      return {
+        values: groupByWidthAssociations(data, 'notepadId', ['pages'])
+      }
+    } as QueryHandler<PageFiltersPayload, Page>
   )
 })
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.pages:create',
-    async function create (
-      event: Electron.IpcMainInvokeEvent, 
-      payload: { data: PagePayload }
-    ): Promise<any> {
+    async function create (_, payload) {
       try {
-        const page = (await database.models.Page
-          .create({ ...payload.data as PagePayload }))
-          .dataValues
-        page.notes = []
-        return page
+        const response = await database.models.Note.bulkCreate(payload.data as any)
+        return {
+          values: response.map((item) => ({
+            ...item.dataValues,
+            notes: []
+          }))
+        }
       } catch (error) {
         console.error(error)
       }
-    }
+    } as CreateHandler<PagePayload, Page>
   )
 })
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.pages:update',
-    async function update (
-      event: Electron.IpcMainInvokeEvent,
-      payload: { value: Page }
-    ): Promise<any> {
+    async function update (_, payload) {
       try {
-        return (await database.models.Page.update(
+        const response = await database.models.Page.update(
           payload.value as Page,
           { where: { id: payload.value.id } }
-        ))
+        )
+        if (response[0] === 1) {
+          return { value: payload.value }
+        }
       } catch (error) {
         console.error(error)
       }
-    }
+    } as UpdateHandler<Page>
   )
 })
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.pages:destroy',
-    async function destroy (
-      event: Electron.IpcMainInvokeEvent,
-      payload: { id: PageID }
-    ): Promise<any> {
+    async function destroy (_, payload) {
       try {
-        return await database.models.Page.destroy({ 
-          where: { id: payload.id as PageID } 
+        const response =  await database.models.Page.destroy({ 
+          where: { id: payload.value.id } 
         })
+        if (response === 1) {
+          return { value: payload.value }
+        }
       } catch (error) {
         console.error(error)
-        return 0
       }
-    }
+    } as DestroyHandler<Page>
   )
 })

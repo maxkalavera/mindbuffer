@@ -1,6 +1,5 @@
 import React, { useState } from "react"
 
-import { useContext } from "@providers/Context"
 import { useModal } from '@providers/Modal'
 import Input from '@components/Input'
 import Button from "@components/Button"
@@ -17,23 +16,34 @@ export default function CreatePage ({
 }: {
   notepad: Notepad
   className?: string,
-  onSuccess?: (payload?: { data: PagePayload }, ...args: any[]) => any,
+  onSuccess?: (...args: any[]) => any,
   onCancel?: (...args: any[]) => any,
 }) {
-  const { } = useContext()
   const { closeModal } = useModal()
-  const [name, setName] = useState('')
+  const [state, setState] = useState({
+    name: '',
+  })
 
   const clearForm = () => {
-    setName('')
+    setState({
+      name: '',
+    })
   }
 
-  const createPage = (payload: { data: PagePayload }) => {
-    (async () => {
-      const page = await window.electronAPI.pages.create(payload)
-      //# notepads.pages.add({ values: [page]})
-      closeModal()
-    })()
+  const createPage = () => {
+  }
+
+  const _onCancel = () => {
+    onCancel()
+    clearForm()
+    closeModal()
+  }
+
+  const _onSuccess = () => {
+    createPage()
+    onSuccess()
+    clearForm()
+    closeModal()
   }
 
   return (
@@ -41,32 +51,20 @@ export default function CreatePage ({
       <Input
         className={styles.input}
         label={'Name:'}
-        value={name} 
-        onChange={(event) => setName(event.target.value)}
+        value={state.name} 
+        onChange={(event) => setState((prev) => ({
+          ...prev,
+          name: event.target.value,
+        }))}
       />
       <div className={styles.options}>
         <Button
           label={'Cancel'}
-          onClick={() => {
-            onCancel()
-            clearForm()
-            closeModal()
-          }}
+          onClick={_onCancel}
         />
         <Button
           label={'Send'}
-          onClick={() => {
-            const payload = {  
-              data: {
-                name,
-                notepadId: notepad.id
-              }
-            }
-            createPage(payload)
-            onSuccess(payload)
-            clearForm()
-            closeModal()
-          }}
+          onClick={_onSuccess}
         />
       </div>
     </div>

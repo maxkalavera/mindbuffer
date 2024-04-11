@@ -1,14 +1,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
+
+import { Page, PagePayload } from '@src/ts/models/Pages.types'
 import type { Notepad, NotepadPayload } from '@ts/models/Notepads.types'
 
 export interface NotepadsSliceState {
   values: Notepad[],
   page: number,
   hasNextPage: boolean,
-  insertedTopHash: number,
-  insertedBottomHash: number,
+  adjustScrollHash: number,
+  scrollBeginingHash: number,
 }
 
 export const fetchNotepadsThunk = createAsyncThunk(
@@ -26,8 +28,8 @@ export const fetchNotepadsThunk = createAsyncThunk(
       throw 'a2ac27ee-822b-4332-979b-34533f6fc001'
 
     return {
+      ...response,
       page: payload.page,
-      values: response
     }
   },
 )
@@ -46,10 +48,7 @@ export const searchNotepadsThunk = createAsyncThunk(
     if (response === undefined)
       throw '7e1d69f0-fb9b-4132-93ad-af312bdae8b8'
 
-    return {
-      page: 1,
-      values: response
-    }
+    return response
   },
 )
 
@@ -57,14 +56,14 @@ export const createNotepadThunk = createAsyncThunk(
   'notepads/createNotepad',
   async (payload: NotepadPayload, thunkAPI) => {
     const response = await window.electronAPI.notepads.create({
-      data: payload
+      data: [payload]
     })
 
     if (thunkAPI.signal.aborted)
-      throw '633399db-51e1-48df-9c85-b34bc8f84b5c'
+      throw 'a82f160b-84a3-4194-a10c-19dd2f71818b'
 
     if (response === undefined)
-      throw '7e1d69f0-fb9b-4132-93ad-af312bdae8b8'
+      throw '7123211a-9d4e-4fab-8162-add400383760'
 
     return response
   },
@@ -86,10 +85,10 @@ export const updateNotepadThunk = createAsyncThunk(
 )
 
 export const destroyNotepadThunk = createAsyncThunk(
-  'notepads/createNotepads',
+  'notepads/destroyNotepad',
   async (payload: { value: Notepad }, thunkAPI) => {
     const response = await window.electronAPI.notepads.destroy({
-      id: payload.value.id
+      value: payload.value
     })
 
     if (thunkAPI.signal.aborted)
@@ -98,7 +97,56 @@ export const destroyNotepadThunk = createAsyncThunk(
     if (response === undefined)
       throw 'c5a0dde9-2a0b-4833-9f43-80ba41fdb4ef'
 
+    return payload
+  },
+)
+
+export const createpageThunk = createAsyncThunk(
+  'notes/createPage',
+  async (payload: PagePayload, thunkAPI) => {
+    const response = await window.electronAPI.pages.create({
+      data: [payload]
+    })
+
+    if (thunkAPI.signal.aborted)
+      throw 'b8c3fbcc-4191-48c2-a851-ab771baebbf9'
+
+    if (response === undefined)
+      throw '5cd24616-dd8e-442d-8d68-9b4cba2cb7d8'
+
     return response
+  },
+)
+
+export const updatePageThunk = createAsyncThunk(
+  'notepads/updatePage',
+  async (payload: { value: Page }, thunkAPI) => {
+    const response = await window.electronAPI.pages.update(payload)
+
+    if (thunkAPI.signal.aborted)
+      throw '30435104-425f-4a6f-957e-baebd8321566'
+
+    if (response === undefined)
+      throw '7d03ef8f-3598-4347-a6b9-1bb19bc0b08c'
+
+    return response
+  },
+)
+
+export const destroyPageThunk = createAsyncThunk(
+  'notes/destroyPage',
+  async (payload: { value: Page }, thunkAPI) => {
+    const response = await window.electronAPI.pages.destroy({
+      value: payload.value
+    })
+
+    if (thunkAPI.signal.aborted)
+      throw '0442526a-6711-48c7-b914-e339ac044665'
+
+    if (response === undefined)
+      throw '6bfc3aed-7eec-49b5-85eb-cde0524454b8'
+
+    return payload
   },
 )
 
@@ -115,7 +163,7 @@ function addTop (
 ) {
   state.values = 
     [...action.payload.values, ...state.values]
-  state.insertedTopHash += 1
+  state.adjustScrollHash += 1
 }
 
 function addBotom (
@@ -124,7 +172,7 @@ function addBotom (
 ) {
   state.values = 
     [...state.values, ...action.payload.values]
-    state.insertedBottomHash += 1
+    state.scrollBeginingHash += 1
 }
 
 
@@ -147,14 +195,33 @@ function destroy (
   )
 }
 
+function addPage (
+  state: NotepadsSliceState, 
+  action: PayloadAction<{ values: Page[] }>
+) {
+}
+
+
+function updatePage (
+  state: NotepadsSliceState, 
+  action: PayloadAction<{ values: Page[] }>
+) {
+}
+
+function destroyPage (
+  state: NotepadsSliceState, 
+  action: PayloadAction<{ values: Page[] }>
+) {
+}
+
 const notepadsSlice = createSlice({
   name: 'notepads',
   initialState: {
     values: [],
     page: 1,
     hasNextPage: true,
-    insertedTopHash: 0,
-    insertedBottomHash: 0,
+    adjustScrollHash: 0,
+    scrollBeginingHash: 0,
   } as NotepadsSliceState,
   reducers: {
     set,
@@ -162,6 +229,9 @@ const notepadsSlice = createSlice({
     addBotom,
     update,
     destroy,
+    addPage,
+    updatePage,
+    destroyPage,
   },
   extraReducers: (builder) => {
     builder.addCase(fetchNotepadsThunk.fulfilled, (state, action) => {
@@ -184,7 +254,26 @@ const notepadsSlice = createSlice({
       state.values = action.payload.values
       state.page = 1
       state.hasNextPage = true
-      state.insertedBottomHash += 1
+      state.scrollBeginingHash += 1
+    })
+    builder.addCase(createNotepadThunk.fulfilled, (state, action) => {
+      addTop(state, {...action, payload: { values: action.payload.values }})
+    })
+    builder.addCase(updateNotepadThunk.fulfilled, (state, action) => {
+      update(state, {...action, payload: { values: [action.payload.value] }})
+    })
+    builder.addCase(destroyNotepadThunk.fulfilled, (state, action) => {
+      destroy(state, { ...action, payload:{ values: [action.payload.value] } })
+    })
+    // Extra reducers for pages
+    builder.addCase(createpageThunk.fulfilled, (state, action) => {
+      addPage(state, {...action, payload: { values: action.payload.values }})
+    })
+    builder.addCase(updatePageThunk.fulfilled, (state, action) => {
+      updatePage(state, {...action, payload: { values: [action.payload.value] }})
+    })
+    builder.addCase(destroyPageThunk.fulfilled, (state, action) => {
+      destroyPage(state, { ...action, payload:{ values: [action.payload.value] } })
     })
   }
 })

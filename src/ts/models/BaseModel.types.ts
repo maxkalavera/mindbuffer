@@ -1,6 +1,6 @@
 
 
-export interface Base {
+export interface BaseModel {
   id: number,
   createdAt: Date,
   updatedAt: Date,

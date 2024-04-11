@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 
-import { useContext } from "@providers/Context"
+import store from "@src/store"
+import { updateNotepadThunk } from "@src/actions/notepads.slice"
 import { useModal } from '@providers/Modal'
 import Input from '@components/Input'
 import Button from "@components/Button"
@@ -16,23 +17,38 @@ export default function UpdateNotepad ({
 }: {
   data: Notepad,
   className?: string,
-  onSuccess?: (payload?: { value: NotepadPayload }, ...args: any[]) => any
+  onSuccess?: (...args: any[]) => any
   onCancel?: (...args: any[]) => any
 }) {
-  const { } = useContext()
-  const { showModal, closeModal } = useModal()
-  const [name, setName] = useState(data.name)
+  const { closeModal } = useModal()
+  const [state, setState] = useState({
+    name: '',
+  })
 
   useEffect(() => {
-    setName(data.name)
-  }, [data.name])
+    setState({
+      name: data.name,
+    })
+  }, [JSON.stringify(data)])
 
-  const updateNotepad = (payload: { value: Notepad }) => {
-    (async () => {
-      await window.electronAPI.notepads.update(payload)
-      //# notepads.update(payload)
-      closeModal()  
-    })()
+  const updateNotepad = () => {
+    store.dispatch(updateNotepadThunk({
+      value: {
+        ...data,
+        ...state,
+      }
+    }))
+  }
+
+  const _onCancel = () => {
+    onCancel()
+    closeModal()
+  }
+
+  const _onSuccess = () => {
+    updateNotepad()
+    onSuccess()
+    closeModal()
   }
 
   return (
@@ -40,30 +56,19 @@ export default function UpdateNotepad ({
       <Input
         className={styles.input}
         label={'Name:'}
-        value={name} 
-        onChange={(event) => setName(event.target.value)}
+        value={state.name} 
+        onChange={(event) => setState({
+          name: event.target.value
+        })}
       />
       <div className={styles.options}>
         <Button
           label={'Cancel'}
-          onClick={() => {
-            onCancel()
-            closeModal()
-          }}
+          onClick={_onCancel}
         />
         <Button
           label={'Save'}
-          onClick={() => {
-            const payload = {
-              value: {
-                ...data,
-                name
-              }
-            }
-            updateNotepad(payload)
-            onSuccess(payload)
-            closeModal()
-          }}
+          onClick={_onSuccess}
         />
       </div>
     </div>

@@ -5,7 +5,6 @@ import { faEllipsisVertical, faCopy, faTrash } from '@fortawesome/free-solid-svg
 
 import { useAlert } from '@providers/Alert'
 import { useModal } from '@providers/Modal'
-import { useContext } from '@providers/Context'
 import DeleteNote from '@components/modals/DeleteNote'
 import DropdownMenu from "@components/DropdownMenu"
 import IconButton from '@components/IconButton'
@@ -28,9 +27,8 @@ function TextNote({
   data: Note
 }) {
   const contentContainer = useRef<HTMLDivElement>(null)
-  const { showModal, closeModal } = useModal()
+  const { showModal } = useModal()
   const { showAlert } = useAlert()
-    //const { state: { models: { notes } } } = useContext()
 
   useEffect(() => {
     if (!contentContainer.current) return

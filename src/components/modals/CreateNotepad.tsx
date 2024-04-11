@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 
-import { useContext } from "@providers/Context"
+import store from "@src/store"
+import { createNotepadThunk } from "@actions/notepads.slice"
 import { useModal } from '@providers/Modal'
 import Input from '@components/Input'
 import Button from "@components/Button"
@@ -13,24 +14,37 @@ export default function CreateNotepad ({
   onSuccess=()=>null,
   onCancel=()=>null,
 }: {
-  onSuccess?: (payload?: { data: NotepadPayload }, ...args: any[]) => any
+  onSuccess?: (...args: any[]) => any
   onCancel?: (...args: any[]) => any
   className?: string
 }) {
-  const { } = useContext()
   const { closeModal } = useModal()
-  const [name, setName] = useState('')
+  const [state, setState] = useState({
+    name: '',
+  })
 
   const clearForm = () => {
-    setName('')
+    setState({
+      name: '',
+    })
   }
 
-  const createNotepad = (payload: { data: NotepadPayload }) => {
-    (async () => {
-      const notepad = await window.electronAPI.notepads.create(payload)
-      if (notepad === undefined) return
-      //# notepads.add({ values: [notepad]})
-    })()
+  const createNotepad = () => {
+    store.dispatch(createNotepadThunk({
+      name: state.name
+    }))
+  }
+  const _onCancel = () => {
+    onCancel()
+    clearForm()
+    closeModal()
+  }
+
+  const _onSuccess = () => {
+    createNotepad()
+    onSuccess()
+    clearForm()
+    closeModal()
   }
 
   return (
@@ -38,31 +52,20 @@ export default function CreateNotepad ({
       <Input
         className={styles.input}
         label={'Name:'}
-        value={name} 
-        onChange={(event) => setName(event.target.value)}
+        value={state.name} 
+        onChange={(event) => setState((prev) => ({
+          ...prev,
+          name: event.target.value
+        }))}
       />
       <div className={styles.options}>
         <Button
           label={'Cancel'}
-          onClick={() => {
-            onCancel()
-            clearForm()
-            closeModal()
-          }}
+          onClick={_onCancel}
         />
         <Button
           label={'Send'}
-          onClick={() => {
-            const payload = {
-              data: {
-                name,
-              }
-            }
-            //# createNotepad(payload)
-            //# onSuccess(payload)
-            clearForm()
-            closeModal()
-          }}
+          onClick={_onSuccess}
         />
       </div>
     </div>
