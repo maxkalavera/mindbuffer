@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import equal from 'fast-deep-equal'
 import { configureStore } from '@reduxjs/toolkit'
 
 import commonsSlice from '@actions/commons.slice'
@@ -24,7 +24,7 @@ function monitor (
   store.subscribe(() => {
     const state = store.getState()
     const values = extract(state)
-    if (!_.isEqual(last.current, values)) {
+    if (!equal(last.current, values)) {
       last.current = values
       callBack(state)
     }

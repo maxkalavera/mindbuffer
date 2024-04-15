@@ -10,12 +10,12 @@ import styles from "@styles/update-notepad-modal.module.css"
 import type { Notepad, NotepadPayload } from "@ts/models/Notepads.types"
 
 export default function UpdateNotepad ({
-  data,
+  value,
   className='',
   onSuccess=()=>null,
   onCancel=()=>null,
 }: {
-  data: Notepad,
+  value: Notepad,
   className?: string,
   onSuccess?: (...args: any[]) => any
   onCancel?: (...args: any[]) => any
@@ -27,14 +27,14 @@ export default function UpdateNotepad ({
 
   useEffect(() => {
     setState({
-      name: data.name,
+      name: value.name,
     })
-  }, [JSON.stringify(data)])
+  }, [JSON.stringify(value)])
 
   const updateNotepad = () => {
     store.dispatch(updateNotepadThunk({
       value: {
-        ...data,
+        ...value,
         ...state,
       }
     }))

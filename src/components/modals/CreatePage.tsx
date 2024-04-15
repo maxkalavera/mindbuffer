@@ -1,11 +1,12 @@
 import React, { useState } from "react"
 
+import store from "@src/store"
+import { createpageThunk } from "@src/actions/notepads.slice"
 import { useModal } from '@providers/Modal'
 import Input from '@components/Input'
 import Button from "@components/Button"
 import styles from "@styles/create-page-modal.module.css"
 
-import type { PagePayload } from "@ts/models/Pages.types"
 import type { Notepad } from "@ts/models/Notepads.types"
 
 export default function CreatePage ({
@@ -31,6 +32,10 @@ export default function CreatePage ({
   }
 
   const createPage = () => {
+    store.dispatch(createpageThunk({
+      name: state.name,
+      notepadId: notepad.id
+    }))
   }
 
   const _onCancel = () => {

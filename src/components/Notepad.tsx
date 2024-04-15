@@ -46,7 +46,7 @@ export default function Notepad ({
               icon: faPen,
               onClick: () => showModal(
                 <UpdateNotepad
-                  data={data}
+                  value={data}
                 />, 
                 'Edit Notepad'
               )
@@ -56,7 +56,7 @@ export default function Notepad ({
               icon: faTrash,
               onClick: () => showModal(
                 <DeleteNotepad 
-                  data={data}
+                  value={data}
                 />, 
                 'Delete Notepad'
               )

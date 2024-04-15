@@ -5,3 +5,5 @@ export interface BaseModel {
   createdAt: Date,
   updatedAt: Date,
 } 
+
+export type BaseID = string | number

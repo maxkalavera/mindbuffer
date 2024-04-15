@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react"
 
+import store from "@src/store"
+import { updatePageThunk } from "@src/actions/notepads.slice"
 import { useModal } from '@providers/Modal'
 import Input from '@components/Input'
 import Button from "@components/Button"
 import styles from "@styles/update-page-modal.module.css"
 
+import type { Page } from "@ts/models/Pages.types"
+
 export default function UpdatePage ({
   className='',
-  data={},
+  value,
   onSuccess=()=>null,
   onCancel=()=>null,
 }: {
   className?: string,
-  data: any,
+  value: Page,
   onSuccess?: (...args: any[]) => any
   onCancel?: (...args: any[]) => any
 }) {
@@ -23,11 +27,17 @@ export default function UpdatePage ({
 
   useEffect(() => {
     setState({
-      name: data.name,
+      name: value.name,
     })
-  }, [JSON.stringify(data)])
+  }, [JSON.stringify(value)])
 
   const updatePage = () => {
+    store.dispatch(updatePageThunk({
+      value: {
+        ...value,
+        name: state.name,
+      }
+    }))
   }
 
   const _onCancel = () => {

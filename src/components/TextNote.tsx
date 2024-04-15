@@ -62,7 +62,7 @@ function TextNote({
               icon: faTrash,
               onClick: () => showModal(
                 <DeleteNote 
-                  data={data}
+                  value={data}
                 />
               , 'Delete Note')
             }

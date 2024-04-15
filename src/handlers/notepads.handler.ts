@@ -6,13 +6,12 @@ import { groupByWidthAssociations } from '@utils/database/groupBy'
 import database from "@utils/database"
 
 import type { 
-  QueryHandler,
-  CreateHandler,
-  UpdateHandler,
-  DestroyHandler,
+  ModelQueryHandler,
+  ModelCreateHandler,
+  ModelUpdateHandler,
+  ModelDestroyHandler,
 } from '@src/ts/handlers.types'
 import type { 
-  NotepadID, 
   NotepadPayload, 
   Notepad, 
   NotepadFiltersPayload 
@@ -27,7 +26,7 @@ app.on('ready', () => {
         page: 1,
         paginationOffset: 20,
         associatedPage: 1,
-        associatedPaginationOffset: 20,
+        associatedPaginationOffset: 50,
       }, payload)
       if (options.page < 1) options.page = 1
     
@@ -51,7 +50,8 @@ app.on('ready', () => {
                     database.models.Page, 
                     {
                       as: ({ fieldName }) => `pages.${fieldName}`
-                    })
+                    }
+                  )
                 }
             FROM "notepads"
             LEFT OUTER JOIN "pages" 
@@ -81,7 +81,7 @@ app.on('ready', () => {
       } catch (error) {
         console.error(error)
       } 
-    } as QueryHandler<NotepadFiltersPayload, Notepad>
+    } as ModelQueryHandler<NotepadFiltersPayload, Notepad>
   )
 })
 
@@ -100,7 +100,7 @@ app.on('ready', () => {
       } catch (error) {
         console.error(error)
       }
-    } as CreateHandler<NotepadPayload, Notepad>
+    } as ModelCreateHandler<NotepadPayload, Notepad>
   )
 })
 
@@ -120,7 +120,7 @@ app.on('ready', () => {
       } catch (error) {
         console.error(error)
       }
-    } as UpdateHandler<Notepad>
+    } as ModelUpdateHandler<Notepad>
   )
 })
 
@@ -138,6 +138,6 @@ app.on('ready', () => {
       } catch (error) {
         console.error(error)
       }
-    } as DestroyHandler<Notepad>
+    } as ModelDestroyHandler<Notepad>
   )
 })

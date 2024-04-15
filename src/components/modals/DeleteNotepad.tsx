@@ -8,12 +8,12 @@ import styles from "@styles/delete-notepad-modal.module.css"
 import { Notepad } from "@ts/models/Notepads.types"
 
 export default function DeleteNotepad({
-  data,
+  value,
   className='',
   onSuccess=()=>null,
   onCancel=()=>null,
 }: {
-  data: Notepad,
+  value: Notepad,
   onSuccess?: (...args: any[]) => any
   onCancel?: (...args: any[]) => any
   className?: string
@@ -21,7 +21,7 @@ export default function DeleteNotepad({
   const { closeModal } = useModal()
 
   const destroyNotepad = () => {
-    store.dispatch(destroyNotepadThunk({ value: data }))
+    store.dispatch(destroyNotepadThunk({ value: value }))
   }
 
   const _onCancel = () => {

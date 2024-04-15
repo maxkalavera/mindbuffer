@@ -6,12 +6,16 @@ import getSelectFields from '@utils/database/getSelectFields'
 import database from "@utils/database"
 
 import type { 
-  QueryHandler,
-  CreateHandler,
-  UpdateHandler,
-  DestroyHandler,
+  ModelQueryHandler,
+  ModelCreateHandler,
+  ModelUpdateHandler,
+  ModelDestroyHandler,
 } from '@src/ts/handlers.types'
-import type { PageID, PagePayload, Page, PageFiltersPayload } from '@ts/models/Pages.types'
+import type { 
+  PagePayload, 
+  Page, 
+  PageFiltersPayload 
+} from '@ts/models/Pages.types'
 
 app.on('ready', () => {
   ipcMain.handle(
@@ -19,7 +23,7 @@ app.on('ready', () => {
     async function getAll (_, payload) {
       const options = Object.assign({
         search: '',
-        paginationOffset: 20,
+        paginationOffset: 50,
       }, payload)    
       options.notepads.map((item) => item.page < 1 ?
         {
@@ -29,7 +33,7 @@ app.on('ready', () => {
         item
       )
       if (options.notepads.length === 0)
-        return []
+        return
 
       const data = await database.sequelize.query(`
         ${
@@ -65,7 +69,7 @@ app.on('ready', () => {
       return {
         values: groupByWidthAssociations(data, 'notepadId', ['pages'])
       }
-    } as QueryHandler<PageFiltersPayload, Page>
+    } as ModelQueryHandler<PageFiltersPayload, Page>
   )
 })
 
@@ -74,7 +78,7 @@ app.on('ready', () => {
     'database.pages:create',
     async function create (_, payload) {
       try {
-        const response = await database.models.Note.bulkCreate(payload.data as any)
+        const response = await database.models.Page.bulkCreate(payload.data as any)
         return {
           values: response.map((item) => ({
             ...item.dataValues,
@@ -84,7 +88,7 @@ app.on('ready', () => {
       } catch (error) {
         console.error(error)
       }
-    } as CreateHandler<PagePayload, Page>
+    } as ModelCreateHandler<PagePayload, Page>
   )
 })
 
@@ -103,7 +107,7 @@ app.on('ready', () => {
       } catch (error) {
         console.error(error)
       }
-    } as UpdateHandler<Page>
+    } as ModelUpdateHandler<Page>
   )
 })
 
@@ -121,6 +125,6 @@ app.on('ready', () => {
       } catch (error) {
         console.error(error)
       }
-    } as DestroyHandler<Page>
+    } as ModelDestroyHandler<Page>
   )
 })

@@ -2,10 +2,16 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 import { contextBridge, ipcRenderer } from 'electron'
 
-import type { QueryInvoker, CreateInvoker, UpdateInvoker, DestroyInvoker } from '@ts/invokers.types'
+import type { 
+  QueryInvoker,
+  ModelQueryInvoker, 
+  ModelCreateInvoker, 
+  ModelUpdateInvoker, 
+  ModelDestroyInvoker 
+} from '@ts/invokers.types'
 import type { NotePayload, Note, NoteFiltersPayload } from '@ts/models/Notes.types'
-import type { PagePayload, Page, PageFiltersPayload } from '@ts/models/Pages.types'
-import type { NotepadPayload, Notepad, NotepadFiltersPayload } from '@ts/models/Notepads.types'
+import type { PagePayload, Page, PageFiltersPayload, PageID } from '@ts/models/Pages.types'
+import type { NotepadPayload, Notepad, NotepadFiltersPayload, NotepadID } from '@ts/models/Notepads.types'
 
 export const electronAPI = {
   commons: {
@@ -20,44 +26,49 @@ export const electronAPI = {
   notes: {
     getAll: ((payload) => {
       return ipcRenderer.invoke('database.notes:getAll', payload)
-    }) as QueryInvoker<NoteFiltersPayload, Note>,
+    }) as ModelQueryInvoker<NoteFiltersPayload, Note>,
     create: ((payload) => {
       return ipcRenderer.invoke('database.notes:create', payload)
-    }) as CreateInvoker<NotePayload, Note>,
+    }) as ModelCreateInvoker<NotePayload, Note>,
     update: ((payload) => {
       return ipcRenderer.invoke('database.note:update', payload)
-    }) as UpdateInvoker<Note>,
+    }) as ModelUpdateInvoker<Note>,
     destroy: ((payload) => {
       return ipcRenderer.invoke('database.notes:destroy', payload)
-    }) as DestroyInvoker<Note>,
+    }) as ModelDestroyInvoker<Note>,
   },
   notepads: {
     getAll: ((payload: NotepadFiltersPayload) => {
       return ipcRenderer.invoke('database.notepads:getAll', payload)
-    }) as QueryInvoker<NotepadFiltersPayload, Notepad>,
+    }) as ModelQueryInvoker<NotepadFiltersPayload, Notepad>,
     create: ((payload) => {
       return ipcRenderer.invoke('database.notepads:create', payload)
-    }) as CreateInvoker<NotepadPayload, Notepad>,
+    }) as ModelCreateInvoker<NotepadPayload, Notepad>,
     update: ((payload) => {
       return ipcRenderer.invoke('database.notepads:update', payload)
-    }) as UpdateInvoker<Notepad>,
+    }) as ModelUpdateInvoker<Notepad>,
     destroy: ((payload) => {
       return ipcRenderer.invoke('database.notepads:destroy', payload)
-    }) as DestroyInvoker<Notepad>,
+    }) as ModelDestroyInvoker<Notepad>,
   },
   pages: {
     getAll: ((payload: PageFiltersPayload) => {
       return ipcRenderer.invoke('database.pages:getAll', payload)
-    }) as QueryInvoker<PageFiltersPayload, Page>,
+    }) as QueryInvoker<PageFiltersPayload, {
+      values: {
+        notepadId: NotepadID,
+        pages: Page[]
+      }[]
+    }>,
     create: ((payload) => {
       return ipcRenderer.invoke('database.pages:create', payload)
-    }) as CreateInvoker<PagePayload, Page>,
+    }) as ModelCreateInvoker<PagePayload, Page>,
     update: ((payload: { value: Page }) => {
       return ipcRenderer.invoke('database.pages:update', payload)
-    }) as UpdateInvoker<Page>,
+    }) as ModelUpdateInvoker<Page>,
     destroy: ((payload) => {
       return ipcRenderer.invoke('database.pages:destroy', payload)
-    }) as DestroyInvoker<Page>,
+    }) as ModelDestroyInvoker<Page>,
   }
 }
 

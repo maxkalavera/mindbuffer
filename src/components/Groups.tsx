@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from "react" 
+import React, { useEffect, useRef, useState } from "react" 
+import _ from 'lodash'
 import { faLayerGroup, faPlus, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 
+import store from "@src/store"
+import { fetchPagesThunk } from "@actions/notepads.slice"
 import { fetchNotepadsThunk } from '@actions/notepads.slice'
 import commonsSlice from "@actions/commons.slice"
-import store from "@src/store"
 import InifiniteScroll from '@components/utils/InifiniteScroll'
 import CreateNotepad from '@components/modals/CreateNotepad'
 import { useModal } from '@providers/Modal'
 import Notepad from '@components/Notepad'
 import IconButton from '@components/IconButton'
 import styles from "@styles/groups.module.css" 
+
+import { NotepadID } from "@src/ts/models/Notepads.types"
 
 export default function Groups({ 
   className='',
@@ -27,6 +31,7 @@ export default function Groups({
       hasNextPage: true,
       adjustScrollHash: 0,
       scrollBeginingHash: 0,
+      paginationMap: {},
     }
   })
   const { showModal } = useModal()
@@ -55,6 +60,7 @@ export default function Groups({
         hasNextPage: state.notepads.hasNextPage,
         adjustScrollHash: state.notes.adjustScrollHash,
         scrollBeginingHash: state.notes.scrollBeginingHash,
+        paginationMap: state.notepads.paginationMap,
       }),
       (state) => setContext((prev) => ({
         ...prev,
@@ -75,6 +81,15 @@ export default function Groups({
     }))   
   }
 
+  const paginateOverScrolledOver = (elements: any[]) => {
+    const forPagination = elements
+    store.dispatch(fetchPagesThunk({
+      notepads: forPagination,
+      search: '',
+    }))
+  }
+
+  //console.log('NOTEPADS', context.notepads.paginationMap)
   return (
     <div 
       className={`${className} ${styles.container}`} 
@@ -108,16 +123,11 @@ export default function Groups({
         next={onScrollNext}
         scrollBeginingHash={`${context.notepads.scrollBeginingHash}`}
         adjustScrollHash={`${context.notepads.adjustScrollHash}`}
-        scrolledOver={(elements) => {
-          //console.log('SCROLLED OVER', elements.map((item) => item.id))
-          /*
-          actions.models.pages.increasePagination({
-            values:  elements.map((item) => ({
-              id: parseInt(item.id)
-            }))
-          })
-          */
-        }}
+        scrolledOver={paginateOverScrolledOver}
+        scrolledOverToID={(item) => parseInt(item.id)}
+        scrolledOverHashMap={
+          _.mapValues(context.notepads.paginationMap, (object: any) => object.hash)
+        }
         items={
           context.notepads.values.map((item: any, key: number) => (
             <Notepad 

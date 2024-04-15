@@ -1,5 +1,7 @@
 import React from "react"
 
+import store from "@src/store"
+import { destroyPageThunk } from "@src/actions/notepads.slice"
 import { useModal } from '@providers/Modal'
 import Button from "@components/Button"
 import styles from "@styles/delete-page-modal.module.css"
@@ -7,12 +9,12 @@ import styles from "@styles/delete-page-modal.module.css"
 import type { Page } from "@ts/models/Pages.types"
 
 export default function DeletePage({
-  data,
+  value,
   className='',
   onSuccess=()=>null,
   onCancel=()=>null,
 }: {
-  data: Page,
+  value: Page,
   onSuccess?: (...args: any[]) => any
   onCancel?: (...args: any[]) => any
   className?: string
@@ -20,6 +22,9 @@ export default function DeletePage({
   const { closeModal } = useModal()
 
   const deletePage = () => {
+    store.dispatch(destroyPageThunk({
+      value: value
+    }))
   }
 
   const _onCancel = () => {

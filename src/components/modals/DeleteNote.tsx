@@ -10,12 +10,12 @@ import styles from "@styles/delete-note-modal.module.css"
 import type { Note } from "@ts/models/Notes.types"
 
 export default function DeleteNote({
-  data,
+  value,
   className='',
   onSuccess=()=>null,
   onCancel=()=>null,
 }: {
-  data: Note
+  value: Note
   onSuccess?: (...args: any[]) => any
   onCancel?: (...args: any[]) => any
   className?: string
@@ -23,7 +23,7 @@ export default function DeleteNote({
   const { closeModal } = useModal()
 
   const destroyNote = () => {
-    store.dispatch(destroyNoteThunk({ value: data }))
+    store.dispatch(destroyNoteThunk({ value: value }))
   }
 
   const _onCancel = () => {

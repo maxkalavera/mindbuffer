@@ -1,14 +1,27 @@
-import { BaseModel } from "@ts/models/BaseModel.types"
+import { BaseModel, BaseID } from "@ts/models/BaseModel.types"
 
 export interface BasePayloadFilter {}
 
-export type QueryInvoker<PayloadFilter extends BasePayloadFilter, Model extends BaseModel> = (
+export type QueryInvoker<
+  PayloadFilter extends BasePayloadFilter, 
+  Result
+> = (
+  payload: PayloadFilter,
+) => Promise<Result>
+
+export type ModelQueryInvoker<
+  PayloadFilter extends BasePayloadFilter, 
+  Model extends BaseModel
+> = (
   payload: PayloadFilter,
 ) => Promise<{
   values: Model[]
 }>
 
-export type CreateInvoker<ModelPayload, Model extends BaseModel> = (
+export type ModelCreateInvoker<
+  ModelPayload, 
+  Model extends BaseModel
+> = (
   payload: {
     data: ModelPayload[]
   },
@@ -16,7 +29,9 @@ export type CreateInvoker<ModelPayload, Model extends BaseModel> = (
   values: Model[]
 }>
 
-export type UpdateInvoker<Model extends BaseModel> = (
+export type ModelUpdateInvoker<
+  Model extends BaseModel
+> = (
   payload: {
     value: Model
   },
@@ -24,7 +39,9 @@ export type UpdateInvoker<Model extends BaseModel> = (
   value: Model
 }>
 
-export type DestroyInvoker<Model extends BaseModel> = (
+export type ModelDestroyInvoker<
+  Model extends BaseModel | BaseID
+> = (
   payload: {
     value: Model
   },

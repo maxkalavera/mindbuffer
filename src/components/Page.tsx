@@ -32,7 +32,7 @@ export default function Page ({
               icon: faPen,
               onClick: () => showModal(
                 <UpdatePage
-                  data={data}
+                  value={data}
                 />, 
                 'Edit Page'
               )
@@ -42,7 +42,7 @@ export default function Page ({
               icon: faTrash,
               onClick: () => showModal(
                 <DeletePage 
-                  data={data}
+                  value={data}
                 />, 
                 'Delete Page'
               )

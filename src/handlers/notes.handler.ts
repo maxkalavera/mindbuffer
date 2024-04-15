@@ -4,13 +4,12 @@ import { QueryTypes } from 'sequelize'
 import database from "@utils/database"
 
 import type { 
-  QueryHandler,
-  CreateHandler,
-  UpdateHandler,
-  DestroyHandler,
+  ModelQueryHandler,
+  ModelCreateHandler,
+  ModelUpdateHandler,
+  ModelDestroyHandler,
 } from '@src/ts/handlers.types'
-import type { 
-  NoteID, 
+import type {
   NotePayload, 
   NoteFiltersPayload, 
   Note 
@@ -53,7 +52,7 @@ app.on('ready', () => {
       } catch (error) {
         console.error(error)
       } 
-    }  as QueryHandler<NoteFiltersPayload, Note>
+    }  as ModelQueryHandler<NoteFiltersPayload, Note>
   )
 })
 
@@ -69,7 +68,7 @@ app.on('ready', () => {
       } catch (error) {
         console.error(error)
       }
-    } as CreateHandler<NotePayload, Note>
+    } as ModelCreateHandler<NotePayload, Note>
   )
 })
 
@@ -89,7 +88,7 @@ app.on('ready', () => {
       } catch (error) {
         console.error(error)
       }
-    } as UpdateHandler<Note>
+    } as ModelUpdateHandler<Note>
   )
 })
 
@@ -107,6 +106,6 @@ app.on('ready', () => {
       } catch (error) {
         console.error(error)
       }
-    } as DestroyHandler<Note>
+    } as ModelDestroyHandler<Note>
   )
 })

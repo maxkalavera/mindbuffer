@@ -1,5 +1,7 @@
-import { reverse } from "lodash"
+import equal from 'fast-deep-equal'
 import React, { ReactElement, useState, useRef, useEffect, ReactNode } from "react"
+
+type ScrolledOverHash = string | number
 
 interface InifiniteScrollProps {
   className?: string,
@@ -9,9 +11,11 @@ interface InifiniteScrollProps {
   scrollThreshold?: number,
   adjustScrollHash?: string,
   scrollBeginingHash?: string,
-  getItemIdentifier?: (...args: any[]) => string 
+  scrolledOverHashMap?: {[key: string]: string | number},
+  getItemIdentifier?: (...args: any[]) => string,
+  scrolledOverToID?: (element: HTMLElement) => ScrolledOverHash,
   next?: (...args: any[]) => any,
-  scrolledOver?: (scrolledOver: HTMLElement[], ...args: any[]) => any,
+  scrolledOver?: (scrolledOver: (string | number)[], ...args: any[]) => any,
 }
 
 export default function InifiniteScroll ({
@@ -22,7 +26,9 @@ export default function InifiniteScroll ({
   scrollThreshold=10,
   adjustScrollHash=undefined,
   scrollBeginingHash=undefined,
+  scrolledOverHashMap={},
   getItemIdentifier=(item) => item.key === undefined ? item.toString() : item.key,
+  scrolledOverToID=(item) => item.id,
   next=()=>{},
   scrolledOver=null,
 }: InifiniteScrollProps) {
@@ -114,17 +120,16 @@ export default function InifiniteScroll ({
     itemsHash
   ])
 
-  return (
-    <div
-      className={`${className}`}
-      ref={containerRef}
-    >
-      { items }
-    </div>
-  )
-}
 
-/*
+  /****************************************************************************
+  * To listen when scrolled over elements
+  ****************************************************************************/
+  const lockHashMap = useRef<Map<any, ScrolledOverHash>>(new Map())
+  useEffect(() => {
+    // Checks if the scrolling has reached the end of the scrolling space
+    if (containerRef.current === null) return
+
+    const listener = () => {
       // Notify when a childelement has been scrolled over
       if (scrolledOver) {
         const { children, childElementCount } = containerRef.current
@@ -143,6 +148,32 @@ export default function InifiniteScroll ({
             references.push(element)
           }
         }
-        scrolledOver(references)
+
+        const scrolledOverItems = references
+          .map(scrolledOverToID)
+          .filter((id) => {
+            const lastHash = lockHashMap.current.get(id)
+            const hash = scrolledOverHashMap[id]
+            lockHashMap.current.set(id, hash)
+            return lastHash !== hash
+          })
+
+        if (scrolledOverItems.length > 0) {
+          scrolledOver(scrolledOverItems)
+        }
       }
-*/
+    }
+    containerRef.current.addEventListener(
+      'scroll', listener, {passive: true})
+    return () => containerRef.current.removeEventListener('scroll', listener)
+  }, [containerRef.current, JSON.stringify(scrolledOverHashMap)])
+
+  return (
+    <div
+      className={`${className}`}
+      ref={containerRef}
+    >
+      { items }
+    </div>
+  )
+}
