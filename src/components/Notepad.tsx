@@ -1,6 +1,7 @@
 import React from "react"
 import { faEllipsisH, faTrash, faPen, faPlus } from '@fortawesome/free-solid-svg-icons'
 
+import ElipsisSpinner from "@src/components/spinners/ElipsisSpinner"
 import UpdateNotepad from '@components/modals/UpdateNotepad'
 import DeleteNotepad from '@components/modals/DeleteNotepad'
 import { useModal } from '@providers/Modal'
@@ -15,10 +16,12 @@ export default function Notepad ({
   data,
   className='',
   id='',
+  loading=false,
 }: {
   data: Notepad,
   className?: string,
   id?: string,
+  loading?: boolean,
 }) {
   const { showModal } = useModal()
 
@@ -78,6 +81,15 @@ export default function Notepad ({
               data={item} 
             />
           ))
+        }
+        {
+          loading ? 
+          (
+            <div className={styles['loader-row']}>
+              <ElipsisSpinner />
+            </div>
+          ) : 
+          null
         }
       </div>
     </div>

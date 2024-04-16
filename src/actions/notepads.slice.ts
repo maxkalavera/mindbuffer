@@ -10,6 +10,7 @@ export interface NotepadsSliceState {
   hasNextPage: boolean,
   adjustScrollHash: number,
   scrollBeginingHash: number,
+  loading: boolean,
   paginationMap: {[key: NotepadID] : {
     page: number,
     hasNext: boolean,
@@ -311,6 +312,7 @@ const notepadsSlice = createSlice({
     hasNextPage: true,
     adjustScrollHash: 0,
     scrollBeginingHash: 0,
+    loading: false,
     paginationMap: {},
   } as NotepadsSliceState,
   reducers: {
@@ -324,6 +326,9 @@ const notepadsSlice = createSlice({
     destroyPages,
   },
   extraReducers: (builder) => {
+    builder.addCase(fetchNotepadsThunk.pending, (state, action) => {
+      state.loading = true
+    })
     builder.addCase(fetchNotepadsThunk.fulfilled, (state, action) => {
       addBotom(
         state, 
@@ -335,6 +340,7 @@ const notepadsSlice = createSlice({
           }
         }
       )
+      state.loading = false
       state.page = action.payload.page
       if (action.payload.values.length === 0) {
         state.hasNextPage = false

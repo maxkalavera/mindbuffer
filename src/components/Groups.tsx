@@ -31,7 +31,15 @@ export default function Groups({
       hasNextPage: true,
       adjustScrollHash: 0,
       scrollBeginingHash: 0,
-      paginationMap: {},
+      loading: false,
+      paginationMap: {} as {
+        [key: number]: {
+            page: number,
+            hasNext: boolean;
+            isLoading: boolean;
+            hash: number;
+        }
+      }
     }
   })
   const { showModal } = useModal()
@@ -61,6 +69,7 @@ export default function Groups({
         adjustScrollHash: state.notes.adjustScrollHash,
         scrollBeginingHash: state.notes.scrollBeginingHash,
         paginationMap: state.notepads.paginationMap,
+        loading: state.notepads.loading,
       }),
       (state) => setContext((prev) => ({
         ...prev,
@@ -121,6 +130,7 @@ export default function Groups({
         className={`${context.commons.isSidebarOpen ? null : styles.hide } ${styles.content}`}
         hasMore={false}
         next={onScrollNext}
+        loading={context.notepads.loading}
         scrollBeginingHash={`${context.notepads.scrollBeginingHash}`}
         adjustScrollHash={`${context.notepads.adjustScrollHash}`}
         scrolledOver={paginateOverScrolledOver}
@@ -133,7 +143,8 @@ export default function Groups({
             <Notepad 
               id={`${item.id}`}
               key={key}
-              data={item} 
+              data={item}
+              loading={context.notepads.paginationMap[item.id].isLoading}
             />
           ))
         }

@@ -21,6 +21,11 @@
   --primary: #FBB800;
   --primary-5: rgba(251, 184, 0, 0.05);
   --primary-10: rgba(251, 184, 0, 0.1);
+  --primary-20: rgba(251, 184, 0, 0.20);
+  --primary-30: rgba(251, 184, 0, 0.30);
+  --primary-40: rgba(251, 184, 0, 0.40);
+  --primary-50: rgba(251, 184, 0, 0.50);
+  --primary-60: rgba(251, 184, 0, 0.60);
   --primary-70: rgba(251, 184, 0, 0.70);
   --primary-contrast: var(--white);
 
@@ -54,6 +59,7 @@
   --content-height: calc(var(--content-container-min-height) - calc(2 * var(--content-container-padding)));
   --sidebar-min-width: var(--gap-md); /* Should be rem units */
   --sidebar-max-width: var(--frame-md); /* Should be rem units */
+  --line-decorations-thickness: 4.0px;
 
   --primary-font: 'Work Sans', sans-serif;
   --secondary-font: 'Roboto', serif;

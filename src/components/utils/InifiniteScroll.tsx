@@ -1,5 +1,13 @@
-import equal from 'fast-deep-equal'
-import React, { ReactElement, useState, useRef, useEffect, ReactNode } from "react"
+import React, { 
+  ReactElement, 
+  useState, 
+  useRef, 
+  useEffect, 
+  ReactNode 
+} from "react"
+
+import BubbleSpinner from "@src/components/spinners/BubbleSpinner"
+import styles from '@styles/infinite-scroll.module.css'
 
 type ScrolledOverHash = string | number
 
@@ -7,6 +15,7 @@ interface InifiniteScrollProps {
   className?: string,
   items: ReactNode[],
   hasMore?: boolean,
+  loading?: boolean,
   inverse?: boolean,
   scrollThreshold?: number,
   adjustScrollHash?: string,
@@ -22,6 +31,7 @@ export default function InifiniteScroll ({
   className='',
   items=[],
   hasMore=false,
+  loading=false,
   inverse=false,
   scrollThreshold=10,
   adjustScrollHash=undefined,
@@ -173,7 +183,26 @@ export default function InifiniteScroll ({
       className={`${className}`}
       ref={containerRef}
     >
+      {
+        loading && inverse ? 
+        (
+          <div className={styles['loader-row']}>
+            <BubbleSpinner inverse={true} />
+          </div>
+        ) : 
+        null
+      }
       { items }
+      {
+        loading && !inverse ? 
+          (
+            <div className={styles['loader-row']}>
+              <BubbleSpinner />
+            </div>
+          ) : 
+          null
+      }
+
     </div>
   )
 }

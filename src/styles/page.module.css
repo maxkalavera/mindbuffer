@@ -14,12 +14,12 @@
 
 .vertical-line {
   height: 100%;
-  border-left: 3px solid var(--primary-10);
+  border-left: var(--line-decorations-thickness) solid var(--primary-10);
   max-height: 100%;
 }
 
 .container:hover .vertical-line {
-  border-left: 3px solid var(--primary-70)
+  border-left: var(--line-decorations-thickness) solid var(--primary-70)
 }
 
 .label {

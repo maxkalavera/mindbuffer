@@ -9,6 +9,7 @@ export interface NotesSliceState {
   hasNextPage: boolean,
   adjustScrollHash: number,
   scrollBeginingHash: number,
+  loading: boolean,
 }
 
 export const fetchNotesThunk = createAsyncThunk(
@@ -155,6 +156,7 @@ const notesSlice = createSlice({
     hasNextPage: true,
     adjustScrollHash: 0,
     scrollBeginingHash: 0,
+    loading: false,
   } as NotesSliceState,
   reducers: {
     set,
@@ -164,6 +166,9 @@ const notesSlice = createSlice({
     destroy,
   },
   extraReducers: (builder) => {
+    builder.addCase(fetchNotesThunk.pending, (state, action) => {
+      state.loading = true
+    })
     builder.addCase(fetchNotesThunk.fulfilled, (state, action) => {
       addTop(
         state, 
@@ -175,6 +180,7 @@ const notesSlice = createSlice({
           }
         }
       )
+      state.loading = false
       state.page = action.payload.page
       if (action.payload.values.length === 0) {
         state.hasNextPage = false

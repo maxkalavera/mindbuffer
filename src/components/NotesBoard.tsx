@@ -23,6 +23,7 @@ function NotesBoard({
       hasNextPage: true,
       adjustScrollHash: 0,
       scrollBeginingHash: 0,
+      loading: false,
     }
   })
 
@@ -36,6 +37,7 @@ function NotesBoard({
           hasNextPage: state.notes.hasNextPage,
           adjustScrollHash: state.notes.adjustScrollHash,
           scrollBeginingHash: state.notes.scrollBeginingHash,
+          loading: state.notes.loading
         }
       }),
       (state) => {
@@ -49,6 +51,7 @@ function NotesBoard({
             hasNextPage: state.notes.hasNextPage,
             adjustScrollHash: state.notes.adjustScrollHash,
             scrollBeginingHash: state.notes.scrollBeginingHash,
+            loading: state.notes.loading
           }
         })
       } 
@@ -67,6 +70,7 @@ function NotesBoard({
       className={`${styles.container} ${className}`}
       hasMore={context.notes.hasNextPage}
       inverse={true}
+      loading={context.notes.loading}
       next={onScrollNext}
       scrollBeginingHash={`${context.notes.scrollBeginingHash}`}
       adjustScrollHash={`${context.notes.adjustScrollHash}`}
