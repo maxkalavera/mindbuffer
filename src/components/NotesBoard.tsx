@@ -16,6 +16,7 @@ function NotesBoard({
   const [context, setContext] = useState({ 
     commons: {
       search: '',
+      selectedPageID: undefined,
     },
     notes: {
       values: [],
@@ -30,7 +31,10 @@ function NotesBoard({
   useEffect(() => {
     store.monitor(
       (state) => ({
-        commons: { search: state.commons.search },
+        commons: { 
+          search: state.commons.search,
+          selectedPageID: state.commons.selectedPageID,
+        },
         notes: {
           values: state.notes.values,
           page: state.notes.page,
@@ -43,7 +47,8 @@ function NotesBoard({
       (state) => {
         setContext({
           commons: { 
-            search: state.commons.search 
+            search: state.commons.search,
+            selectedPageID: state.commons.selectedPageID
           },
           notes: {
             values: state.notes.values,
@@ -62,6 +67,7 @@ function NotesBoard({
     store.dispatch(fetchNotesThunk({
       page: context.notes.page + 1,
       search: context.commons.search,
+      pageID: context.commons.selectedPageID,
     }))   
   }
 

@@ -22,28 +22,53 @@ app.on('ready', () => {
       const options = Object.assign({
         search: '',
         page: 1,
+        pageID: undefined,
         paginationOffset: 20
       }, payload)
       if (options.page < 1) options.page = 1
     
+      const queryParams = {
+        limit: options.paginationOffset,
+        offset: options.paginationOffset * (options.page - 1),
+      } as any
+
+      if (options.search) {
+        queryParams.search = `"${options.search}"`
+      } else if (options.pageID) {
+        queryParams.pageID = options.pageID
+      }
+
       try {
-        const searchKeywords = options.search.toLowerCase().split(/\s+/)
         const notes = await database.sequelize.query(`
           SELECT * FROM "notes"
-          WHERE
-          ${
-            searchKeywords
-              .map((item: string) => `"content" LIKE "%${item}%"`)
-              .join(' OR ')
-          }
-          ORDER BY "createdAt" DESC
+            ${
+              queryParams.search ||
+              queryParams.pageID ?
+                `WHERE` : ''
+            }
+            ${
+              queryParams.search ? 
+                `
+                  id IN (
+                    select noteID 
+                    FROM searches 
+                    WHERE noteContent 
+                    MATCH $$search
+                    ORDER BY 
+                        rank DESC, 
+                        noteID DESC
+                  )              
+                ` : 
+                ''
+            }
+            ${
+              queryParams.pageID ? 
+                `id = $$pageID` : ''
+            }
           LIMIT $$limit OFFSET $$offset;
         `, {
           type: QueryTypes.SELECT,
-          bind: {
-            limit: options.paginationOffset,
-            offset: options.paginationOffset * (options.page - 1),
-          },
+          bind: queryParams,
           raw: true,
         })
         return {
@@ -96,6 +121,7 @@ app.on('ready', () => {
   ipcMain.handle(
     'database.notes:destroy',
     async function destroy (_, payload) {
+      console.log('database.notes:destroy PAYLOAD', payload)
       try {
         const response = await database.models.Note.destroy({ 
           where: { id: payload.value.id } 

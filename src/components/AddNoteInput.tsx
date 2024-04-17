@@ -16,12 +16,29 @@ function AddNoteInput({
   const [state, setState] = useState({
     inputValue: '',
   })
+  const [context, setContext] = useState({
+    selectedPageID: undefined,
+  })
+
+  useEffect(() => {
+    store.monitor(
+      (state) => ({
+        selectedPageID: state.commons.selectedPageID
+      }), 
+      (state) => {
+        setContext({
+          selectedPageID: state.commons.selectedPageID
+        })
+      }
+    )
+  }, [])
+
   const createNote = async () => {
     if (state.inputValue.trim() === '') return
 
     store.dispatch(createNoteThunk({
       content: state.inputValue,
-      pageId: 1,
+      pageId: context.selectedPageID,
     }))
     setState({ inputValue: '' })
   }
@@ -55,7 +72,7 @@ function AddNoteInput({
         onChange={(event) => setState({ inputValue: event.target.value })}
       />
       <AddNoteButtonCarrousel 
-        onSave={() => createNote()}
+        onSave={createNote}
         isSaveActive={state.inputValue.trim() !== ''}
       />
     </div>

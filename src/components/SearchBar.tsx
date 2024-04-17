@@ -1,6 +1,5 @@
 import { faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-svg-icons"
 
-import { searchNotesThunk } from "@actions/notes.slice"
 import commonsSlice from "@actions/commons.slice"
 import store from "@src/store"
 import IconButton from "@components/IconButton"
@@ -50,18 +49,12 @@ function Searchbar({
   const sendSearch = (search: string) => {
     const { setSearch } = commonsSlice.actions
     store.dispatch(setSearch({ value: search }))
-    store.dispatch(searchNotesThunk({
-      search,
-    }))
   }
 
   const clearSearch = () => {
     const { setSearch } = commonsSlice.actions
     store.dispatch(setSearch({ value: '' }))
     setState({search: ''})
-    store.dispatch(searchNotesThunk({
-      search: '',
-    }))
   }
 
   const onInputChange = (event: any) => {

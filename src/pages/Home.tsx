@@ -12,13 +12,41 @@ import SearchBar from '@components/SearchBar'
 import styles from '@styles/home.module.css'
 
 export default function Home() {
+  const [context, setContext] = useState({
+    commons: {
+      search: '',
+      selectedPageID: undefined,
+    }
+  })
 
   useEffect(() => {
-    const promise = store.dispatch(fetchNotesThunk({ page: 1, search: '' }))
+    store.monitor(
+      (state) => ({
+        search: state.commons.search,
+        selectedPageID: state.commons.selectedPageID
+      }), 
+      (state) => {
+        setContext({
+          commons:  {
+            search: state.commons.search,
+            selectedPageID: state.commons.selectedPageID
+          }
+        })
+      }
+    )
+  }, [])
+
+  useEffect(() => {
+    const { search, selectedPageID } = context.commons
+    const promise = store.dispatch(fetchNotesThunk({ 
+      page: 1, 
+      search: search,
+      pageID: selectedPageID,
+    }))
     return () => {
       promise.abort()
     }
-  }, [])
+  }, [context.commons.search, context.commons.selectedPageID])
 
   useEffect(() => {
     const promise = store.dispatch(fetchNotepadsThunk({ page: 1, search: '' }))

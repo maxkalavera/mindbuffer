@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
+import type { PageID } from '@ts/models/Pages.types'
 import type { Note, NotePayload } from "@ts/models/Notes.types"
 
 export interface NotesSliceState {
@@ -14,10 +15,18 @@ export interface NotesSliceState {
 
 export const fetchNotesThunk = createAsyncThunk(
   'notes/fetchNotes',
-  async (payload: { page: number, search: string}, thunkAPI) => {
+  async (
+    payload: { 
+      page: number, 
+      search: string,
+      pageID: PageID,
+    },
+    thunkAPI
+  ) => {
     const response = await window.electronAPI.notes.getAll({
       page: payload.page,
-      search: payload.search
+      search: payload.search,
+      pageID: payload.pageID,
     })
 
     if (thunkAPI.signal.aborted)
@@ -29,27 +38,6 @@ export const fetchNotesThunk = createAsyncThunk(
     return {
       ...response,
       page: payload.page,
-    }
-  },
-)
-
-export const searchNotesThunk = createAsyncThunk(
-  'notes/searchNotes',
-  async (payload: { search: string }, thunkAPI) => {
-    const response = await window.electronAPI.notes.getAll({
-      page: 1,
-      search: payload.search
-    })
-
-    if (thunkAPI.signal.aborted)
-      throw 'ed7f98e2-57ed-43f2-bd95-c577405c27da'
-
-    if (response === undefined)
-      throw 'db30e09f-40d0-48f2-8b6a-6c9605174ff8'
-
-    return {
-      ...response,
-      page: 1,
     }
   },
 )
@@ -170,7 +158,7 @@ const notesSlice = createSlice({
       state.loading = true
     })
     builder.addCase(fetchNotesThunk.fulfilled, (state, action) => {
-      addTop(
+      (action.payload.page === 1 ? set : addTop )(
         state, 
         {
           ...action, 
@@ -185,12 +173,9 @@ const notesSlice = createSlice({
       if (action.payload.values.length === 0) {
         state.hasNextPage = false
       }
-    })
-    builder.addCase(searchNotesThunk.fulfilled, (state, action) => {
-      state.values = action.payload.values.reverse()
-      state.page = 1
-      state.hasNextPage = true
-      state.scrollBeginingHash += 1
+      if (action.payload.page === 1) {
+        state.scrollBeginingHash += 1
+      }
     })
     builder.addCase(createNoteThunk.fulfilled, (state, action) => {
       addBotom(state, {...action, payload: { values: action.payload.values }})

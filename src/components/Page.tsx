@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { faEllipsisH, faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
 
+import commonsSlice from '@src/actions/commons.slice'
+import store from '@src/store'
 import { useModal } from '@providers/Modal'
 import UpdatePage from '@components/modals/UpdatePage'
 import DeletePage from '@components/modals/DeletePage'
@@ -17,12 +19,40 @@ export default function Page ({
   data: Page,
   className?: string,
 }) {
-  const { showModal, closeModal } = useModal()
+  const { showModal } = useModal()
+  const [context, setContext] = useState({
+    selectedPageID: undefined,
+  })
+
+  useEffect(() => {
+    store.monitor(
+      (state) => ({
+        selectedPageID: state.commons.selectedPageID
+      }), 
+      (state) => {
+        setContext({
+          selectedPageID: state.commons.selectedPageID
+        })
+      }
+    )
+  }, [])
+
+  const onPageSelected = () => {
+    const { setSelectedPageID } = commonsSlice.actions
+    store.dispatch(setSelectedPageID({
+      value: context.selectedPageID !== data.id ? 
+        data.id :
+        undefined
+    }))
+  }
 
   return (
     <div className={`${className} ${styles.container}`}>
         <div className={styles['vertical-line']}></div>
-        <p className={`secondary-p ${styles.label}`}>
+        <p 
+          className={`secondary-p ${styles.label}`}
+          onClick={onPageSelected}
+        >
           { data.name }
         </p>
         <DropdownMenu

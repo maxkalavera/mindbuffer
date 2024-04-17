@@ -110,8 +110,7 @@ export default function InifiniteScroll ({
       (inverse && scrollTop <= scrollThreshold) ||
       (!inverse && scrollTop + clientHeight >= scrollHeight - scrollThreshold)  
     ) {
-      containerRef.current.removeEventListener(
-        'scroll', ListenToScrollEnd)
+      containerRef.current.removeEventListener('scroll', ListenToScrollEnd)
       next()
     }
   }
@@ -121,13 +120,16 @@ export default function InifiniteScroll ({
     if (containerRef.current === undefined)
       return
 
-    containerRef.current.addEventListener(
-      'scroll', ListenToScrollEnd, {passive: true})
-    return () => containerRef.current.removeEventListener(
-      'scroll', ListenToScrollEnd)
+    if (hasMore) {
+      containerRef.current.addEventListener('scroll', ListenToScrollEnd, {passive: true})
+    } else {
+      containerRef.current.removeEventListener('scroll', ListenToScrollEnd)
+    }
+    return () => containerRef.current.removeEventListener('scroll', ListenToScrollEnd)
   }, [
     containerRef.current, 
-    itemsHash
+    itemsHash,
+    hasMore
   ])
 
 

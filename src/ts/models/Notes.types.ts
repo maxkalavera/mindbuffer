@@ -19,5 +19,6 @@ export type Note = BaseModel & NoteData
 export interface NoteFiltersPayload {
   page?: number,
   search?: string,
+  pageID?: PageID,
   paginationOffset?: number,
 }

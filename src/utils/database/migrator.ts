@@ -16,6 +16,11 @@ export default function buildMigrator (sequelize: Sequelize) {
         name: '01_groups',
         up: require('@assets/migrations/01_groups').up,
         down: require('@assets/migrations/01_groups').down
+      },
+      {
+        name: '02_searches',
+        up: require('@assets/migrations/02_searches').up,
+        down: require('@assets/migrations/02_searches').down
       }
     ],
     context: sequelize.getQueryInterface(),

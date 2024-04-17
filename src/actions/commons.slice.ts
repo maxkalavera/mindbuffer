@@ -1,11 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
+import type { PageID } from '@ts/models/Pages.types'
+
 interface NotesSliceState {
   search: string,
+  selectedPageID: PageID,
   isSidebarOpen: boolean,
   sidebarToggleHash: number,
-  platform: string,
 }
 
 function setSearch (
@@ -13,6 +15,13 @@ function setSearch (
   action: PayloadAction<{ value: string }>
 ) {
   state.search = action.payload.value
+}
+
+function setSelectedPageID(
+  state: NotesSliceState, 
+  action: PayloadAction<{ value: PageID }>
+) {
+  state.selectedPageID = action.payload.value
 }
 
 function setIsSidebarOpen (
@@ -34,10 +43,10 @@ const commonsSlice = createSlice({
     search: '',
     isSidebarOpen: true,
     sidebarToggleHash: 0,
-    platform: '',
   } as NotesSliceState,
   reducers: {
     setSearch,
+    setSelectedPageID,
     setIsSidebarOpen,
     mutateSidebarToggleHash,
   },

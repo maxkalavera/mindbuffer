@@ -98,7 +98,6 @@ export default function Groups({
     }))
   }
 
-  //console.log('NOTEPADS', context.notepads.paginationMap)
   return (
     <div 
       className={`${className} ${styles.container}`} 
@@ -128,7 +127,7 @@ export default function Groups({
 
       <InifiniteScroll
         className={`${context.commons.isSidebarOpen ? null : styles.hide } ${styles.content}`}
-        hasMore={false}
+        hasMore={context.notepads.hasNextPage}
         next={onScrollNext}
         loading={context.notepads.loading}
         scrollBeginingHash={`${context.notepads.scrollBeginingHash}`}
