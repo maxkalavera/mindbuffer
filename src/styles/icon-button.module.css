@@ -6,6 +6,6 @@
   cursor: pointer;
 }
 
-.button:active svg {
-  color: var(--primary-70);
+.button:disabled {
+  color: var(--gray-700);
 }

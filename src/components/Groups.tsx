@@ -30,7 +30,7 @@ export default function Groups({
       page: 1,
       hasNextPage: true,
       adjustScrollHash: 0,
-      scrollBeginingHash: 0,
+      scrollEndHash: 0,
       loading: false,
       paginationMap: {} as {
         [key: number]: {
@@ -67,13 +67,22 @@ export default function Groups({
         page: state.notepads.values,
         hasNextPage: state.notepads.hasNextPage,
         adjustScrollHash: state.notes.adjustScrollHash,
-        scrollBeginingHash: state.notes.scrollBeginingHash,
+        scrollEndHash: state.notepads.scrollEndHash,
         paginationMap: state.notepads.paginationMap,
         loading: state.notepads.loading,
       }),
       (state) => setContext((prev) => ({
         ...prev,
-        notepads: state.notepads
+        notepads: {
+          ...state.notepads,
+          values: state.notepads.values,
+          page: state.notepads.page,
+          hasNextPage: state.notepads.hasNextPage,
+          adjustScrollHash: state.notepads.adjustScrollHash,
+          scrollEndHash: state.notepads.scrollEndHash,
+          loading: state.notepads.loading,
+          paginationMap: state.notepads.paginationMap,
+        }
       }))
     )
   })
@@ -103,7 +112,7 @@ export default function Groups({
       className={`${className} ${styles.container}`} 
     >
       <div
-        className={styles.header}
+        className={`${styles.header}`}
       >
         <IconButton
           className={styles['show-frame-button']}
@@ -126,12 +135,12 @@ export default function Groups({
       </div>
 
       <InifiniteScroll
-        className={`${context.commons.isSidebarOpen ? null : styles.hide } ${styles.content}`}
+        className={`${context.commons.isSidebarOpen ? '' : styles.hide } ${styles.content}`}
         hasMore={context.notepads.hasNextPage}
         next={onScrollNext}
         loading={context.notepads.loading}
-        scrollBeginingHash={`${context.notepads.scrollBeginingHash}`}
         adjustScrollHash={`${context.notepads.adjustScrollHash}`}
+        scrollEndHash={`${context.notepads.scrollEndHash}`}
         scrolledOver={paginateOverScrolledOver}
         scrolledOverToID={(item) => parseInt(item.id)}
         scrolledOverHashMap={

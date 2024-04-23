@@ -20,6 +20,7 @@ interface InifiniteScrollProps {
   scrollThreshold?: number,
   adjustScrollHash?: string,
   scrollBeginingHash?: string,
+  scrollEndHash?: string,
   scrolledOverHashMap?: {[key: string]: string | number},
   getItemIdentifier?: (...args: any[]) => string,
   scrolledOverToID?: (element: HTMLElement) => ScrolledOverHash,
@@ -36,6 +37,7 @@ export default function InifiniteScroll ({
   scrollThreshold=10,
   adjustScrollHash=undefined,
   scrollBeginingHash=undefined,
+  scrollEndHash=undefined,
   scrolledOverHashMap={},
   getItemIdentifier=(item) => item.key === undefined ? item.toString() : item.key,
   scrolledOverToID=(item) => item.id,
@@ -47,6 +49,26 @@ export default function InifiniteScroll ({
   * This infinite scroll can't be used with flex-direction: column-inverse
   */
   const containerRef = useRef<HTMLDivElement>()
+
+  const adjustScroll = () => {
+    // Position the scroll in the starting side
+    if (!containerRef.current)
+      return
+
+    if (inverse) {
+      containerRef.current.scroll({
+        top: containerRef.current.scrollHeight - lastScrollHeightRef.current,
+        // @ts-ignore
+        behavior: 'instant',
+      })
+    } else {
+      containerRef.current.scroll({
+        top: lastScrollHeightRef.current,
+        // @ts-ignore
+        behavior: 'instant',
+      })
+    }
+  }
 
   const scrollBegining = () => {
     // Position the scroll in the starting side
@@ -68,24 +90,24 @@ export default function InifiniteScroll ({
     }
   }
 
-  const adjustScroll = () => {
-      // Position the scroll in the starting side
-      if (!containerRef.current)
-        return
-  
-      if (inverse) {
-        containerRef.current.scroll({
-          top: containerRef.current.scrollHeight - lastScrollHeightRef.current,
-          // @ts-ignore
-          behavior: 'instant',
-        })
-      } else {
-        containerRef.current.scroll({
-          top: lastScrollHeightRef.current,
-          // @ts-ignore
-          behavior: 'instant',
-        })
-      }
+  const scrollEnd = () => {
+    // Position the scroll in the starting side
+    if (!containerRef.current)
+      return
+
+    if (inverse) {
+      containerRef.current.scroll({
+        top: 0,
+        // @ts-ignore
+        behavior: 'instant',
+      })
+    } else {
+      containerRef.current.scroll({ 
+        top: containerRef.current.scrollHeight,
+        // @ts-ignore
+        behavior: 'instant',
+      })
+    }
   }
 
   useEffect(() => {
@@ -99,6 +121,12 @@ export default function InifiniteScroll ({
       scrollBegining()
     }
   }, [scrollBeginingHash])
+
+  useEffect(() => {
+    if (items.length > 0) {
+      scrollEnd()
+    }
+  }, [scrollEndHash])
 
   const lastScrollHeightRef = useRef<number>(0)
   const itemsHash = JSON.stringify(items.map(getItemIdentifier))  
@@ -182,7 +210,7 @@ export default function InifiniteScroll ({
 
   return (
     <div
-      className={`${className}`}
+      className={`${className} ${styles.container}`}
       ref={containerRef}
     >
       {

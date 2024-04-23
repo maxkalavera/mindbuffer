@@ -49,11 +49,14 @@ export default function Home() {
   }, [context.commons.search, context.commons.selectedPageID])
 
   useEffect(() => {
-    const promise = store.dispatch(fetchNotepadsThunk({ page: 1, search: '' }))
+    const promise = store.dispatch(fetchNotepadsThunk({ 
+      page: 1, 
+      search: context.commons.search 
+    }))
     return () => {
       promise.abort()
     }
-  }, [])
+  }, [context.commons.search])
 
   return (
     <div className={styles.container}>

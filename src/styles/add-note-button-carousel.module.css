@@ -21,13 +21,15 @@
   color: var(--text-color);
 }
 
-.button:hover {
+.button:hover:enabled {
   outline: 1px solid var(--text-color);
 }
 
+/*
 .button:active {
   outline: 1px solid var(--primary-70);
 }
+*/
 
 .display-menu-on-hover {
   transition: height 0.75s;
@@ -40,4 +42,8 @@
 .save {
   background-color: var(--primary-70);
   color: var(--gray-900);
+}
+
+.save:hover:enabled {
+  outline: 1px solid var(--primary-70);
 }

@@ -12,6 +12,7 @@ function AddNoteButtonCarousel({
 }) {
   return (
     <div className={`${styles.container} ${!isSaveActive ? styles['display-menu-on-hover'] : ''}`}>
+      {/*
       <IconButton 
         className={styles.button}
         icon={faFile}
@@ -24,6 +25,7 @@ function AddNoteButtonCarousel({
         className={styles.button}
         icon={faMicrophone}
       />
+      */}
       {
         isSaveActive ?
           <IconButton 
@@ -32,6 +34,7 @@ function AddNoteButtonCarousel({
             onClick={onSave}
           /> :
           <IconButton 
+            disabled={true}
             className={styles.button}
             icon={faEllipsisVertical}
           />

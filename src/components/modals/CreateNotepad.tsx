@@ -57,6 +57,7 @@ export default function CreateNotepad ({
           ...prev,
           name: event.target.value
         }))}
+        onEnter={_onSuccess}
       />
       <div className={styles.options}>
         <Button

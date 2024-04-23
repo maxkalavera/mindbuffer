@@ -23,6 +23,10 @@ const store = new Store({
       type: 'number',
       default: 0.0,
     },
+    selectedPageID: {
+      type: 'string',
+      default: ''
+    },
     migrationsGlob: {
       type: 'string',
       default: path.resolve(srcDir, 'assets/migrations/*.{js,cjs,mjs,ts,cts,mts,sql}')
@@ -37,7 +41,7 @@ const store = new Store({
 if (process.env.MINDBUFFER_DEBUG)
   store.set('debug', (process.env.MINDBUFFER_DEBUG).toLowerCase() === 'true')
 
-if ((process.env.MINDBUFFER_RESET_STORE || '').toLowerCase() === 'true')  {
+if ((process.env.MINDBUFFER_RESET_SETTINGS_STORE || '').toLowerCase() === 'true')  {
   store.clear()
   console.log('Resetting store...')
 }

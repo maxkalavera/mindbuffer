@@ -10,6 +10,7 @@ export interface NotepadsSliceState {
   hasNextPage: boolean,
   adjustScrollHash: number,
   scrollBeginingHash: number,
+  scrollEndHash: number,
   loading: boolean,
   paginationMap: {[key: NotepadID] : {
     page: number,
@@ -24,7 +25,10 @@ export const fetchNotepadsThunk = createAsyncThunk(
   async (payload: { page: number, search: string}, thunkAPI) => {
     const response = await window.electronAPI.notepads.getAll({
       page: payload.page,
-      search: payload.search
+      search: payload.search,
+      paginationOffset: window.globals.paginationOffset,
+      associatedPaginationPage: 1,
+      associatedPaginationOffset: window.globals.associatedPagesPaginationOffset,
     })
 
     if (thunkAPI.signal.aborted)
@@ -37,24 +41,6 @@ export const fetchNotepadsThunk = createAsyncThunk(
       ...response,
       page: payload.page,
     }
-  },
-)
-
-export const searchNotepadsThunk = createAsyncThunk(
-  'notepads/searchNotepads',
-  async (payload: { search: string }, thunkAPI) => {
-    const response = await window.electronAPI.notepads.getAll({
-      page: 1,
-      search: payload.search
-    })
-
-    if (thunkAPI.signal.aborted)
-      throw '633399db-51e1-48df-9c85-b34bc8f84b5c'
-
-    if (response === undefined)
-      throw '7e1d69f0-fb9b-4132-93ad-af312bdae8b8'
-
-    return response
   },
 )
 
@@ -156,6 +142,10 @@ export const destroyPageThunk = createAsyncThunk(
   },
 )
 
+/****************************************************************************** 
+* Pages thunks 
+******************************************************************************/
+
 export const fetchPagesThunk = createAsyncThunk(
   'notepads/fetchPages',
   async (
@@ -166,13 +156,20 @@ export const fetchPagesThunk = createAsyncThunk(
     thunkAPI
   ) => {
     const state = (thunkAPI.getState() as any).notepads as NotepadsSliceState
-    const response = await window.electronAPI.pages.getAll({
-      notepads: payload.notepads.map((notepadID) => ({
+
+    const notepads = payload.notepads
+      .filter((notepadID) => 
+        state.paginationMap[notepadID].hasNext
+      ).map((notepadID) => ({
         id: notepadID,
         page: state.paginationMap[notepadID] ?
           state.paginationMap[notepadID].page :
           2
-      })),
+      }))
+    if (!notepads) 
+      return { notepads: { values: [] } }
+    const response = await window.electronAPI.pages.getAll({
+      notepads: notepads,
       search: '',
     })
 
@@ -216,7 +213,7 @@ function addTop (
   action.payload.values.forEach(notepad => {
     state.paginationMap[notepad.id] = {
       page: 1,
-      hasNext: false,
+      hasNext: notepad.pages.length === window.globals.associatedPagesPaginationOffset,
       isLoading: false,
       hash: 0,
     }
@@ -229,7 +226,6 @@ function addBotom (
 ) {
   state.values = 
     [...state.values, ...action.payload.values]
-  state.scrollBeginingHash += 1
   // For pages pagination
   action.payload.values.forEach(notepad => {
     state.paginationMap[notepad.id] = {
@@ -311,7 +307,7 @@ const notepadsSlice = createSlice({
     page: 1,
     hasNextPage: true,
     adjustScrollHash: 0,
-    scrollBeginingHash: 0,
+    scrollEndHash: 0,
     loading: false,
     paginationMap: {},
   } as NotepadsSliceState,
@@ -330,7 +326,7 @@ const notepadsSlice = createSlice({
       state.loading = true
     })
     builder.addCase(fetchNotepadsThunk.fulfilled, (state, action) => {
-      addBotom(
+      (action.payload.page === 1 ? set : addBotom )(
         state, 
         {
           ...action, 
@@ -342,18 +338,27 @@ const notepadsSlice = createSlice({
       )
       state.loading = false
       state.page = action.payload.page
-      if (action.payload.values.length === 0) {
+      
+      // Notepads pagination
+      if (action.payload.values.length < window.globals.paginationOffset) {
         state.hasNextPage = false
       }
-    })
-    builder.addCase(searchNotepadsThunk.fulfilled, (state, action) => {
-      state.values = action.payload.values
-      state.page = 1
-      state.hasNextPage = true
-      state.scrollBeginingHash += 1
+      if (action.payload.page === 1) {
+        state.adjustScrollHash += 1
+      }
+      // Pages pagination
+      action.payload.values.forEach((notepad) => {
+        if (notepad.pages.length < window.globals.paginationOffset) {
+          state.paginationMap[notepad.id].hasNext = false
+        }
+      })
     })
     builder.addCase(createNotepadThunk.fulfilled, (state, action) => {
-      addTop(state, {...action, payload: { values: action.payload.values }})
+      addBotom(state, { ...action, payload: { values: action.payload.values }})
+      action.payload.values.forEach((notepad) => {
+        state.paginationMap[notepad.id].hasNext = false
+      })
+      state.scrollEndHash += 1
     })
     builder.addCase(updateNotepadThunk.fulfilled, (state, action) => {
       update(state, {...action, payload: { values: [action.payload.value] }})
@@ -372,21 +377,22 @@ const notepadsSlice = createSlice({
       destroyPages(state, { ...action, payload:{ values: [action.payload.value] } })
     })
     builder.addCase(fetchPagesThunk.pending, (state, action) => {
-      action.meta.arg.notepads.forEach((notepadID) => {
-        state.paginationMap[notepadID].page += 1
-        state.paginationMap[notepadID].isLoading = true
-      })
+      action.meta.arg.notepads
+        .filter((notepadID) => 
+          state.paginationMap[notepadID].hasNext
+        ).forEach((notepadID) => {
+          state.paginationMap[notepadID].page += 1
+          state.paginationMap[notepadID].isLoading = true
+        })
     })
     builder.addCase(fetchPagesThunk.fulfilled, (state, action) => {
       // Add received pages to every fetched notepad
       action.payload.notepads.values.forEach((payloadNotepad) => {
         const notepad = state.values.find((notepad) => notepad.id === payloadNotepad.notepadId)
         notepad.pages = [...notepad.pages, ...payloadNotepad.pages]
-      })
-      // Set loading of pagination for every notepad to false
-      action.meta.arg.notepads.forEach((notepadID) => {
-        state.paginationMap[notepadID].isLoading = false
-        state.paginationMap[notepadID].hash += 1
+
+        state.paginationMap[payloadNotepad.notepadId].isLoading = false
+        state.paginationMap[payloadNotepad.notepadId].hash += 1
       })
     })
   }

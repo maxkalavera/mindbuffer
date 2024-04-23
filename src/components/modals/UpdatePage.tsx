@@ -60,6 +60,7 @@ export default function UpdatePage ({
         onChange={(event) => setState({
           name: event.target.value
         })}
+        onEnter={_onSuccess}
       />
       <div className={styles.options}>
         <Button

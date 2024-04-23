@@ -1,6 +1,7 @@
 import { app, ipcMain } from 'electron'
 import { QueryTypes } from 'sequelize'
 
+import { ThrowError } from '@utils/errors'
 import { groupByWidthAssociations } from '@utils/database/groupBy'
 import getSelectFields from '@utils/database/getSelectFields'
 import database from "@utils/database"
@@ -35,39 +36,17 @@ app.on('ready', () => {
       if (options.notepads.length === 0)
         return
 
-      const data = await database.sequelize.query(`
-        ${
-          options.notepads.map((notepad) => 
-            `
-            SELECT *
-            FROM (
-              SELECT
-                ROW_NUMBER () OVER (
-                  ORDER BY "pages"."createdAt"
-                ) as rowNumber,
-                ${getSelectFields(database.models.Page, {
-                  as: ({ tableName, fieldName }) => fieldName === 'notepadId' ?
-                    `${fieldName}` :
-                    `${tableName}.${fieldName}`
-                })}
-              FROM "pages" 
-              WHERE "pages"."notepadId"=${notepad.id}
-            )
-            WHERE
-              rowNumber > ${options.paginationOffset * (notepad.page - 1)} AND
-              rowNumber <= ${options.paginationOffset * (notepad.page)}
-            `
-          ).join(' UNION ')
-        }
-      `, {
-        type: QueryTypes.SELECT,
-        replacements: [],
-        raw: true,
-        nest: true,
-      })
+      try {
+
+      } catch (error) {
+        ThrowError({ 
+          content: 'Error retrieving data from database',
+          error: error,
+        })
+      }
 
       return {
-        values: groupByWidthAssociations(data, 'notepadId', ['pages'])
+        values: []
       }
     } as ModelQueryHandler<PageFiltersPayload, Page>
   )
@@ -86,7 +65,10 @@ app.on('ready', () => {
           }))
         }
       } catch (error) {
-        console.error(error)
+        ThrowError({ 
+          content: 'Error retrieving data from database',
+          error: error,
+        })
       }
     } as ModelCreateHandler<PagePayload, Page>
   )
@@ -105,7 +87,10 @@ app.on('ready', () => {
           return { value: payload.value }
         }
       } catch (error) {
-        console.error(error)
+        ThrowError({ 
+          content: 'Error retrieving data from database',
+          error: error,
+        })
       }
     } as ModelUpdateHandler<Page>
   )
@@ -123,7 +108,10 @@ app.on('ready', () => {
           return { value: payload.value }
         }
       } catch (error) {
-        console.error(error)
+        ThrowError({ 
+          content: 'Error retrieving data from database',
+          error: error,
+        })
       }
     } as ModelDestroyHandler<Page>
   )

@@ -14,14 +14,20 @@ import type { PagePayload, Page, PageFiltersPayload, PageID } from '@ts/models/P
 import type { NotepadPayload, Notepad, NotepadFiltersPayload, NotepadID } from '@ts/models/Notepads.types'
 
 export const electronAPI = {
-  commons: {
-    getPlatform: (() => ipcRenderer.invoke('commons:getPlatform')) as any
-  },
-  store: {
+  commons: {},
+  settings: {
     sidebarAperture: {
-      get: () => ipcRenderer.invoke('store.sidebarAperture:get'),
-      set: (payload: { sidebarAperture: number }) => ipcRenderer.invoke('store.sidebarAperture:set', payload)
-    }
+      get: () => 
+        ipcRenderer.invoke('settings.sidebarAperture:get'),
+      set: (payload: { sidebarAperture: number }) => 
+        ipcRenderer.invoke('settings.sidebarAperture:set', payload)
+    },
+    selectedPageID: {
+      get: () => 
+        ipcRenderer.invoke('settings.selectedPageID:get'),
+      set: (payload: { selectedPageID: PageID }) => 
+        ipcRenderer.invoke('settings.selectedPageID:set', payload)
+    },
   },
   notes: {
     getAll: ((payload) => {

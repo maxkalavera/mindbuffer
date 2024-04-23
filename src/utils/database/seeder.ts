@@ -1,5 +1,6 @@
 import type { QueryInterface } from 'sequelize'
 import type { Sequelize } from 'sequelize'
+import { Where } from 'sequelize/types/utils';
 
 type SeederParams = {
   seeders?: {
@@ -52,18 +53,19 @@ const Seeder = function Seeder (
       console.error('No context provided to run the seeders')
       return
     }
-    const tables = (await context.showAllTables())
-      .filter((item) => item !== 'SequelizeMeta')
-    for(let i = 0; i < tables.length; i++) {
-      const tableName = tables[i]
-      const res = await context.bulkDelete(
-        tableName, 
-        {}, 
-        {
-          // @ts-ignore
-          cascade: true
-        }
-      )
+
+    const models = Object.values(context.sequelize.models)
+      .filter((item) => item.name !== 'SequelizeMeta')
+    const transaction = await context.sequelize.transaction();
+    try {
+      await models.forEach(async (model) => {
+        await model.truncate()
+          .catch((error) => { throw error })
+      })
+      await transaction.commit()
+    } catch (error) {
+      console.error(error)
+      await transaction.rollback()
     }
   }
 } as any as (new (params: SeederParams) => SeederType)

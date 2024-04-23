@@ -61,6 +61,7 @@ export default function CreatePage ({
           ...prev,
           name: event.target.value,
         }))}
+        onEnter={_onSuccess}
       />
       <div className={styles.options}>
         <Button

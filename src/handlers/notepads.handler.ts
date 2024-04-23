@@ -1,6 +1,7 @@
 import { app, ipcMain } from 'electron'
 import { QueryTypes } from 'sequelize'
 
+import { ThrowError } from '@utils/errors'
 import getSelectFields from '@utils/database/getSelectFields'
 import { groupByWidthAssociations } from '@utils/database/groupBy'
 import database from "@utils/database"
@@ -25,15 +26,12 @@ app.on('ready', () => {
         search: '',
         page: 1,
         paginationOffset: 20,
-        associatedPage: 1,
+        associatedPaginationPage: 1,
         associatedPaginationOffset: 50,
       }, payload)
       if (options.page < 1) options.page = 1
     
       try {
-        const searchKeywords = options.search === '' ?
-          [] : 
-          options.search.toLowerCase().split(/\s+/)
         const data = await database.sequelize.query(`
         SELECT * 
         FROM (
@@ -60,6 +58,27 @@ app.on('ready', () => {
                 "notepads"."id" IN (
                     SELECT id FROM "notepads" LIMIT ? OFFSET ?
                 )
+                ${
+                  options.search ?
+                    `
+                    AND
+                    "pages"."id" IN (
+                        SELECT pageId FROM "notes"
+                        WHERE
+                            id IN (
+                                select noteID 
+                                FROM searches 
+                                WHERE noteContent 
+                                MATCH "${options.search}"
+                                ORDER BY 
+                                    rank DESC, 
+                                    noteID DESC
+                            )  
+                    )
+                    ` :
+                    ''
+
+                }
         )
         WHERE
             notepadsRowNumber > ? AND
@@ -69,8 +88,8 @@ app.on('ready', () => {
           replacements: [
             options.paginationOffset,
             options.paginationOffset * (options.page - 1),
-            options.associatedPaginationOffset * (options.associatedPage - 1),
-            options.associatedPaginationOffset * (options.associatedPage),
+            options.associatedPaginationOffset * (options.associatedPaginationPage - 1),
+            options.associatedPaginationOffset * (options.associatedPaginationPage),
           ],
           raw: true,
           nest: true,
@@ -79,8 +98,12 @@ app.on('ready', () => {
           values: groupByWidthAssociations(data, 'id', ['pages'])
         }
       } catch (error) {
-        console.error(error)
-      } 
+        ThrowError({ 
+          content: 'Error retrieving data from database',
+          error: error,
+        })
+      }
+     return undefined
     } as ModelQueryHandler<NotepadFiltersPayload, Notepad>
   )
 })
@@ -98,7 +121,10 @@ app.on('ready', () => {
           }))
         }
       } catch (error) {
-        console.error(error)
+        ThrowError({ 
+          content: 'Error retrieving data from database',
+          error: error,
+        })
       }
     } as ModelCreateHandler<NotepadPayload, Notepad>
   )
@@ -118,7 +144,10 @@ app.on('ready', () => {
           return { value: payload.value }
         }
       } catch (error) {
-        console.error(error)
+        ThrowError({ 
+          content: 'Error retrieving data from database',
+          error: error,
+        })
       }
     } as ModelUpdateHandler<Notepad>
   )
@@ -136,7 +165,10 @@ app.on('ready', () => {
           return { value: payload.value }
         }
       } catch (error) {
-        console.error(error)
+        ThrowError({ 
+          content: 'Error retrieving data from database',
+          error: error,
+        })
       }
     } as ModelDestroyHandler<Notepad>
   )

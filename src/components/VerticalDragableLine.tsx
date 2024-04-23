@@ -28,24 +28,17 @@ export default function VerticalDragableLine ({
     )
   }, [])
 
-  /*
-  useEffect(() => {
-    console.log('context.sidebarAperture', context.sidebarAperture)
-    if (context.sidebarAperture === undefined)
-      return
-
-    setState({ aperture: context.sidebarAperture })
-  }, [context.sidebarAperture])
-  */
-
+  const apertureBufferRef = useRef<number>(1.0)
   useEffect(() => {
     if (context.sidebarToggleHash === undefined || state.aperture === undefined)
       return
 
     setState((prev) => ({
       ...prev,
-      aperture: prev.aperture < APERTURE_BIAS ? 1.0 : 0.0
+      aperture: prev.aperture < APERTURE_BIAS ? apertureBufferRef.current : 0.0
     }))
+    if (state.aperture > APERTURE_BIAS)
+      apertureBufferRef.current = state.aperture
   }, [context.sidebarToggleHash])
 
   const isSidebarOpenRef = useRef<boolean>(undefined)
@@ -147,7 +140,7 @@ export default function VerticalDragableLine ({
   useEffect(() => {
     const controller = new AbortController();
     new Promise<number>(async (resolve, reject) => {
-      const result = await window.electronAPI.store.sidebarAperture.get()
+      const result = await window.electronAPI.settings.sidebarAperture.get()
       if (!controller.signal.aborted) {
         resolve(result)
       }
@@ -155,7 +148,6 @@ export default function VerticalDragableLine ({
     }).then((aperture) => {
       setState({ aperture })
     }).catch((reason) => {
-      console.error(reason)
       setState({ aperture: 1.0 })
     })
   }, [])
@@ -165,7 +157,7 @@ export default function VerticalDragableLine ({
       return
 
     (async () => {
-      await window.electronAPI.store.sidebarAperture
+      await window.electronAPI.settings.sidebarAperture
       .set({ sidebarAperture: state.aperture })
     })()
   }, [state.aperture])

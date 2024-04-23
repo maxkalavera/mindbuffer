@@ -73,7 +73,7 @@ function NotesBoard({
 
   return (
     <InifiniteScroll
-      className={`${styles.container} ${className}`}
+      className={`${className} ${styles.container}`}
       hasMore={context.notes.hasNextPage}
       inverse={true}
       loading={context.notes.loading}

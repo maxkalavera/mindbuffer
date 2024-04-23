@@ -16,6 +16,17 @@ export const modelDefiner =  (sequelize: Sequelize) => {
 
 export const associationsDefiner = (sequelize: Sequelize) => {
   sequelize.models.Page.hasMany(
-    sequelize.models.Note, { foreignKey: 'pageId', as: 'notes' })
-  sequelize.models.Page.belongsTo(sequelize.models.Notepad, { as: 'notepad' })
+    sequelize.models.Note, 
+    { 
+      foreignKey: {
+        name: 'pageId',
+        allowNull: true,
+      }, 
+      as: 'notes' 
+    }
+  )
+  sequelize.models.Page.belongsTo(
+    sequelize.models.Notepad, 
+    { as: 'notepad' }
+  )
 }

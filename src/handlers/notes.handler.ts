@@ -1,6 +1,7 @@
 import { app, ipcMain } from 'electron'
 import { QueryTypes } from 'sequelize'
 
+import { ThrowError } from '@utils/errors'
 import database from "@utils/database"
 
 import type { 
@@ -39,7 +40,7 @@ app.on('ready', () => {
       }
 
       try {
-        const notes = await database.sequelize.query(`
+        const data = await database.sequelize.query(`
           SELECT * FROM "notes"
             ${
               queryParams.search ||
@@ -63,8 +64,16 @@ app.on('ready', () => {
             }
             ${
               queryParams.pageID ? 
-                `id = $$pageID` : ''
+                `pageId = $$pageID` : ''
             }
+          ${
+            !queryParams.search ?
+              `ORDER BY
+                updatedAt DESC
+              ` :
+              ''
+          }
+           
           LIMIT $$limit OFFSET $$offset;
         `, {
           type: QueryTypes.SELECT,
@@ -72,10 +81,13 @@ app.on('ready', () => {
           raw: true,
         })
         return {
-          values: notes
+          values: data
         }
       } catch (error) {
-        console.error(error)
+        ThrowError({ 
+          content: 'Error retrieving data from database',
+          error: error,
+        })
       } 
     }  as ModelQueryHandler<NoteFiltersPayload, Note>
   )
@@ -91,7 +103,10 @@ app.on('ready', () => {
           values: response.map((item) => item.dataValues)
         }
       } catch (error) {
-        console.error(error)
+        ThrowError({ 
+          content: 'Error retrieving data from database',
+          error: error,
+        })
       }
     } as ModelCreateHandler<NotePayload, Note>
   )
@@ -111,7 +126,10 @@ app.on('ready', () => {
           return { value: payload.value }
         }
       } catch (error) {
-        console.error(error)
+        ThrowError({ 
+          content: 'Error retrieving data from database',
+          error: error,
+        })
       }
     } as ModelUpdateHandler<Note>
   )
@@ -121,7 +139,6 @@ app.on('ready', () => {
   ipcMain.handle(
     'database.notes:destroy',
     async function destroy (_, payload) {
-      console.log('database.notes:destroy PAYLOAD', payload)
       try {
         const response = await database.models.Note.destroy({ 
           where: { id: payload.value.id } 
@@ -130,7 +147,10 @@ app.on('ready', () => {
           return { value: payload.value }
         }
       } catch (error) {
-        console.error(error)
+        ThrowError({ 
+          content: 'Error retrieving data from database',
+          error: error,
+        })
       }
     } as ModelDestroyHandler<Note>
   )

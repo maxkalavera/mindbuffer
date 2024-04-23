@@ -75,7 +75,7 @@ export async function up({ context: queryInterface }: { context: QueryInterface}
 		{
 			type: DataTypes.INTEGER,
 			defaultValue: 1,
-			allowNull: false,
+			allowNull: true,
 			references: {
 				model: 'pages',
 				key: 'id'

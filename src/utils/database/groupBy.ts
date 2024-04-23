@@ -25,11 +25,14 @@ export function groupByWidthAssociations (
         associationIndex < associations.length; 
         associationIndex++
       ) {
-        item[associations[associationIndex]] = [item[associations[associationIndex]]]
+        const hasAssociatedValues = !Object.values(item[associations[associationIndex]])
+          .every((item) => item === null)
+        item[associations[associationIndex]] = hasAssociatedValues ? 
+          [item[associations[associationIndex]]] :
+          []
       }
       map.set(item[by], item)
     }
   }
-
   return Array.from(map.values())
 }

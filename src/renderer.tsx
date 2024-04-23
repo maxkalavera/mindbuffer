@@ -11,6 +11,11 @@ import '@styles/globals.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 
+window.globals = {
+  paginationOffset: 20,
+  associatedPagesPaginationOffset: 50,
+}
+
 root.render(
   <React.StrictMode>
     <ReduxProvider store={store} >

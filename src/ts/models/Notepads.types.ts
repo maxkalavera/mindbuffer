@@ -18,6 +18,6 @@ export interface NotepadFiltersPayload {
   page?: number,
   search?: string,
   paginationOffset?: number,
-  associatedPage?: number,
+  associatedPaginationPage?: number,
   associatedPaginationOffset?: number,
 }

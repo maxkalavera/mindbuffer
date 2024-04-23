@@ -1,7 +1,9 @@
 import path from "path"
 import { app } from 'electron'
 import { Model, Sequelize } from "sequelize"
+import { MigrationError } from "umzug"
 
+import { ThrowFatalError } from "@src/utils/errors"
 import buildSeeder from "@utils/database/seeder"
 import buildMigrator from '@utils/database/migrator'
 import settings from '@utils/settings'
@@ -39,7 +41,14 @@ export default {
   sequelize: sequelize,
   models: sequelize.models,
   init: async function () {
-    await umzug.up()
+    try {
+      await umzug.up()
+    } catch (error) {
+      ThrowFatalError({
+        content: 'Unable connecting to the database, the app will be closed',
+        error: error,
+      })
+    }
     if (!IS_PRODUCTION && MINDBUFFER_APPLY_TESTING_DATA) {
       await seeder.emptyDatabase()
       await seeder.up()
@@ -48,10 +57,11 @@ export default {
   testConnection: async function () {
     try {
       await this.sequelize.authenticate()
-      console.log('Connection to database has been established successfully.')
       return true
     } catch (error) {
-      console.error('Unable to connect to the database:', error)
+      ThrowFatalError({
+        content: 'Unable connecting to the database, the app will be closed'
+      })
       return false
     }
   }

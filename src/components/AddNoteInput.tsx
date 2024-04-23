@@ -52,8 +52,10 @@ function AddNoteInput({
     if (event.key in keyMap.current)
       keyMap.current[event.key] = true
 
-    if (Object.values(keyMap.current).every((item) => item))
+    if (Object.values(keyMap.current).every((item) => item)) {
       createNote()
+      Object.keys(keyMap.current).forEach((key) => keyMap.current[key] = false)
+    }
   }
   
   const onKeyUp = (event: any) => {

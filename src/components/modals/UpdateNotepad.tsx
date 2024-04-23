@@ -60,6 +60,7 @@ export default function UpdateNotepad ({
         onChange={(event) => setState({
           name: event.target.value
         })}
+        onEnter={_onSuccess}
       />
       <div className={styles.options}>
         <Button

@@ -57,8 +57,8 @@
   --content-container-padding: var(--gap-md);
   --content-container-min-height: calc(100vh - var(--header-height) - var(--footer-height));
   --content-height: calc(var(--content-container-min-height) - calc(2 * var(--content-container-padding)));
-  --sidebar-min-width: var(--gap-md); /* Should be rem units */
-  --sidebar-max-width: var(--frame-md); /* Should be rem units */
+  --sidebar-min-width: 4rem; /* Should be rem units */
+  --sidebar-max-width: var(--frame-lg); /* Should be rem units */
   --line-decorations-thickness: 4.0px;
 
   --primary-font: 'Work Sans', sans-serif;

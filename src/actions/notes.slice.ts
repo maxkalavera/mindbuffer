@@ -173,7 +173,7 @@ const notesSlice = createSlice({
       if (action.payload.values.length === 0) {
         state.hasNextPage = false
       }
-      if (action.payload.page === 1) {
+      if (action.payload.page < window.globals.paginationOffset) {
         state.scrollBeginingHash += 1
       }
     })

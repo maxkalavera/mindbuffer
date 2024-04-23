@@ -46,8 +46,9 @@ export default function Page ({
     }))
   }
 
+  const isSelected = context.selectedPageID === data.id
   return (
-    <div className={`${className} ${styles.container}`}>
+    <div className={`${className} ${styles.container} ${isSelected ? styles.container__selected : null}`}>
         <div className={styles['vertical-line']}></div>
         <p 
           className={`secondary-p ${styles.label}`}

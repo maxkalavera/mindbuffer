@@ -15,5 +15,8 @@ export const modelDefiner =  (sequelize: Sequelize) => {
 }
 
 export const associationsDefiner = (sequelize: Sequelize) => {
-  sequelize.models.Note.belongsTo(sequelize.models.Page, { as: 'page' })
+  sequelize.models.Note.belongsTo(
+    sequelize.models.Page, 
+    { as: 'page' }
+  )
 }
