@@ -27,9 +27,13 @@
   --primary-50: rgba(251, 184, 0, 0.50);
   --primary-60: rgba(251, 184, 0, 0.60);
   --primary-70: rgba(251, 184, 0, 0.70);
+  --primary-80: rgba(251, 184, 0, 0.80);
+  --primary-90: rgba(251, 184, 0, 0.90);
   --primary-contrast: var(--white);
 
-  --frame-background: var(--primary-10);
+  --frame-background: rgba(251, 184, 0, 0.1);
+  --frame-border: rgba(251, 184, 0, 0.25);
+  --frame-border-highlight: rgba(251, 184, 0, 0.7);
   --text-color: var(--gray-300);
   --text-color-highlight: var(--gray-100);
 
@@ -39,7 +43,7 @@
   --row-lg: 8rem;    /* ~128px */
   --row-xl: 12rem;   /* ~192px */
   --row-xxl: 16rem;  /* ~256px */
-  --frame-xs: 12.0rem; /* ~192px */
+  --frame-xs: 8.0rem; /* ~192px */
   --frame-sm: 16.0rem;  /* ~256px */
   --frame-md: 24.0rem;  /* ~384px */
   --frame-lg: 36.0rem;  /* ~576px */

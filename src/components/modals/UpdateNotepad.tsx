@@ -56,7 +56,8 @@ export default function UpdateNotepad ({
       <Input
         className={styles.input}
         label={'Name:'}
-        value={state.name} 
+        value={state.name}
+        maxlength={50}
         onChange={(event) => setState({
           name: event.target.value
         })}

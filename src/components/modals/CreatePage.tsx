@@ -56,7 +56,8 @@ export default function CreatePage ({
       <Input
         className={styles.input}
         label={'Name:'}
-        value={state.name} 
+        value={state.name}
+        maxlength={50}
         onChange={(event) => setState((prev) => ({
           ...prev,
           name: event.target.value,

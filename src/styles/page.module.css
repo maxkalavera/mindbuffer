@@ -19,7 +19,7 @@
 .vertical-line {
   margin-left: calc(var(--gap-sm) + var(--gap-xs));
   height: 100%;
-  border-left: var(--line-decorations-thickness) solid var(--primary-10);
+  border-left: var(--line-decorations-thickness) solid var(--frame-border);
   max-height: 100%;
 }
 

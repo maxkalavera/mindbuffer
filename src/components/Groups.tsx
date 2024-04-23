@@ -2,18 +2,17 @@ import React, { useEffect, useRef, useState } from "react"
 import _ from 'lodash'
 import { faLayerGroup, faPlus, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 
-import store from "@src/store"
-import { fetchPagesThunk } from "@actions/notepads.slice"
-import { fetchNotepadsThunk } from '@actions/notepads.slice'
+import SelectedPage from "@components/SelectedPage"
 import commonsSlice from "@actions/commons.slice"
 import InifiniteScroll from '@components/utils/InifiniteScroll'
 import CreateNotepad from '@components/modals/CreateNotepad'
-import { useModal } from '@providers/Modal'
 import Notepad from '@components/Notepad'
 import IconButton from '@components/IconButton'
+import { fetchPagesThunk } from "@actions/notepads.slice"
+import { fetchNotepadsThunk } from '@actions/notepads.slice'
+import { useModal } from '@providers/Modal'
+import store from "@src/store"
 import styles from "@styles/groups.module.css" 
-
-import { NotepadID } from "@src/ts/models/Notepads.types"
 
 export default function Groups({ 
   className='',
@@ -133,6 +132,10 @@ export default function Groups({
           )}
         />
       </div>
+
+      <SelectedPage 
+        className={`${context.commons.isSidebarOpen ? '' : styles.hide }`}
+      />
 
       <InifiniteScroll
         className={`${context.commons.isSidebarOpen ? '' : styles.hide } ${styles.content}`}
