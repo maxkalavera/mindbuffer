@@ -1,8 +1,8 @@
 import React from "react"
 
-
-import { destroyNoteThunk } from "@src/actions/notes.slice"
 import store from "@src/store"
+import { destroyNoteThunk } from "@src/actions/notes.slice"
+import { useAlert } from "@providers/Alert"
 import { useModal } from '@providers/Modal'
 import Button from "@components/Button"
 import styles from "@styles/delete-note-modal.module.css"
@@ -20,10 +20,13 @@ export default function DeleteNote({
   onCancel?: (...args: any[]) => any
   className?: string
 }) {
+  const { showAlert } = useAlert()
   const { closeModal } = useModal()
 
   const destroyNote = () => {
-    store.dispatch(destroyNoteThunk({ value: value }))
+    store.dispatch(destroyNoteThunk({ value: value })).then(() => {
+      showAlert({ message: 'Note deleted', type: 'success' })
+    })
   }
 
   const _onCancel = () => {

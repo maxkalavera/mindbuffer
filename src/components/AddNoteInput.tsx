@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react"
 
+import { useAlert } from "@providers/Alert"
 import { createNoteThunk } from "@actions/notes.slice"
 import store from "@src/store"
 import AddNoteButtonCarrousel from "@components/AddNoteButtonCarousel"
@@ -13,6 +14,7 @@ function AddNoteInput({
 }: {
   className?: string
 }) {
+  const { showAlert } = useAlert()
   const [state, setState] = useState({
     inputValue: '',
   })
@@ -39,8 +41,11 @@ function AddNoteInput({
     store.dispatch(createNoteThunk({
       content: state.inputValue,
       pageId: context.selectedPageID,
-    }))
+    })).then(() => {
+      showAlert({ message: 'Note created', type: 'success'})
+    })
     setState({ inputValue: '' })
+
   }
 
   const platformKey = (PLATFORM === 'macOS' ? 'Meta' : 'Control')

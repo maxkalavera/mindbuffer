@@ -1,13 +1,12 @@
 import React, { useState } from "react"
 
 import store from "@src/store"
+import { useAlert } from "@providers/Alert"
 import { createNotepadThunk } from "@actions/notepads.slice"
 import { useModal } from '@providers/Modal'
 import Input from '@components/Input'
 import Button from "@components/Button"
 import styles from "@styles/create-notepad-modal.module.css"
-
-import type { NotepadPayload } from "@ts/models/Notepads.types"
 
 export default function CreateNotepad ({
   className='',
@@ -18,6 +17,7 @@ export default function CreateNotepad ({
   onCancel?: (...args: any[]) => any
   className?: string
 }) {
+  const { showAlert } = useAlert()
   const { closeModal } = useModal()
   const [state, setState] = useState({
     name: '',
@@ -32,7 +32,9 @@ export default function CreateNotepad ({
   const createNotepad = () => {
     store.dispatch(createNotepadThunk({
       name: state.name
-    }))
+    })).then(() => {
+      showAlert({ message: 'Notepad created', type: 'success' })
+    })
   }
   const _onCancel = () => {
     onCancel()

@@ -65,6 +65,13 @@
   --sidebar-max-width: var(--frame-lg); /* Should be rem units */
   --line-decorations-thickness: 4.0px;
 
+  /* Alert colors */
+  --alert-primary: #ffd33d;
+  --alert-secondary: #FFFFFF;
+  --alert-success: #28a745;
+  --alert-danger: #d73a49;
+  --alert-warning: #f66a0a;
+
   --primary-font: 'Work Sans', sans-serif;
   --secondary-font: 'Roboto', serif;
   --tertiary-font: 'Glegoo', monospace;

@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 
 import store from "@src/store"
+import { useAlert } from "@providers/Alert"
 import { createpageThunk } from "@src/actions/notepads.slice"
 import { useModal } from '@providers/Modal'
 import Input from '@components/Input'
@@ -20,6 +21,7 @@ export default function CreatePage ({
   onSuccess?: (...args: any[]) => any,
   onCancel?: (...args: any[]) => any,
 }) {
+  const { showAlert } = useAlert()
   const { closeModal } = useModal()
   const [state, setState] = useState({
     name: '',
@@ -35,7 +37,9 @@ export default function CreatePage ({
     store.dispatch(createpageThunk({
       name: state.name,
       notepadId: notepad.id
-    }))
+    })).then(() => {
+      showAlert({ message: 'Page created', type: 'success' })
+    })
   }
 
   const _onCancel = () => {

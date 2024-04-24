@@ -8,11 +8,15 @@ function AlertBox ({
 }: {
   className?: string
 }) {
-  const { message } = useAlert()
+  const { 
+    message,
+    type,
+    isAlertActive,
+  } = useAlert()
 
   return (
     <div className={`${className} ${styles.container}`}>
-      <small className={`tertiary-small ${styles.message}`}>{ message }</small>
+      <small className={`tertiary-small ${styles[type]}`}>{ message }</small>
     </div>
   )
 }

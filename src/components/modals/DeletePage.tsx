@@ -1,6 +1,7 @@
 import React from "react"
 
 import store from "@src/store"
+import { useAlert } from "@providers/Alert"
 import { destroyPageThunk } from "@src/actions/notepads.slice"
 import { useModal } from '@providers/Modal'
 import Button from "@components/Button"
@@ -19,12 +20,15 @@ export default function DeletePage({
   onCancel?: (...args: any[]) => any
   className?: string
 }) {
+  const { showAlert } = useAlert()
   const { closeModal } = useModal()
 
   const deletePage = () => {
     store.dispatch(destroyPageThunk({
       value: value
-    }))
+    })).then(() => {
+      showAlert({ message: 'Page deleted', type: 'success' })
+    })
   }
 
   const _onCancel = () => {

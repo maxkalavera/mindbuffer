@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react"
 
 import store from "@src/store"
+import { useAlert } from "@providers/Alert"
 import { updateNotepadThunk } from "@src/actions/notepads.slice"
 import { useModal } from '@providers/Modal'
 import Input from '@components/Input'
 import Button from "@components/Button"
 import styles from "@styles/update-notepad-modal.module.css"
 
-import type { Notepad, NotepadPayload } from "@ts/models/Notepads.types"
+import type { Notepad } from "@ts/models/Notepads.types"
 
 export default function UpdateNotepad ({
   value,
@@ -20,6 +21,7 @@ export default function UpdateNotepad ({
   onSuccess?: (...args: any[]) => any
   onCancel?: (...args: any[]) => any
 }) {
+  const { showAlert } = useAlert()
   const { closeModal } = useModal()
   const [state, setState] = useState({
     name: '',
@@ -37,7 +39,9 @@ export default function UpdateNotepad ({
         ...value,
         ...state,
       }
-    }))
+    })).then(() => {
+      showAlert({ message: 'Notepad updated', type: 'success' })
+    })
   }
 
   const _onCancel = () => {

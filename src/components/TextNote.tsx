@@ -54,7 +54,7 @@ function TextNote({
               icon: faCopy,
               onClick: () => {
                 navigator.clipboard.writeText(data.content) 
-                showAlert('Text copied to clipboard')
+                showAlert({ message: 'Text copied to clipboard', type: 'success'})
               }
             },
             {

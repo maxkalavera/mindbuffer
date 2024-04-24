@@ -1,10 +1,25 @@
 import React, { useContext, useState, useRef } from 'react'
 
-const INITIAL_STATE = {}
+const INITIAL_STATE: {
+  message: string,
+  type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning',
+  isAlertActive: boolean,
+  showAlert: ({ message, type, }: {
+    message: string;
+    type?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning';
+}) => void,
+  closeAlert: () => void,
+} = {
+  message: '',
+  type: 'primary',
+  isAlertActive: false,
+  showAlert: undefined,
+  closeAlert: undefined,
+}
 
-const context = React.createContext(INITIAL_STATE)
+const context = React.createContext<typeof INITIAL_STATE>(INITIAL_STATE)
 
-function useAlert (): any {
+function useAlert (): typeof INITIAL_STATE {
   return useContext(context)
 }
 
@@ -15,13 +30,29 @@ function AlertProvider ({
   children?: JSX.Element | JSX.Element[]
   alertDuration?: number
 }) {
-  const [message, setMessage] = useState<string>('')
-  const [isAlertActive, setIsAlertActive] = useState<boolean>(false)
+  const [state, setState] = useState<{
+    message: (typeof INITIAL_STATE)['message'],
+    type: (typeof INITIAL_STATE)['type'],
+    isAlertActive: (typeof INITIAL_STATE)['isAlertActive'],
+  }>({
+    message: '',
+    type: 'primary',
+    isAlertActive: false,
+  })
   const timer = useRef<NodeJS.Timeout>(null)
 
-  const showAlert = (message: string) => {
-    setMessage(message)
-    setIsAlertActive(true)
+  const showAlert = ({
+    message,
+    type='primary',
+  }: {
+    message: (typeof state)['message'],
+    type?: (typeof state)['type'],
+  }) => {
+    setState({
+      message,
+      type,
+      isAlertActive: true,
+    })
     clearTimeout(timer.current)
     timer.current = setTimeout(() => {
       closeAlert()
@@ -29,16 +60,18 @@ function AlertProvider ({
   }
 
   const closeAlert = () => {
-    setIsAlertActive(false)
-    setMessage('')
+    setState((prev) => ({
+      ...prev,
+      message: '',
+      isAlertActive: false,
+    }))
     clearTimeout(timer.current)
   }
 
   return (
     <context.Provider
       value={{
-        message,
-        isAlertActive,
+        ...state,
         showAlert,
         closeAlert
       }}

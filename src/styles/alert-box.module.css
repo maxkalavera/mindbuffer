@@ -11,6 +11,22 @@
   /*box-shadow: 0px -1px 0 var(--frame-border);*/
 }
 
-.message {
-  color: var(--primary-70);
+.primary {
+  color: var(--alert-primary);
+}
+
+.secondary {
+  color: var(--alert-secondary);
+}
+
+.success {
+  color: var(--alert-success);
+}
+
+.danger {
+  color: var(--alert-danger);
+}
+
+.warning {
+  color: var(--alert-warning);
 }

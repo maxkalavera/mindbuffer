@@ -1,6 +1,7 @@
 import React from "react"
 
 import store from "@src/store"
+import { useAlert } from "@providers/Alert"
 import { destroyNotepadThunk } from "@src/actions/notepads.slice"
 import { useModal } from '@providers/Modal'
 import Button from "@components/Button"
@@ -18,10 +19,13 @@ export default function DeleteNotepad({
   onCancel?: (...args: any[]) => any
   className?: string
 }) {
+  const { showAlert } = useAlert()
   const { closeModal } = useModal()
 
   const destroyNotepad = () => {
-    store.dispatch(destroyNotepadThunk({ value: value }))
+    store.dispatch(destroyNotepadThunk({ value: value })).then(() => {
+      showAlert({ message: 'Notepad deleted', type: 'success' })
+    })
   }
 
   const _onCancel = () => {
