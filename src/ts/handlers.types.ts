@@ -2,6 +2,14 @@ import { BaseID, BaseModel } from "@ts/models/BaseModel.types"
 
 export interface BasePayloadFilter {}
 
+export type QueryHandler<
+  PayloadFilter extends BasePayloadFilter, 
+  Result
+> = (
+  event: Electron.IpcMainInvokeEvent,
+  payload: PayloadFilter,
+) => Promise<Result>
+
 export type ModelQueryHandler<
   PayloadFilter extends BasePayloadFilter, 
   Model extends BaseModel

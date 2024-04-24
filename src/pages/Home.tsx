@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import store from '@src/store'
+import pagesSlice, { fetchSelectedPageThunk } from '@src/actions/pages.slice'
 import { fetchNotesThunk } from '@actions/notes.slice'
 import { fetchNotepadsThunk } from '@actions/notepads.slice'
 import ResizableSide from '@components/ResizableSide'
@@ -15,6 +16,8 @@ export default function Home() {
   const [context, setContext] = useState({
     commons: {
       search: '',
+    },
+    pages: {
       selectedPageID: undefined,
     }
   })
@@ -23,13 +26,15 @@ export default function Home() {
     store.monitor(
       (state) => ({
         search: state.commons.search,
-        selectedPageID: state.commons.selectedPageID
+        selectedPageID: state.pages.selectedPageID
       }), 
       (state) => {
         setContext({
           commons:  {
             search: state.commons.search,
-            selectedPageID: state.commons.selectedPageID
+          },
+          pages: {
+            selectedPageID: state.pages.selectedPageID
           }
         })
       }
@@ -37,7 +42,8 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    const { search, selectedPageID } = context.commons
+    const { search } = context.commons
+    const { selectedPageID } = context.pages
     const promise = store.dispatch(fetchNotesThunk({ 
       page: 1, 
       search: search,
@@ -46,7 +52,21 @@ export default function Home() {
     return () => {
       promise.abort()
     }
-  }, [context.commons.search, context.commons.selectedPageID])
+  }, [context.commons.search, context.pages.selectedPageID])
+
+  useEffect(() => {
+    if (context.pages.selectedPageID === undefined) {
+      const { setSelectedPage } = pagesSlice.actions
+      store.dispatch(setSelectedPage({ value: undefined }))
+      return
+    }
+    const promise = store.dispatch(fetchSelectedPageThunk({
+      pageID: context.pages.selectedPageID
+    }))
+    return () => {
+      promise.abort()
+    }
+  }, [context.pages.selectedPageID])
 
   useEffect(() => {
     const promise = store.dispatch(fetchNotepadsThunk({ 
@@ -57,6 +77,24 @@ export default function Home() {
       promise.abort()
     }
   }, [context.commons.search])
+
+  useEffect(() => {
+    const promise = store.dispatch(fetchNotepadsThunk({ 
+      page: 1, 
+      search: context.commons.search 
+    }))
+    return () => {
+      promise.abort()
+    }
+  }, [context.commons.search])
+
+  useEffect(() => {
+    (async () => {
+      const { setSelectedPageID } = pagesSlice.actions
+      const selectedPageID = await window.electronAPI.settings.selectedPageID.get()
+      store.dispatch(setSelectedPageID({ value: selectedPageID }))
+    })()
+  }, [])
 
   return (
     <div className={styles.container}>

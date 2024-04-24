@@ -66,6 +66,9 @@ export const electronAPI = {
         pages: Page[]
       }[]
     }>,
+    get: ((payload) => {
+      return ipcRenderer.invoke('database.pages:get', payload)
+    }) as QueryInvoker<{ pageID: PageID}, { value: Page & { notepad: Notepad } }>,
     create: ((payload) => {
       return ipcRenderer.invoke('database.pages:create', payload)
     }) as ModelCreateInvoker<PagePayload, Page>,

@@ -5,7 +5,6 @@ import type { PageID } from '@ts/models/Pages.types'
 
 interface NotesSliceState {
   search: string,
-  selectedPageID: PageID,
   isSidebarOpen: boolean,
   sidebarToggleHash: number,
 }
@@ -15,13 +14,6 @@ function setSearch (
   action: PayloadAction<{ value: string }>
 ) {
   state.search = action.payload.value
-}
-
-function setSelectedPageID(
-  state: NotesSliceState, 
-  action: PayloadAction<{ value: PageID }>
-) {
-  state.selectedPageID = action.payload.value
 }
 
 function setIsSidebarOpen (
@@ -46,7 +38,6 @@ const commonsSlice = createSlice({
   } as NotesSliceState,
   reducers: {
     setSearch,
-    setSelectedPageID,
     setIsSidebarOpen,
     mutateSidebarToggleHash,
   },

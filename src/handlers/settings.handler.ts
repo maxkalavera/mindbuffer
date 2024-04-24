@@ -50,7 +50,10 @@ app.on('ready', () => {
       event: Electron.IpcMainInvokeEvent
     ): Promise<PageID> {
       try {
-        return JSON.parse(settings.get('selectedPageID') as string) as PageID
+        const result = settings.get('selectedPageID')
+        return result ? 
+          JSON.parse(result as string) as PageID :
+          undefined
       } catch (error) {
         ThrowError({ 
           content: 'Error syncing settings',
@@ -69,7 +72,12 @@ app.on('ready', () => {
       payload: { selectedPageID: PageID }
     ): Promise<any> {
       try {
-        return settings.set('selectedPageID', JSON.stringify(payload.selectedPageID))
+        console.log('SET', JSON.stringify(payload.selectedPageID))
+        if (payload.selectedPageID === undefined) {
+          return settings.set('selectedPageID', '')
+        } else {
+          return settings.set('selectedPageID', JSON.stringify(payload.selectedPageID))
+        }
       } catch (error) {
         ThrowError({ 
           content: 'Error syncing settings',

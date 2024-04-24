@@ -134,7 +134,7 @@ export default function Groups({
       </div>
 
       <SelectedPage 
-        className={`${context.commons.isSidebarOpen ? '' : styles.hide }`}
+        className={`${context.commons.isSidebarOpen ? '' : `${styles.transparent}` }`}
       />
 
       <InifiniteScroll

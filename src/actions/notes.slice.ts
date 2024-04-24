@@ -157,6 +157,9 @@ const notesSlice = createSlice({
     builder.addCase(fetchNotesThunk.pending, (state, action) => {
       state.loading = true
     })
+    builder.addCase(fetchNotesThunk.rejected, (state, action) => {
+      state.loading = false
+    })
     builder.addCase(fetchNotesThunk.fulfilled, (state, action) => {
       (action.payload.page === 1 ? set : addTop )(
         state, 

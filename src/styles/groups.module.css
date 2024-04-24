@@ -9,7 +9,6 @@
   align-items: stretch;
   gap: var(--gap-sm);
   overflow: hidden;
-  /*box-shadow: 1px 0px 0 var(--frame-border);*/
 }
 
 .header {
@@ -42,6 +41,10 @@
 .hide,
 .hide.content {
   display: none;
+}
+
+.transparent {
+  opacity: 0.0;
 }
 
 .content {

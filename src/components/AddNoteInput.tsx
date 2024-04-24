@@ -23,11 +23,11 @@ function AddNoteInput({
   useEffect(() => {
     store.monitor(
       (state) => ({
-        selectedPageID: state.commons.selectedPageID
+        selectedPageID: state.pages.selectedPageID
       }), 
       (state) => {
         setContext({
-          selectedPageID: state.commons.selectedPageID
+          selectedPageID: state.pages.selectedPageID
         })
       }
     )

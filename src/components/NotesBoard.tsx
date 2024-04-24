@@ -16,7 +16,6 @@ function NotesBoard({
   const [context, setContext] = useState({ 
     commons: {
       search: '',
-      selectedPageID: undefined,
     },
     notes: {
       values: [],
@@ -25,6 +24,9 @@ function NotesBoard({
       adjustScrollHash: 0,
       scrollBeginingHash: 0,
       loading: false,
+    },
+    pages: {
+      selectedPageID: undefined,
     }
   })
 
@@ -33,7 +35,6 @@ function NotesBoard({
       (state) => ({
         commons: { 
           search: state.commons.search,
-          selectedPageID: state.commons.selectedPageID,
         },
         notes: {
           values: state.notes.values,
@@ -42,13 +43,15 @@ function NotesBoard({
           adjustScrollHash: state.notes.adjustScrollHash,
           scrollBeginingHash: state.notes.scrollBeginingHash,
           loading: state.notes.loading
+        },
+        pages: {
+          selectedPageID: state.pages.selectedPageID,
         }
       }),
       (state) => {
         setContext({
           commons: { 
             search: state.commons.search,
-            selectedPageID: state.commons.selectedPageID
           },
           notes: {
             values: state.notes.values,
@@ -57,6 +60,9 @@ function NotesBoard({
             adjustScrollHash: state.notes.adjustScrollHash,
             scrollBeginingHash: state.notes.scrollBeginingHash,
             loading: state.notes.loading
+          },
+          pages: {
+            selectedPageID: state.pages.selectedPageID
           }
         })
       } 
@@ -67,7 +73,7 @@ function NotesBoard({
     store.dispatch(fetchNotesThunk({
       page: context.notes.page + 1,
       search: context.commons.search,
-      pageID: context.commons.selectedPageID,
+      pageID: context.pages.selectedPageID,
     }))   
   }
 

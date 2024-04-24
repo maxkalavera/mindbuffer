@@ -7,16 +7,19 @@ import getSelectFields from '@utils/database/getSelectFields'
 import database from "@utils/database"
 
 import type { 
+  QueryHandler,
   ModelQueryHandler,
   ModelCreateHandler,
   ModelUpdateHandler,
   ModelDestroyHandler,
-} from '@src/ts/handlers.types'
+} from '@ts/handlers.types'
 import type { 
   PagePayload, 
   Page, 
+  PageID,
   PageFiltersPayload 
 } from '@ts/models/Pages.types'
+import { Notepad } from '@ts/models/Notepads.types'
 
 app.on('ready', () => {
   ipcMain.handle(
@@ -37,18 +40,76 @@ app.on('ready', () => {
         return
 
       try {
+        const data = await database.sequelize.query(`
+          ${
+            options.notepads.map((notepad) => 
+              `
+              SELECT *
+              FROM (
+                SELECT
+                  ROW_NUMBER () OVER (
+                    ORDER BY "pages"."createdAt"
+                  ) as rowNumber,
+                  ${getSelectFields(database.models.Page, {
+                    as: ({ tableName, fieldName }) => fieldName === 'notepadId' ?
+                      `${fieldName}` :
+                      `${tableName}.${fieldName}`
+                  })}
+                FROM "pages" 
+                WHERE "pages"."notepadId"=${notepad.id}
+              )
+              WHERE
+                rowNumber > ${options.paginationOffset * (notepad.page - 1)} AND
+                rowNumber <= ${options.paginationOffset * (notepad.page)}
+              `
+            ).join(' UNION ')
+          }
+        `, {
+          type: QueryTypes.SELECT,
+          replacements: [],
+          raw: true,
+          nest: true,
+        })
 
+        return {
+          values: groupByWidthAssociations(data, 'notepadId', ['pages'])
+        }
       } catch (error) {
         ThrowError({ 
           content: 'Error retrieving data from database',
           error: error,
         })
-      }
-
-      return {
-        values: []
+        return {
+          values: []
+        }
       }
     } as ModelQueryHandler<PageFiltersPayload, Page>
+  )
+})
+
+app.on('ready', () => {
+  ipcMain.handle(
+    'database.pages:get',
+    async function get (_, payload) {
+      const response = await database.models.Page.findOne({
+        where: {
+          id: payload.pageID
+        },
+        include: [
+          { model: database.models.Notepad, as: 'notepad'}
+        ],
+      })
+      return {
+        value: response ? 
+          {
+            ...response.dataValues,
+            notepad: {
+              ...response.dataValues.notepad.dataValues
+            }
+          } as Page & { notepad: Notepad }
+          : undefined
+      }
+    }  as QueryHandler<{ pageID: PageID}, { value: Page & { notepad: Notepad } }>
   )
 })
 

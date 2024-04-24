@@ -325,6 +325,9 @@ const notepadsSlice = createSlice({
     builder.addCase(fetchNotepadsThunk.pending, (state, action) => {
       state.loading = true
     })
+    builder.addCase(fetchNotepadsThunk.rejected, (state, action) => {
+      state.loading = false
+    })
     builder.addCase(fetchNotepadsThunk.fulfilled, (state, action) => {
       (action.payload.page === 1 ? set : addBotom )(
         state, 
@@ -385,9 +388,18 @@ const notepadsSlice = createSlice({
           state.paginationMap[notepadID].isLoading = true
         })
     })
+    builder.addCase(fetchPagesThunk.rejected, (state, action) => {
+      action.meta.arg.notepads
+        .filter((notepadID) => 
+          state.paginationMap[notepadID].hasNext
+        ).forEach((notepadID) => {
+          state.paginationMap[notepadID].page -= 1
+          state.paginationMap[notepadID].isLoading = false
+        })
+    })
     builder.addCase(fetchPagesThunk.fulfilled, (state, action) => {
       // Add received pages to every fetched notepad
-      action.payload.notepads.values.forEach((payloadNotepad) => {
+      action.payload.notepads.values.forEach((payloadNotepad: any) => {
         const notepad = state.values.find((notepad) => notepad.id === payloadNotepad.notepadId)
         notepad.pages = [...notepad.pages, ...payloadNotepad.pages]
 

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { faEllipsisH, faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
 
-import commonsSlice from '@src/actions/commons.slice'
+import { setSelectedPageIDThunk } from '@actions/pages.slice'
+import pagesSlice from '@actions/pages.slice'
 import store from '@src/store'
 import { useModal } from '@providers/Modal'
 import UpdatePage from '@components/modals/UpdatePage'
@@ -27,19 +28,18 @@ export default function Page ({
   useEffect(() => {
     store.monitor(
       (state) => ({
-        selectedPageID: state.commons.selectedPageID
+        selectedPageID: state.pages.selectedPageID
       }), 
       (state) => {
         setContext({
-          selectedPageID: state.commons.selectedPageID
+          selectedPageID: state.pages.selectedPageID
         })
       }
     )
   }, [])
 
   const onPageSelected = () => {
-    const { setSelectedPageID } = commonsSlice.actions
-    store.dispatch(setSelectedPageID({
+    store.dispatch(setSelectedPageIDThunk({
       value: context.selectedPageID !== data.id ? 
         data.id :
         undefined
