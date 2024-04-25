@@ -20,5 +20,8 @@ export const mainConfig: Configuration = {
     plugins: [
       new TsconfigPathsPlugin()
     ]
-  }
+  },
+  externals: {
+    'pg-hstore': {},
+},
 };

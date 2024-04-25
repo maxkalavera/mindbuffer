@@ -1,7 +1,7 @@
 import path from "path"
 import { app } from 'electron'
-import { Model, Sequelize } from "sequelize"
-import { MigrationError } from "umzug"
+import { Sequelize } from "sequelize"
+import sqlite3 from 'sqlite3'
 
 import { ThrowFatalError } from "@src/utils/errors"
 import buildSeeder from "@utils/database/seeder"
@@ -13,6 +13,7 @@ const IS_PRODUCTION = app && app.isPackaged
 
 export const sequelize = new Sequelize({
   dialect: 'sqlite',
+  dialectModule: sqlite3,
   logging: settings.get('debug') as boolean,
   storage: (IS_PRODUCTION ? 
     path.resolve(app.getPath('userData'), settings.get('dbFilename') as string) :
