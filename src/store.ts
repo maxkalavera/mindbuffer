@@ -6,7 +6,6 @@ import notesSlice from '@actions/notes.slice'
 import notepadsSlice from '@actions/notepads.slice'
 import pagesSlice from '@actions/pages.slice'
 
-
 const store = configureStore({
   reducer: {
     notes: notesSlice.reducer,

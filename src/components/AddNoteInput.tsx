@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react"
 
+import settings from '@utils/settings'
 import { useAlert } from "@providers/Alert"
 import { createNoteThunk } from "@actions/notes.slice"
 import store from "@src/store"
@@ -40,7 +41,7 @@ function AddNoteInput({
 
     store.dispatch(createNoteThunk({
       content: state.inputValue,
-      pageId: context.selectedPageID,
+      pageId: context.selectedPageID || null,
     })).then(() => {
       showAlert({ message: 'Note created', type: 'success'})
     })
@@ -71,6 +72,7 @@ function AddNoteInput({
   return (
     <div className={`${className} ${styles.container}`}>
       <textarea
+        id={__ENVIRONMENT__ === 'testing' ? 'id:f5bf4eb14a1a456a9469f4283144a5b3' : ''}
         placeholder="Add some thoughts..."
         className={`${styles.textarea}`}
         value={state.inputValue}

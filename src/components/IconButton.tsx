@@ -5,11 +5,13 @@ import styles from "@styles/icon-button.module.css"
 import type { IconProp } from '@fortawesome/fontawesome-svg-core'
 
 function IconButton({
-  className = "",
+  id="",
+  className="",
   icon=undefined,
   disabled=false,
-  onClick = () => null,
+  onClick =() => null,
 }: {
+  id?: string,
   className?: string,
   icon?:  IconProp,
   disabled?: boolean,
@@ -17,6 +19,7 @@ function IconButton({
 }) {
   return (
     <button
+      id={id}
       className={`${className} ${styles.button}`}
       onClick={onClick}
       disabled={disabled}

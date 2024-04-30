@@ -74,7 +74,6 @@ export async function up({ context: queryInterface }: { context: QueryInterface}
 		'pageId',
 		{
 			type: DataTypes.INTEGER,
-			defaultValue: 1,
 			allowNull: true,
 			references: {
 				model: 'pages',

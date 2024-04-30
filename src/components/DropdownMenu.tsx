@@ -14,7 +14,8 @@ function DropdownMenu ({
   options?: {
     label?: string
     onClick?: () => void
-    icon?: IconProp
+    icon?: IconProp,
+    className?: string,
   }[]
 }) {
   const containerRef = useRef<any>(null)
@@ -54,7 +55,7 @@ function DropdownMenu ({
 
   return (
     <div 
-      className={`${styles.container}`}
+      className={`${styles.container} ${className}`}
       ref={containerRef}
     >
       { children }
@@ -72,7 +73,10 @@ function DropdownMenu ({
                 item.onClick()
                 closeDropdown()
               }}
-              className={styles.option}
+              className={[
+                styles.option,
+                item.className,
+              ].join(' ')}
             >
               { 
                 item.icon ? 

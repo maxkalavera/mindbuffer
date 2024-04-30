@@ -1,5 +1,6 @@
-import { faArrowRight, faMicrophone, faImage, faFile, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
 
+import settings from '@utils/settings'
 import IconButton from "@components/IconButton"
 import styles from "@styles/add-note-button-carousel.module.css"
 
@@ -29,6 +30,7 @@ function AddNoteButtonCarousel({
       {
         isSaveActive ?
           <IconButton 
+            id={__ENVIRONMENT__ === 'testing' ? 'id:6d8920a3354b43feaf3d60dbc743e1de' : ''}
             className={`${styles.button} ${styles.save}`}
             icon={faArrowRight}
             onClick={onSave}

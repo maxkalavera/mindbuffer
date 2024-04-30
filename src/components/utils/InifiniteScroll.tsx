@@ -12,6 +12,7 @@ import styles from '@styles/infinite-scroll.module.css'
 type ScrolledOverHash = string | number
 
 interface InifiniteScrollProps {
+  id?: string,
   className?: string,
   items: ReactNode[],
   hasMore?: boolean,
@@ -29,6 +30,7 @@ interface InifiniteScrollProps {
 }
 
 export default function InifiniteScroll ({
+  id='',
   className='',
   items=[],
   hasMore=false,
@@ -209,6 +211,7 @@ export default function InifiniteScroll ({
 
   return (
     <div
+      id={id}
       className={`${className} ${styles.container}`}
       ref={containerRef}
     >

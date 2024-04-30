@@ -1,5 +1,3 @@
-import path from "path"
-import { app } from 'electron'
 import { Sequelize } from "sequelize"
 import sqlite3 from 'sqlite3'
 
@@ -9,16 +7,12 @@ import buildMigrator from '@utils/database/migrator'
 import settings from '@utils/settings'
 
 const MINDBUFFER_APPLY_TESTING_DATA = (process.env.MINDBUFFER_APPLY_TESTING_DATA || '').toLowerCase() === 'true'
-const IS_PRODUCTION = app && app.isPackaged 
 
 export const sequelize = new Sequelize({
   dialect: 'sqlite',
   dialectModule: sqlite3,
   logging: settings.get('debug') as boolean,
-  storage: (IS_PRODUCTION ? 
-    path.resolve(app.getPath('userData'), settings.get('dbFilename') as string) :
-    path.join(settings.get('rootDir') as string, '.run', settings.get('dbFilename') as string)
-  ),
+  storage: settings.get('dbPath') as string,
 })
 
 const umzug = buildMigrator(sequelize)
@@ -50,7 +44,7 @@ export default {
         error: error,
       })
     }
-    if (!IS_PRODUCTION && MINDBUFFER_APPLY_TESTING_DATA) {
+    if (__ENVIRONMENT__ === 'testing' || MINDBUFFER_APPLY_TESTING_DATA) {
       await seeder.emptyDatabase()
       await seeder.up()
     }

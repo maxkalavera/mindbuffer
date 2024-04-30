@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
+import settings from '@utils/settings'
 import store from '@src/store'
 import { fetchNotesThunk } from '@actions/notes.slice'
 import InifiniteScroll from '@components/utils/InifiniteScroll'
@@ -79,6 +80,7 @@ function NotesBoard({
 
   return (
     <InifiniteScroll
+      id={__ENVIRONMENT__ === 'testing' ? 'id:56612895d6e043de89585c2aafbf776e' : ''}
       className={`${className} ${styles.container}`}
       hasMore={context.notes.hasNextPage}
       inverse={true}
@@ -91,7 +93,9 @@ function NotesBoard({
           <TextNote 
             key={item.id}
             data={item}
-            className={styles.textnote}
+            className={[
+              styles.textnote,
+            ].join(' ')}
           />
         ))
       }

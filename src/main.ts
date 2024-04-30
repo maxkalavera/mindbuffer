@@ -13,7 +13,6 @@ import '@handlers/settings.handler'
 // whether you're running in development or production).
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
-const IS_PRODUCTION = app && app.isPackaged 
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -34,7 +33,7 @@ const createWindow = (): void => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Open the DevTools.
-  if (!IS_PRODUCTION) {
+  if (['development'].some((item) => item === __ENVIRONMENT__)) {
     mainWindow.webContents.openDevTools();
   }
 };
@@ -53,21 +52,21 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('activate', () => {
+app.on('activate', async () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
-    init();
+    await init();
   }
 });
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 async function init() {
-  createWindow()
   if (await database.testConnection()) {
-    database.init()
+    await database.init()
   }
+  createWindow()
 }
 
 function destroy() {
@@ -75,9 +74,9 @@ function destroy() {
 }
 
 app.whenReady().then(() => {
-  if (!IS_PRODUCTION) {
+  if (['development'].some((item) => item === __ENVIRONMENT__)) {
     installExtension(REACT_DEVELOPER_TOOLS)
-    .then((name) => console.log(`Added Extension:  ${name}`))
-    .catch((err) => console.log('An error occurred: ', err));
+      .then((name) => console.log(`Added Extension:  ${name}`))
+      .catch((err) => console.log('An error occurred: ', err));
   }
 });

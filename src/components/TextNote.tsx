@@ -40,7 +40,12 @@ function TextNote({
   }, [contentContainer.current, data.content])
 
   return (
-    <div className={`${className} ${styles.container}`}
+    <div 
+      className={[
+        className,
+        styles.container,
+        __ENVIRONMENT__ === 'testing' ? 'class:88ca791f00cd44539162be4e1c7a30eb' : ''
+      ].join(' ')}
     >
       <div 
         className={`${mkStyles.markdown} ${styles.content}`} 
@@ -48,6 +53,9 @@ function TextNote({
       />
       <div className={styles.options}>
         <DropdownMenu
+          className={
+            __ENVIRONMENT__ === 'testing' ? 'class:0c7cb38404c34f6ba51ebe56b10b142f' : ''
+          }
           options={[
             {
               label: 'Copy',
@@ -60,6 +68,7 @@ function TextNote({
             {
               label: 'Delete',
               icon: faTrash,
+              className: __ENVIRONMENT__ === 'testing' ? 'class:8c80d40c1eee414cbdab38ddca3130e5' : '',
               onClick: () => showModal(
                 <DeleteNote 
                   value={data}
