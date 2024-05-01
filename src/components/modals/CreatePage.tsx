@@ -58,7 +58,10 @@ export default function CreatePage ({
   return (
     <div className={`${className} ${styles.container}`}>
       <Input
-        className={styles.input}
+        className={[
+          styles.input,
+          __ENVIRONMENT__ === 'testing' ? `class:a4629e7124c34a9bbed19980588f183a` : ''
+        ].join(' ')}
         label={'Name:'}
         value={state.name}
         maxlength={50}
@@ -70,10 +73,12 @@ export default function CreatePage ({
       />
       <div className={styles.options}>
         <Button
+          className={__ENVIRONMENT__ === 'testing' ? `class:8574d9c791c54ac387a0eadeb60ad9e9` : ''}
           label={'Cancel'}
           onClick={_onCancel}
         />
         <Button
+          className={__ENVIRONMENT__ === 'testing' ? `class:6012f7869d934c888ac9711da2eb0db7` : ''}
           label={'Send'}
           onClick={_onSuccess}
         />

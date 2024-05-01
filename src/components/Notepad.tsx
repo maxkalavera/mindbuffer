@@ -26,7 +26,8 @@ export default function Notepad ({
   const { showModal } = useModal()
 
   return (
-    <div className={`${className} ${styles.container}`}
+    <div 
+      className={`${className} ${styles.container}`}
       id={id}
     >
       <div className={styles.header}>
@@ -34,10 +35,12 @@ export default function Notepad ({
           { data.name } 
         </h4>
         <DropdownMenu
+          className={__ENVIRONMENT__ === 'testing' ? 'class:1111038c21384acd8519b8b0de8ee56f' : ''}
           options={[
             {
               label: 'New Page',
               icon: faPlus,
+              className: __ENVIRONMENT__ === 'testing' ? 'class:abe3cef1d3f74a02891a715fa2316b07' : '',
               onClick: () => showModal(
                 <CreatePage 
                   notepad={data}
@@ -47,6 +50,7 @@ export default function Notepad ({
             {
               label: 'Edit',
               icon: faPen,
+              className: __ENVIRONMENT__ === 'testing' ? 'class:6fa0c084fc5747cf9c9ae554788c5c14' : '',
               onClick: () => showModal(
                 <UpdateNotepad
                   value={data}
@@ -57,6 +61,7 @@ export default function Notepad ({
             {
               label: 'Delete',
               icon: faTrash,
+              className: __ENVIRONMENT__ === 'testing' ? 'class:dcf43c19345a4a4590b5a5b971e2d439' : '',
               onClick: () => showModal(
                 <DeleteNotepad 
                   value={data}

@@ -124,6 +124,7 @@ export default function Groups({
           Notepads / Pages
         </h4>
         <IconButton
+          id={__ENVIRONMENT__ === 'testing' ? 'id:20bee6661ebb48bcb7109bbebdf6e59c' : ''}
           className={styles['add-button']} 
           icon={faPlus}
           onClick={() => showModal(
@@ -138,7 +139,11 @@ export default function Groups({
       />
 
       <InifiniteScroll
-        className={`${context.commons.isSidebarOpen ? '' : styles.hide } ${styles.content}`}
+        className={[
+          context.commons.isSidebarOpen ? '' : styles.hide,
+          styles.content,
+        ].join(' ')}
+        id={__ENVIRONMENT__ === 'testing' ? 'id:e7d6b885ff794c278ee07af4cfd1427c' : ''}
         hasMore={context.notepads.hasNextPage}
         next={onScrollNext}
         loading={context.notepads.loading}
@@ -146,13 +151,12 @@ export default function Groups({
         scrollEndHash={`${context.notepads.scrollEndHash}`}
         scrolledOver={paginateOverScrolledOver}
         scrolledOverToID={(item) => parseInt(item.id)}
-        scrolledOverHashMap={
-          _.mapValues(context.notepads.paginationMap, (object: any) => object.hash)
-        }
+        scrolledOverHashMap={_.mapValues(context.notepads.paginationMap, (object: any) => object.hash)}
         items={
           context.notepads.values.map((item: any, key: number) => (
             <Notepad 
               id={`${item.id}`}
+              className={__ENVIRONMENT__ === 'testing' ? 'class:f07d35d05aba4e189e8d90bdfa30f2b0' : ''}
               key={key}
               data={item}
               loading={context.notepads.paginationMap[item.id].isLoading}

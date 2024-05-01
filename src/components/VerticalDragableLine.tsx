@@ -20,6 +20,7 @@ export default function VerticalDragableLine ({
   const verticalLineRef = useRef<HTMLDivElement>(null)
   const minWidthRef = useRef<number>(null)
   const maxWidthRef = useRef<number>(null)
+  __ENVIRONMENT__ === 'testing' ? state.aperture = 1.0 : void
 
   useEffect(() => {
     store.monitor(

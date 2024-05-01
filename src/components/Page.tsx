@@ -57,10 +57,12 @@ export default function Page ({
           { data.name }
         </p>
         <DropdownMenu
+          className={__ENVIRONMENT__ === 'testing' ? 'class:b26dec9002c64d349cf9d449394b6c33' : ''}
           options={[
             {
               label: 'Edit',
               icon: faPen,
+              className: __ENVIRONMENT__ === 'testing' ? 'class:85850df7af5542a5951cf31d9b8c4a2d' : '',
               onClick: () => showModal(
                 <UpdatePage
                   value={data}
@@ -71,6 +73,7 @@ export default function Page ({
             {
               label: 'Delete',
               icon: faTrash,
+              className: __ENVIRONMENT__ === 'testing' ? 'class:b97c8ab4fd60487289b6523663e34c92' : '',
               onClick: () => showModal(
                 <DeletePage 
                   value={data}

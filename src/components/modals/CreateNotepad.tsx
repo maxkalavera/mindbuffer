@@ -52,7 +52,10 @@ export default function CreateNotepad ({
   return (
     <div className={`${className} ${styles.container}`}>
       <Input
-        className={styles.input}
+        className={[
+          styles.input,
+          __ENVIRONMENT__ === 'testing' ? 'class:4fa38b49d2d34cef90ad4374cde805ab' : ''
+        ].join(' ')}
         label={'Name:'}
         value={state.name}
         maxlength={50}
@@ -64,10 +67,12 @@ export default function CreateNotepad ({
       />
       <div className={styles.options}>
         <Button
+          className={__ENVIRONMENT__ === 'testing' ? `class:8574d9c791c54ac387a0eadeb60ad9e9` : ''}
           label={'Cancel'}
           onClick={_onCancel}
         />
         <Button
+          className={__ENVIRONMENT__ === 'testing' ? `class:6012f7869d934c888ac9711da2eb0db7` : ''}
           label={'Send'}
           onClick={_onSuccess}
         />

@@ -40,21 +40,21 @@ const countNotesOnBoard = async (
 }
 
 describe('Notes operations', () => {
-  beforeAll(() => {
+  beforeEach(() => {
     driverRef.current = new webdriver.Builder()
-    .usingServer('http://localhost:9515')
-    .withCapabilities({
-      'goog:chromeOptions': {
-        binary: global.__BINARY_PATH__
-      }
-    })
-    .forBrowser('chrome')
-    .build()
+      .usingServer('http://localhost:9515')
+      .withCapabilities({
+        'goog:chromeOptions': {
+          binary: global.__BINARY_PATH__,
+        }
+      })
+      .forBrowser('chrome')
+      .build()
   });
-  afterAll(async () => {
-    //await driverRef.current.quit()
+  afterEach(async () => {
+    await driverRef.current.quit()
   });
-  test('note is added to note\'s board when sent', async () => {
+  test('Note is added to note\'s board when created', async () => {
     const textContent = 'text:ff7e42cb7e49432e8e8024c650eea7c0'
     const driver = driverRef.current
     await createNote(driver, textContent)
@@ -64,7 +64,7 @@ describe('Notes operations', () => {
       expect(notesBoardTextContent.includes(textContent)).toBeTruthy()
     }
   });
-  test('note is deleted when delete\'s operation is confirmed', async () => {
+  test('Note is deleted when delete\'s operation is confirmed', async () => {
     const textContent = 'text:8591f61d054842508a42821a0fb22dc0'
     const driver = driverRef.current
     await createNote(driver, textContent)
@@ -75,7 +75,7 @@ describe('Notes operations', () => {
       expect(notesBoardTextContent.includes(textContent)).not.toBeTruthy()
     }
   });
-  test('notes board should paginate when there is too many items', async () => {
+  test('Notes board should paginate when there is too many items', async () => {
     const notes = [
       'text:e900e1e563094a86b3ae225accf5b73d',
       'text:989c347424b744ba9173cdb5c3991d66',
