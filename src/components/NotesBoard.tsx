@@ -80,7 +80,7 @@ function NotesBoard({
 
   return (
     <InifiniteScroll
-      id={__ENVIRONMENT__ === 'testing' ? 'id:56612895d6e043de89585c2aafbf776e' : ''}
+      id={__ENVIRONMENT__ === 'testing' ? 'id:notes-board:Y8FAln8HKV' : ''}
       className={`${className} ${styles.container}`}
       hasMore={context.notes.hasNextPage}
       inverse={true}

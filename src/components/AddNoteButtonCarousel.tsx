@@ -30,7 +30,7 @@ function AddNoteButtonCarousel({
       {
         isSaveActive ?
           <IconButton 
-            id={__ENVIRONMENT__ === 'testing' ? 'id:6d8920a3354b43feaf3d60dbc743e1de' : ''}
+            id={__ENVIRONMENT__ === 'testing' ? 'id:create-note-button:j2OnOhuazV' : ''}
             className={`${styles.button} ${styles.save}`}
             icon={faArrowRight}
             onClick={onSave}

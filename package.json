@@ -10,8 +10,9 @@
     "make": "MINDBUFFER_ENVIRONMENT=production electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "test": "MINDBUFFER_ENVIRONMENT=testing electron-forge package && concurrently  \"./node_modules/.bin/chromedriver\" \"jest\"",
-    "only-test": "concurrently  \"./node_modules/.bin/chromedriver\" \"jest\""
+    "test": "MINDBUFFER_ENVIRONMENT=testing MINDBUFFER_DEBUG=false electron-forge package && concurrently  \"./node_modules/.bin/chromedriver\" \"jest\"",
+    "test-package": "MINDBUFFER_ENVIRONMENT=testing MINDBUFFER_DEBUG=true electron-forge package",
+    "test-execute": "concurrently  './node_modules/.bin/chromedriver' 'jest $TEST_FILE'"
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",
@@ -36,6 +37,7 @@
     "@types/react": "^18.2.60",
     "@types/react-dom": "^18.2.19",
     "@types/selenium-webdriver": "^4.1.22",
+    "@types/uuid": "^9.0.8",
     "@types/webpack-node-externals": "^3.0.4",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
@@ -63,6 +65,7 @@
     "tsconfig-paths": "^4.2.0",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
     "typescript": "~4.5.4",
+    "uuid": "^9.0.1",
     "webpack-cli": "^5.1.4"
   },
   "keywords": [],

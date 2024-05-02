@@ -44,7 +44,7 @@ function TextNote({
       className={[
         className,
         styles.container,
-        __ENVIRONMENT__ === 'testing' ? 'class:88ca791f00cd44539162be4e1c7a30eb' : ''
+        __ENVIRONMENT__ === 'testing' ? 'class:text-note:7BoiMerq5D' : ''
       ].join(' ')}
     >
       <div 
@@ -54,7 +54,7 @@ function TextNote({
       <div className={styles.options}>
         <DropdownMenu
           className={
-            __ENVIRONMENT__ === 'testing' ? 'class:0c7cb38404c34f6ba51ebe56b10b142f' : ''
+            __ENVIRONMENT__ === 'testing' ? 'class:note-options-button:TMKI1oxDBJ' : ''
           }
           options={[
             {
@@ -68,7 +68,7 @@ function TextNote({
             {
               label: 'Delete',
               icon: faTrash,
-              className: __ENVIRONMENT__ === 'testing' ? 'class:8c80d40c1eee414cbdab38ddca3130e5' : '',
+              className: __ENVIRONMENT__ === 'testing' ? 'class:note-options-delete-button:CEXEVxvbnV' : '',
               onClick: () => showModal(
                 <DeleteNote 
                   value={data}

@@ -60,7 +60,7 @@ export default function CreatePage ({
       <Input
         className={[
           styles.input,
-          __ENVIRONMENT__ === 'testing' ? `class:a4629e7124c34a9bbed19980588f183a` : ''
+          __ENVIRONMENT__ === 'testing' ? `class:page-modal-name-input-wrapper:o0Tmq3A18Z` : ''
         ].join(' ')}
         label={'Name:'}
         value={state.name}
@@ -73,12 +73,12 @@ export default function CreatePage ({
       />
       <div className={styles.options}>
         <Button
-          className={__ENVIRONMENT__ === 'testing' ? `class:8574d9c791c54ac387a0eadeb60ad9e9` : ''}
+          className={__ENVIRONMENT__ === 'testing' ? `class:modal-cancel-button:64CdoMr82v` : ''}
           label={'Cancel'}
           onClick={_onCancel}
         />
         <Button
-          className={__ENVIRONMENT__ === 'testing' ? `class:6012f7869d934c888ac9711da2eb0db7` : ''}
+          className={__ENVIRONMENT__ === 'testing' ? `class:modal-confirm-button:fHIbu0jVfe` : ''}
           label={'Send'}
           onClick={_onSuccess}
         />

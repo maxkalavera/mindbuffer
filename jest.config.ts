@@ -12,6 +12,7 @@ const config: Config = {
   transformIgnorePatterns: [
     'node_modules/(?!' + [
       'selenium-webdriver',
+      'uuid',
     ].join('|') + ')',
   ],
   transform: {

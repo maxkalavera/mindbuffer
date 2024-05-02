@@ -58,7 +58,10 @@ export default function UpdatePage ({
   return (
     <div className={`${className} ${styles.container}`}>
       <Input
-        className={styles.input}
+        className={[
+          styles.input,
+          __ENVIRONMENT__ === 'testing' ? `class:page-modal-name-input-wrapper:o0Tmq3A18Z` : ''
+        ].join(' ')}
         label={'Name:'}
         value={state.name}
         maxlength={50}
@@ -69,12 +72,12 @@ export default function UpdatePage ({
       />
       <div className={styles.options}>
         <Button
-          className={__ENVIRONMENT__ === 'testing' ? `class:8574d9c791c54ac387a0eadeb60ad9e9` : ''}
+          className={__ENVIRONMENT__ === 'testing' ? `class:modal-cancel-button:64CdoMr82v` : ''}
           label={'Cancel'}
           onClick={_onCancel}
         />
         <Button
-          className={__ENVIRONMENT__ === 'testing' ? `class:6012f7869d934c888ac9711da2eb0db7` : ''}
+          className={__ENVIRONMENT__ === 'testing' ? `class:modal-confirm-button:fHIbu0jVfe` : ''}
           label={'Save'}
           onClick={_onSuccess}
         />

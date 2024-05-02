@@ -124,7 +124,7 @@ export default function Groups({
           Notepads / Pages
         </h4>
         <IconButton
-          id={__ENVIRONMENT__ === 'testing' ? 'id:20bee6661ebb48bcb7109bbebdf6e59c' : ''}
+          id={__ENVIRONMENT__ === 'testing' ? 'id:create-notepad-button:f9CFxx4pON' : ''}
           className={styles['add-button']} 
           icon={faPlus}
           onClick={() => showModal(
@@ -143,7 +143,7 @@ export default function Groups({
           context.commons.isSidebarOpen ? '' : styles.hide,
           styles.content,
         ].join(' ')}
-        id={__ENVIRONMENT__ === 'testing' ? 'id:e7d6b885ff794c278ee07af4cfd1427c' : ''}
+        id={__ENVIRONMENT__ === 'testing' ? 'id:notepad-list-container:7MLMomsYBt' : ''}
         hasMore={context.notepads.hasNextPage}
         next={onScrollNext}
         loading={context.notepads.loading}
@@ -156,7 +156,6 @@ export default function Groups({
           context.notepads.values.map((item: any, key: number) => (
             <Notepad 
               id={`${item.id}`}
-              className={__ENVIRONMENT__ === 'testing' ? 'class:f07d35d05aba4e189e8d90bdfa30f2b0' : ''}
               key={key}
               data={item}
               loading={context.notepads.paginationMap[item.id].isLoading}

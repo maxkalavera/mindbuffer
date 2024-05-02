@@ -27,7 +27,11 @@ export default function Notepad ({
 
   return (
     <div 
-      className={`${className} ${styles.container}`}
+      className={[
+        className,
+        styles.container,
+        __ENVIRONMENT__ === 'testing' ? 'class:notepad:8iwbWkd5Y1' : ''
+      ].join(' ')}
       id={id}
     >
       <div className={styles.header}>
@@ -35,12 +39,12 @@ export default function Notepad ({
           { data.name } 
         </h4>
         <DropdownMenu
-          className={__ENVIRONMENT__ === 'testing' ? 'class:1111038c21384acd8519b8b0de8ee56f' : ''}
+          className={__ENVIRONMENT__ === 'testing' ? 'class:notepad-options-button:GrWzrbooC9' : ''}
           options={[
             {
               label: 'New Page',
               icon: faPlus,
-              className: __ENVIRONMENT__ === 'testing' ? 'class:abe3cef1d3f74a02891a715fa2316b07' : '',
+              className: __ENVIRONMENT__ === 'testing' ? 'class:notepad-options-create-page-button:LLAk9dX9bP' : '',
               onClick: () => showModal(
                 <CreatePage 
                   notepad={data}
@@ -50,7 +54,7 @@ export default function Notepad ({
             {
               label: 'Edit',
               icon: faPen,
-              className: __ENVIRONMENT__ === 'testing' ? 'class:6fa0c084fc5747cf9c9ae554788c5c14' : '',
+              className: __ENVIRONMENT__ === 'testing' ? 'class:notepad-options-edit-button:OJSSF5T46S' : '',
               onClick: () => showModal(
                 <UpdateNotepad
                   value={data}
@@ -61,7 +65,7 @@ export default function Notepad ({
             {
               label: 'Delete',
               icon: faTrash,
-              className: __ENVIRONMENT__ === 'testing' ? 'class:dcf43c19345a4a4590b5a5b971e2d439' : '',
+              className: __ENVIRONMENT__ === 'testing' ? 'class:notepad-options-delete-button:r6ukcuDrQL' : '',
               onClick: () => showModal(
                 <DeleteNotepad 
                   value={data}

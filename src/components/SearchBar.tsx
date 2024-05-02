@@ -61,23 +61,38 @@ function Searchbar({
     setState({search: event.target.value})
   }
 
-  const useSearchButton = state.search === '' || 
+  const sendSearchFlag = state.search === '' || 
     state.search  !== context.commons.search
   return (
     <div className={`${className} ${styles.container}`}>
       <input
+        id={__ENVIRONMENT__ === 'testing' ? 'id:searchbar-input:aPNkesepop' : ''}
         type="text"
         placeholder="Search..."
         className={`${styles.input} ${className}`}
         value={state.search}
         onChange={(event) => onInputChange(event)}
         onKeyDown={(event: any) => (event.code === "Enter") ? sendSearch(state.search) : null }
-      ></input>
-      <IconButton 
-        className={styles.button}
-        icon={useSearchButton ? faMagnifyingGlass : faXmark}
-        onClick={() => useSearchButton ? sendSearch(state.search) : clearSearch()}
       />
+      {
+        sendSearchFlag ?
+          (
+            <IconButton 
+              id={__ENVIRONMENT__ === 'testing' ? 'id:searchbar-send-button:OGUB40c5DM' : ''}
+              className={styles.button}
+              icon={faMagnifyingGlass}
+              onClick={() => sendSearch(state.search)}
+            />
+          ) :
+          (
+            <IconButton 
+              id={__ENVIRONMENT__ === 'testing' ? 'id:searchbar-clear-button:KlsiLQF3zr' : ''}
+              className={styles.button}
+              icon={faXmark}
+              onClick={() => clearSearch()}
+            />
+          )
+      }
     </div>
 
   );

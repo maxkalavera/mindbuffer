@@ -24,6 +24,8 @@ const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
     height: 768,
     width: 1080,
+    // If testing and not debuging mode run in headless mode, in background
+    show: __ENVIRONMENT__ !== 'testing' || __DEBUG__ === true,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },

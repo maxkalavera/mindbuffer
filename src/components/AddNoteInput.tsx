@@ -72,7 +72,7 @@ function AddNoteInput({
   return (
     <div className={`${className} ${styles.container}`}>
       <textarea
-        id={__ENVIRONMENT__ === 'testing' ? 'id:f5bf4eb14a1a456a9469f4283144a5b3' : ''}
+        id={__ENVIRONMENT__ === 'testing' ? 'id:create-note-textarea:ZtAZE54FsV' : ''}
         placeholder="Add some thoughts..."
         className={`${styles.textarea}`}
         value={state.inputValue}
