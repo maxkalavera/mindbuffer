@@ -74,16 +74,6 @@ export const deletePage = async (
   await confirmButton.click()
 }
 
-export const clickPage = async (
-  driver: webdriver.ThenableWebDriver,
-  pageName: string,
-) => {
-  return (await driver.findElements(By.xpath(
-    `//*[contains(text(), '${pageName}')]` +
-    `//ancestor::*[contains(@class, 'class:page:8o3bzP8yoT')]`
-  ))).length
-}
-
 export const countPages = async (
   driver: webdriver.ThenableWebDriver,
 ) => {
@@ -91,4 +81,15 @@ export const countPages = async (
     `//*[@id='id:notepad-list-container:7MLMomsYBt']` +
     `//descendant::*[contains(@class, 'class:page:8o3bzP8yoT')]`
   ))).length
+}
+
+export const clickPage = async (
+  driver: webdriver.ThenableWebDriver,
+  pageName: string,
+) => {
+  const page = await driver.findElement(By.xpath(
+    `//*[contains(text(), '${pageName}')]` +
+    `//ancestor-or-self::*[contains(@class, 'class:page:8o3bzP8yoT')]`
+  ))
+  await page.click()
 }

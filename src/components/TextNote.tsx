@@ -31,12 +31,17 @@ function TextNote({
   const { showAlert } = useAlert()
 
   useEffect(() => {
-    if (!contentContainer.current) return
-    (async () => {
+    if (!contentContainer.current)
+      return
+    let controller = new AbortController()
+    new Promise(async (resolve, _) => {
       const parsed = await marked.parse(data.content)
       const purified = DOMPurify.sanitize(parsed)
-      contentContainer.current.innerHTML = purified
-    })()
+      if (contentContainer.current && !controller.signal.aborted) {
+        contentContainer.current.innerHTML = purified
+      }
+    })
+    return () => controller.abort()
   }, [contentContainer.current, data.content])
 
   return (

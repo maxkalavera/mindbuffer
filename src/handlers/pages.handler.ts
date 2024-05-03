@@ -1,6 +1,7 @@
 import { app, ipcMain } from 'electron'
 import { QueryTypes } from 'sequelize'
 
+import toSerializable from '@utils/database/toSerializable'
 import { ThrowError } from '@utils/errors'
 import { groupByWidthAssociations } from '@utils/database/groupBy'
 import getSelectFields from '@utils/database/getSelectFields'
@@ -71,9 +72,9 @@ app.on('ready', () => {
           nest: true,
         })
 
-        return {
+        return toSerializable({
           values: groupByWidthAssociations(data, 'notepadId', ['pages'])
-        }
+        })
       } catch (error) {
         ThrowError({ 
           content: 'Error retrieving data from database',
@@ -91,7 +92,7 @@ app.on('ready', () => {
   ipcMain.handle(
     'database.pages:get',
     async function get (_, payload) {
-      const response = await database.models.Page.findOne({
+      const data = await database.models.Page.findOne({
         where: {
           id: payload.pageID
         },
@@ -99,16 +100,16 @@ app.on('ready', () => {
           { model: database.models.Notepad, as: 'notepad'}
         ],
       })
-      return {
-        value: response ? 
+      return toSerializable({
+        value: data ? 
           {
-            ...response.dataValues,
+            ...data.dataValues,
             notepad: {
-              ...response.dataValues.notepad.dataValues
+              ...data.dataValues.notepad.dataValues
             }
           } as Page & { notepad: Notepad }
           : undefined
-      }
+      })
     }  as QueryHandler<{ pageID: PageID}, { value: Page & { notepad: Notepad } }>
   )
 })
@@ -118,13 +119,13 @@ app.on('ready', () => {
     'database.pages:create',
     async function create (_, payload) {
       try {
-        const response = await database.models.Page.bulkCreate(payload.data as any)
-        return {
-          values: response.map((item) => ({
+        const data = await database.models.Page.bulkCreate(payload.data as any)
+        return toSerializable({
+          values: data.map((item) => ({
             ...item.dataValues,
             notes: []
           }))
-        }
+        })
       } catch (error) {
         ThrowError({ 
           content: 'Error retrieving data from database',
@@ -140,12 +141,12 @@ app.on('ready', () => {
     'database.pages:update',
     async function update (_, payload) {
       try {
-        const response = await database.models.Page.update(
+        const data = await database.models.Page.update(
           payload.value as Page,
           { where: { id: payload.value.id } }
         )
-        if (response[0] === 1) {
-          return { value: payload.value }
+        if (data[0] === 1) {
+          return toSerializable({ value: payload.value })
         }
       } catch (error) {
         ThrowError({ 
@@ -162,11 +163,11 @@ app.on('ready', () => {
     'database.pages:destroy',
     async function destroy (_, payload) {
       try {
-        const response =  await database.models.Page.destroy({ 
+        const data =  await database.models.Page.destroy({ 
           where: { id: payload.value.id } 
         })
-        if (response === 1) {
-          return { value: payload.value }
+        if (data === 1) {
+          return toSerializable({ value: payload.value })
         }
       } catch (error) {
         ThrowError({ 

@@ -55,16 +55,17 @@ export default function Home() {
   }, [context.commons.search, context.pages.selectedPageID])
 
   useEffect(() => {
+    let promise: any = undefined
     if (context.pages.selectedPageID === undefined) {
       const { setSelectedPage } = pagesSlice.actions
       store.dispatch(setSelectedPage({ value: undefined }))
-      return
+    } else {
+      promise = store.dispatch(fetchSelectedPageThunk({
+        pageID: context.pages.selectedPageID
+      }))
     }
-    const promise = store.dispatch(fetchSelectedPageThunk({
-      pageID: context.pages.selectedPageID
-    }))
     return () => {
-      promise.abort()
+      promise && promise.abort()
     }
   }, [context.pages.selectedPageID])
 

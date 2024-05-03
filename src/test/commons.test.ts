@@ -39,7 +39,7 @@ describe('General operations', () => {
       .build()
   });
   afterEach(async () => {
-    await driverRef.current.quit()
+    //await driverRef.current.quit()
   });
   test('Search should filter items by its keywords', async () => {
     const driver = driverRef.current
@@ -49,7 +49,7 @@ describe('General operations', () => {
     for(let i = 0; i < notes.length; i++) {
       await createNotepad(driver, notepads[i])
       await createPage(driver, notepads[i], pages[i])
-      await clickPage(driver, pages[i])
+      await clickPage(driver, pages[i]) // Is not selecting the page
       await createNote(driver, notes[i])
       await clickPage(driver, pages[i])
     }

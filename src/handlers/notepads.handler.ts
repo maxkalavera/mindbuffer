@@ -1,6 +1,7 @@
 import { app, ipcMain } from 'electron'
 import { QueryTypes } from 'sequelize'
 
+import toSerializable from '@utils/database/toSerializable'
 import { ThrowError } from '@utils/errors'
 import getSelectFields from '@utils/database/getSelectFields'
 import { groupByWidthAssociations } from '@utils/database/groupBy'
@@ -24,6 +25,7 @@ app.on('ready', () => {
     async function getAll (_, payload) {
       const options = Object.assign({
         search: '',
+        pageID: undefined,
         page: 1,
         paginationOffset: 20,
         associatedPaginationPage: 1,
@@ -31,6 +33,19 @@ app.on('ready', () => {
       }, payload)
       if (options.page < 1) options.page = 1
     
+      const queryParams = {
+        limit: options.paginationOffset,
+        offset: options.paginationOffset * (options.page - 1),
+        associatedLimitLeft: options.associatedPaginationOffset * (options.associatedPaginationPage - 1),
+        associatedLimitRight: options.associatedPaginationOffset * (options.associatedPaginationPage),
+      } as any
+
+      if (options.search) {
+        queryParams.search = `"${options.search}"`
+      } else if (options.pageID) {
+        queryParams.pageID = options.pageID
+      }
+
       try {
         const data = await database.sequelize.query(`
         SELECT * 
@@ -56,10 +71,10 @@ app.on('ready', () => {
             ON "notepads"."id"="pages"."notepadId"
             WHERE
                 "notepads"."id" IN (
-                    SELECT id FROM "notepads" LIMIT ? OFFSET ?
+                    SELECT id FROM "notepads" LIMIT $$limit OFFSET $$offset
                 )
                 ${
-                  options.search ?
+                  queryParams.search ?
                     `
                     AND
                     "pages"."id" IN (
@@ -69,7 +84,7 @@ app.on('ready', () => {
                                 select noteID 
                                 FROM searches 
                                 WHERE noteContent 
-                                MATCH "${options.search}"
+                                MATCH $$search
                                 ORDER BY 
                                     rank DESC, 
                                     noteID DESC
@@ -81,22 +96,17 @@ app.on('ready', () => {
                 }
         )
         WHERE
-            notepadsRowNumber > ? AND
-            notepadsRowNumber <= ?
+            notepadsRowNumber > $$associatedLimitLeft AND
+            notepadsRowNumber <= $$associatedLimitRight
         `, {
           type: QueryTypes.SELECT,
-          replacements: [
-            options.paginationOffset,
-            options.paginationOffset * (options.page - 1),
-            options.associatedPaginationOffset * (options.associatedPaginationPage - 1),
-            options.associatedPaginationOffset * (options.associatedPaginationPage),
-          ],
+          bind: queryParams,
           raw: true,
           nest: true,
         })
-        return {
+        return toSerializable({
           values: groupByWidthAssociations(data, 'id', ['pages'])
-        }
+        })
       } catch (error) {
         ThrowError({ 
           content: 'Error retrieving data from database',
@@ -114,12 +124,12 @@ app.on('ready', () => {
     async function create (_, payload) {
       try {
         const response = await database.models.Notepad.bulkCreate(payload.data as any)
-        return {
+        return toSerializable({
           values: response.map((item) => ({
             ...item.dataValues,
             pages: [],
           }))
-        }
+        })
       } catch (error) {
         ThrowError({ 
           content: 'Error retrieving data from database',
@@ -141,7 +151,7 @@ app.on('ready', () => {
         )
 
         if (response[0] === 1) {
-          return { value: payload.value }
+          return toSerializable({ value: payload.value })
         }
       } catch (error) {
         ThrowError({ 
@@ -162,7 +172,7 @@ app.on('ready', () => {
           where: { id: payload.value.id } 
         })
         if (response === 1) {
-          return { value: payload.value }
+          return toSerializable({ value: payload.value })
         }
       } catch (error) {
         ThrowError({ 

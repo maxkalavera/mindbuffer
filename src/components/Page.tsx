@@ -46,6 +46,12 @@ export default function Page ({
     }))
   }
 
+  if (data.id === 1) {
+    console.log('ID', data.id)
+    console.log('SELECTED PAGE ID', context.selectedPageID)
+    console.log('IS SELECTED', context.selectedPageID === data.id)
+  }
+
   const isSelected = context.selectedPageID === data.id
   return (
     <div 

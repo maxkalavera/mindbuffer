@@ -1,6 +1,7 @@
 import { app, ipcMain } from 'electron'
 import { QueryTypes } from 'sequelize'
 
+import toSerializable from '@utils/database/toSerializable'
 import { ThrowError } from '@utils/errors'
 import database from "@utils/database"
 
@@ -22,8 +23,8 @@ app.on('ready', () => {
     async function getAll (_, payload) {
       const options = Object.assign({
         search: '',
-        page: 1,
         pageID: undefined,
+        page: 1,
         paginationOffset: 20
       }, payload)
       if (options.page < 1) options.page = 1
@@ -80,9 +81,9 @@ app.on('ready', () => {
           bind: queryParams,
           raw: true,
         })
-        return {
+        return toSerializable({
           values: data
-        }
+        })
       } catch (error) {
         ThrowError({ 
           content: 'Error retrieving data from database',
@@ -99,9 +100,9 @@ app.on('ready', () => {
     async function create (_, payload) {
       try {
         const response = await database.models.Note.bulkCreate(payload.data as any)
-        return {
+        return toSerializable({
           values: response.map((item) => item.dataValues)
-        }
+        })
       } catch (error) {
         ThrowError({ 
           content: 'Error retrieving data from database',
@@ -123,7 +124,7 @@ app.on('ready', () => {
         )
 
         if (response[0] === 1) {
-          return { value: payload.value }
+          return toSerializable({ value: payload.value })
         }
       } catch (error) {
         ThrowError({ 
@@ -144,7 +145,7 @@ app.on('ready', () => {
           where: { id: payload.value.id } 
         })
         if (response === 1) {
-          return { value: payload.value }
+          return toSerializable({ value: payload.value })
         }
       } catch (error) {
         ThrowError({ 
