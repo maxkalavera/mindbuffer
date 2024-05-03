@@ -24,6 +24,9 @@ export default function Groups({
       isSidebarOpen: true,
       search: '',
     },
+    pages: {
+      selectedPageID: undefined,
+    },
     notepads: {
       values: [],
       page: 1,
@@ -48,12 +51,16 @@ export default function Groups({
       (state) => ({
         isSidebarOpen: state.commons.isSidebarOpen,
         search: state.commons.search,
+        selectedPageID: state.pages.selectedPageID
       }),
       (state) => setContext((prev) => ({
         ...prev,
         commons: {
           isSidebarOpen: state.commons.isSidebarOpen,
           search: state.commons.search,
+        },
+        pages: {
+          selectedPageID: state.pages.selectedPageID
         }
       }))
     )
@@ -94,7 +101,7 @@ export default function Groups({
   const onScrollNext = () => {
     store.dispatch(fetchNotepadsThunk({
       page: context.notepads.page + 1,
-      search: context.commons.search,
+      search: context.pages.selectedPageID === undefined ? context.commons.search  : ''
     }))   
   }
 

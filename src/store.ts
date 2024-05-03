@@ -17,7 +17,7 @@ const store = configureStore({
 
 function monitor (
   extract: (state: ReturnType<typeof store.getState>) => any,
-  callBack: (state: ReturnType<typeof store.getState>) => void
+  callBack: (state: ReturnType<typeof store.getState>) => void,
 ) {
   const last: {current: any} = {current: undefined}
   store.subscribe(() => {

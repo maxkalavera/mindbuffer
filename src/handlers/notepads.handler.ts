@@ -42,8 +42,6 @@ app.on('ready', () => {
 
       if (options.search) {
         queryParams.search = `"${options.search}"`
-      } else if (options.pageID) {
-        queryParams.pageID = options.pageID
       }
 
       try {

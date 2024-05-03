@@ -17,7 +17,6 @@ export type Notepad = BaseModel & NotepadData
 export interface NotepadFiltersPayload {
   page?: number,
   search?: string,
-  pageID?: PageID,
   paginationOffset?: number,
   associatedPaginationPage?: number,
   associatedPaginationOffset?: number,

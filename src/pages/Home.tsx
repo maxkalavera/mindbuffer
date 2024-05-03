@@ -42,19 +42,6 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    const { search } = context.commons
-    const { selectedPageID } = context.pages
-    const promise = store.dispatch(fetchNotesThunk({ 
-      page: 1, 
-      search: search,
-      pageID: selectedPageID,
-    }))
-    return () => {
-      promise.abort()
-    }
-  }, [context.commons.search, context.pages.selectedPageID])
-
-  useEffect(() => {
     let promise: any = undefined
     if (context.pages.selectedPageID === undefined) {
       const { setSelectedPage } = pagesSlice.actions
@@ -70,24 +57,28 @@ export default function Home() {
   }, [context.pages.selectedPageID])
 
   useEffect(() => {
-    const promise = store.dispatch(fetchNotepadsThunk({ 
+    const { search } = context.commons
+    const { selectedPageID } = context.pages
+    const promise = store.dispatch(fetchNotesThunk({ 
       page: 1, 
-      search: context.commons.search 
+      search: search,
+      pageID: selectedPageID,
     }))
     return () => {
       promise.abort()
     }
-  }, [context.commons.search])
+  }, [context.commons.search, context.pages.selectedPageID])
 
   useEffect(() => {
+    /* Fetch notepads on search */
     const promise = store.dispatch(fetchNotepadsThunk({ 
       page: 1, 
-      search: context.commons.search 
+      search: context.pages.selectedPageID === undefined ? context.commons.search  : ''
     }))
     return () => {
       promise.abort()
     }
-  }, [context.commons.search])
+  }, [context.commons.search, context.pages.selectedPageID])
 
   useEffect(() => {
     (async () => {

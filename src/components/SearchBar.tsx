@@ -20,7 +20,7 @@ function Searchbar({
     },
     notes: {
       page: 1,
-    }
+    },
   })
 
   useEffect(() => {
@@ -31,7 +31,7 @@ function Searchbar({
         },
         notes: {
           page: state.notes.page
-        }
+        },
       }), 
       (state) => {
         setContext({
@@ -39,8 +39,8 @@ function Searchbar({
             search: state.commons.search,
           },
           notes: {
-            page: state.notes.page
-          }
+            page: state.notes.page,
+          },
         })
       }
     )

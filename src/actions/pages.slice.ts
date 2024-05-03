@@ -16,8 +16,6 @@ export const fetchSelectedPageThunk = createAsyncThunk(
     const response = await window.electronAPI.pages.get({
       pageID: payload.pageID
     })
-    console.log('fetchSelectedPageThunk')
-    console.log(response)
 
     if (thunkAPI.signal.aborted)
       throw '3886e733-ca70-419d-a494-d3eb09311fa9'

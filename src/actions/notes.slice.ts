@@ -177,7 +177,7 @@ const notesSlice = createSlice({
         state.hasNextPage = false
       }
       if (action.payload.page < window.globals.paginationOffset) {
-        state.scrollBeginingHash += 1
+        state.adjustScrollHash += 1
       }
     })
     builder.addCase(createNoteThunk.fulfilled, (state, action) => {

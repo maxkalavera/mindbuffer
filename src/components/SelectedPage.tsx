@@ -29,7 +29,7 @@ export default function SelectedPage ({
             loading: state.pages.loadingSelectedPage
           }
         })
-      }
+      },
     )
   }, [])
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { faEllipsisH, faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
 
 import { setSelectedPageIDThunk } from '@actions/pages.slice'
@@ -25,7 +25,7 @@ export default function Page ({
     selectedPageID: undefined,
   })
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     store.monitor(
       (state) => ({
         selectedPageID: state.pages.selectedPageID
@@ -38,18 +38,19 @@ export default function Page ({
     )
   }, [])
 
+  useEffect(() => {
+    const { pages: { selectedPageID } } = store.getState()
+    setContext({ selectedPageID: selectedPageID })
+  }, [])
+
+  console.log(context.selectedPageID)
+
   const onPageSelected = () => {
     store.dispatch(setSelectedPageIDThunk({
       value: context.selectedPageID !== data.id ? 
         data.id :
         undefined
     }))
-  }
-
-  if (data.id === 1) {
-    console.log('ID', data.id)
-    console.log('SELECTED PAGE ID', context.selectedPageID)
-    console.log('IS SELECTED', context.selectedPageID === data.id)
   }
 
   const isSelected = context.selectedPageID === data.id

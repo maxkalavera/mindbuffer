@@ -36,18 +36,20 @@ app.on('ready', () => {
 
       if (options.search) {
         queryParams.search = `"${options.search}"`
-      } else if (options.pageID) {
+      }
+      if (options.pageID) {
         queryParams.pageID = options.pageID
       }
 
       try {
         const data = await database.sequelize.query(`
           SELECT * FROM "notes"
-            ${
-              queryParams.search ||
-              queryParams.pageID ?
-                `WHERE` : ''
-            }
+          ${
+            queryParams.search || queryParams.pageID ?
+              `WHERE` : ''
+          }
+            ${queryParams.pageID ? `pageId = $$pageID` : ''}
+            ${queryParams.search && queryParams.pageID ? 'AND' : ''}
             ${
               queryParams.search ? 
                 `
@@ -60,21 +62,14 @@ app.on('ready', () => {
                         rank DESC, 
                         noteID DESC
                   )              
-                ` : 
-                ''
-            }
-            ${
-              queryParams.pageID ? 
-                `pageId = $$pageID` : ''
+                ` : ''
             }
           ${
             !queryParams.search ?
               `ORDER BY
                 updatedAt DESC
-              ` :
-              ''
+              ` : ''
           }
-           
           LIMIT $$limit OFFSET $$offset;
         `, {
           type: QueryTypes.SELECT,
