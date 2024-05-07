@@ -13,7 +13,10 @@ App to make annotations with the visuals of a Webchat.
 
 
 ## Realease a new version
+Use `npm version` to increase the version of the project and create a git tag in the local commit. Then push the tags using 
+`git push --follow-tags` with the origin repository.
 
+Example:
 ```
 npm version minor
 git push --follow-tags
