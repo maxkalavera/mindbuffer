@@ -36,7 +36,9 @@ const config: ForgeConfig = {
     },
     {
       name: '@electron-forge/maker-squirrel',
-      config: {}
+      config: {
+
+      }
     }
   ],
   publishers: [
@@ -48,6 +50,7 @@ const config: ForgeConfig = {
           name: 'mindbuffer'
         },
         draft: true,
+        authToken: process.env.GITHUB_TOKEN
       }
     }
   ],
