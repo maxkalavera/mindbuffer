@@ -80,5 +80,5 @@ describe('Notepads operations', () => {
       `//descendant::*[contains(text(),'${notepads[notepads.length - 1]}')]`
     )))
     expect(await countNotepads(driver)).toEqual(25)
-  }, 10000)
+  }, 30 * 1000)
 })

@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react'
+import React, { ReactElement, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import type { IconProp } from '@fortawesome/fontawesome-svg-core'
 
@@ -25,14 +25,17 @@ function DropdownMenu ({
   const closeDropdown = () => {
     setIsVisible(false)
     document.removeEventListener('click', closeDropdown)
+    document.removeEventListener('click', onClickOutside)
   }
 
   const onClickOutside = (event: MouseEvent) => {
     if (containerRef.current === null) return 
     if (contentRef.current === null) return 
 
-    if (!containerRef.current.contains(event.target))
+    if (!containerRef.current.contains(event.target)) {
       closeDropdown()
+      document.removeEventListener('click', onClickOutside)
+    }
   }
 
   const openDropdown = () => {
@@ -47,11 +50,17 @@ function DropdownMenu ({
     document.addEventListener('click', onClickOutside)
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (containerRef.current === null) return 
 
-    containerRef.current.addEventListener('click', openDropdown)
-  }, [containerRef.current])
+    !isVisible ? 
+      containerRef.current.addEventListener('click', openDropdown) :
+      containerRef.current.addEventListener('click', closeDropdown)
+    return () => {
+      containerRef.current.removeEventListener('click', openDropdown)
+      containerRef.current.removeEventListener('click', closeDropdown)
+    }
+  }, [containerRef.current, isVisible])
 
   return (
     <div 

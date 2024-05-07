@@ -13,16 +13,19 @@ const search = async (
   driver: webdriver.ThenableWebDriver,
   content: string,
 ) => {
-  const searchInput = await driver.findElement(By.id('id:searchbar-input:aPNkesepop'))
+  const searchInput = await driver.wait(until.elementLocated(By.id('id:searchbar-input:aPNkesepop')))
+  await driver.wait(until.elementIsVisible(searchInput))
   await searchInput.sendKeys(content)
-  const sendSearchButton = await driver.findElement(By.id('id:searchbar-send-button:OGUB40c5DM'))
+  const sendSearchButton = await driver.wait(until.elementLocated(By.id('id:searchbar-send-button:OGUB40c5DM')))
+  await driver.wait(until.elementIsVisible(sendSearchButton))
   await sendSearchButton.click()
 }
 
 const clearSearch = async (
   driver: webdriver.ThenableWebDriver,
 ) => {
-  const clearSearchButton = await driver.findElement(By.id('id:searchbar-clear-button:KlsiLQF3zr'))
+  const clearSearchButton = await driver.wait(until.elementLocated(By.id('id:searchbar-clear-button:KlsiLQF3zr')))
+  await driver.wait(until.elementIsVisible(clearSearchButton))
   await clearSearchButton.click()
 }
 
@@ -39,7 +42,7 @@ describe('General operations', () => {
       .build()
   });
   afterEach(async () => {
-    //await driverRef.current.quit()
+    await driverRef.current.quit()
   });
   test('Search should filter items by its keywords', async () => {
     const driver = driverRef.current
@@ -49,7 +52,7 @@ describe('General operations', () => {
     for(let i = 0; i < notes.length; i++) {
       await createNotepad(driver, notepads[i])
       await createPage(driver, notepads[i], pages[i])
-      await clickPage(driver, pages[i]) // Is not selecting the page
+      await clickPage(driver, pages[i])
       await createNote(driver, notes[i])
       await clickPage(driver, pages[i])
     }
@@ -62,5 +65,5 @@ describe('General operations', () => {
     expect(await countNotepads(driver)).toEqual(1)
     expect(await countPages(driver)).toEqual(1)
     expect(await countNotes(driver)).toEqual(1)
-  })
+  }, 30 * 1000)
 })

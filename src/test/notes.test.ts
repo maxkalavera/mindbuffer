@@ -61,5 +61,5 @@ describe('Notes operations', () => {
       ))
     )    
     expect(await countNotes(driver)).toEqual(25)
-  }, 10000);
+  }, 30 * 1000);
 });

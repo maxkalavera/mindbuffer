@@ -90,5 +90,5 @@ describe('Pages operations', () => {
       `//descendant::*[contains(text(),'${pages[pages.length - 1]}')]`
     )))
     expect(await countPages(driver)).toEqual(75)
-  }, 1000 * 25000)
+  }, 30 * 1000)
 })

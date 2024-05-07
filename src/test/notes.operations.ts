@@ -1,12 +1,14 @@
-import webdriver, { By } from 'selenium-webdriver'
+import webdriver, { By, until } from 'selenium-webdriver'
 
 export const createNote = async (
   driver: webdriver.ThenableWebDriver,
   content: string,
 ) => {
-  const textArea = await driver.findElement(By.id('id:create-note-textarea:ZtAZE54FsV'))
+  const textArea = await driver.wait(until.elementLocated(By.id('id:create-note-textarea:ZtAZE54FsV')))
+  await driver.wait(until.elementIsVisible(textArea))
   await textArea.sendKeys(content)
   const sendButton = await driver.findElement(By.id('id:create-note-button:j2OnOhuazV'))
+  await driver.wait(until.elementIsVisible(sendButton))
   await sendButton.click()
 }
 
@@ -14,18 +16,21 @@ export const deleteNote = async (
   driver: webdriver.ThenableWebDriver,
   content: string,
 ) => {
-  const notesBoard = await driver.findElement(By.id('id:notes-board:Y8FAln8HKV'))
-  const createdNote = await notesBoard.findElement(By.xpath(
+  const createdNote = await driver.wait(until.elementLocated(By.xpath(
     `//*[contains(text(),'${content}')]` +
     `//ancestor::div[contains(@class, 'class:text-note:7BoiMerq5D')]`
-  ))
+  )))
+  await driver.wait(until.elementIsVisible(createdNote))
   expect(createdNote).not.toBeUndefined()
   expect((await createdNote.getText()).includes(content)).toBeTruthy()
-  const optionsButton = await createdNote.findElement(By.className('class:note-options-button:TMKI1oxDBJ'))
+  const optionsButton = await driver.wait(until.elementLocated(By.className('class:note-options-button:TMKI1oxDBJ')))
+  await driver.wait(until.elementIsVisible(optionsButton))
   await optionsButton.click()
-  const deleteButton = await createdNote.findElement(By.className('class:note-options-delete-button:CEXEVxvbnV'))
+  const deleteButton = await driver.wait(until.elementLocated(By.className('class:note-options-delete-button:CEXEVxvbnV')))
+  await driver.wait(until.elementIsVisible(deleteButton))
   await deleteButton.click()
-  const confirmButton = await driver.findElement(By.className('class:modal-confirm-button:fHIbu0jVfe'))
+  const confirmButton = await driver.wait(until.elementLocated(By.className('class:modal-confirm-button:fHIbu0jVfe')))
+  await driver.wait(until.elementIsVisible(confirmButton))
   await confirmButton.click()
 }
 

@@ -12,7 +12,9 @@ export function ThrowError ({
   error=undefined,
 }: ThrowErrorParams = {} ) {
   error ? console.log(error) : undefined
-  dialog.showErrorBox(title, content)
+  if ( __ENVIRONMENT__ !== 'testing' || __DEBUG__ === true) {
+    dialog.showErrorBox(title, content)
+  }
 }
 
 export function ThrowFatalError ({
@@ -21,6 +23,9 @@ export function ThrowFatalError ({
   error=undefined,
 }: ThrowErrorParams = {} ) {
   error ? console.log(error) : undefined
-  dialog.showErrorBox(title, content)
+  if ( __ENVIRONMENT__ !== 'testing' || __DEBUG__ === true) {
+    dialog.showErrorBox(title, content)
+  }
   app.quit()
+
 }

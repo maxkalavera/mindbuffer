@@ -17,18 +17,30 @@ function ModalProvider ({
 }: {
   children?: JSX.Element | JSX.Element[]
 }) {
-  const [title, setTitle] = useState<string>('')
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-  const [modalContent, setModalContent] = useState<JSX.Element | null>(null)
+  const [state, setState] = useState<{
+    title: string,
+    isModalOpen: boolean,
+    modalContent: JSX.Element | null, 
+  }>({
+    title: '',
+    isModalOpen: false,
+    modalContent: null, 
+  })
   const showModal = (content: JSX.Element, title='') => {
-    if (!isModalOpen) {
-      setModalContent(content)
-      setIsModalOpen(true)
-      setTitle(title)
+    if (!state.isModalOpen) {
+      setState({
+        title: title,
+        isModalOpen: true,
+        modalContent: content, 
+      })
     }
   }
   const closeModal = () => {
-    setIsModalOpen(false)
+    setState({
+      title: '',
+      isModalOpen: false,
+      modalContent: null, 
+    })
   }
 
   return (
@@ -42,19 +54,19 @@ function ModalProvider ({
       <section 
         className={`${styles.container}`}
         style={{
-          'display': isModalOpen ? 'block' : 'none'
+          'display': state.isModalOpen ? 'block' : 'none'
         }}
       >
         <div className={styles.content}>
           <div className={styles.header}>
-            <h4 className={`secondary-h4 ${styles.title}`}>{title}</h4>
+            <h4 className={`secondary-h4 ${styles.title}`}>{state.title}</h4>
             <IconButton 
               className={styles['close-button']}
               icon={faXmark}
               onClick={closeModal}
             />
           </div>
-          { modalContent }
+          { state.modalContent }
         </div>
       </section>
     </context.Provider>

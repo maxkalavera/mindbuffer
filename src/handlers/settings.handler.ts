@@ -72,7 +72,6 @@ app.on('ready', () => {
       payload: { selectedPageID: PageID }
     ): Promise<any> {
       try {
-        console.log('SET', JSON.stringify(payload.selectedPageID))
         if (payload.selectedPageID === undefined) {
           return settings.set('selectedPageID', '')
         } else {

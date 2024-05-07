@@ -134,10 +134,13 @@ export default function Groups({
           id={__ENVIRONMENT__ === 'testing' ? 'id:create-notepad-button:f9CFxx4pON' : ''}
           className={styles['add-button']} 
           icon={faPlus}
-          onClick={() => showModal(
-            <CreateNotepad />, 
-            'New Notepad'
-          )}
+          onClick={() => {
+            console.log('CLICKED')
+            showModal(
+              <CreateNotepad />,
+              'New Notepad'
+            )
+          }}
         />
       </div>
 

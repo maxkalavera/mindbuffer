@@ -43,8 +43,6 @@ export default function Page ({
     setContext({ selectedPageID: selectedPageID })
   }, [])
 
-  console.log(context.selectedPageID)
-
   const onPageSelected = () => {
     store.dispatch(setSelectedPageIDThunk({
       value: context.selectedPageID !== data.id ? 

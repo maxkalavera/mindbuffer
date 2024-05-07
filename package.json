@@ -10,9 +10,9 @@
     "make": "MINDBUFFER_ENVIRONMENT=production electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "test": "MINDBUFFER_ENVIRONMENT=testing MINDBUFFER_DEBUG=false electron-forge package && concurrently  \"./node_modules/.bin/chromedriver\" \"jest\"",
-    "test-package": "MINDBUFFER_ENVIRONMENT=testing MINDBUFFER_DEBUG=true electron-forge package",
-    "test-execute": "concurrently  './node_modules/.bin/chromedriver' 'jest $TEST_FILE'"
+    "test": "MINDBUFFER_ENVIRONMENT=testing electron-forge package && concurrently --kill-others --kill-others-on-fail -c \"gray,yellow\" \"./node_modules/.bin/chromedriver\" \"jest --runInBand\"",
+    "test-package": "MINDBUFFER_ENVIRONMENT=testing electron-forge package",
+    "test-execute": "concurrently --kill-others --kill-others-on-fail -c \"gray,yellow\" \"./node_modules/.bin/chromedriver\" \"jest --runInBand $TEST_FILE\""
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",

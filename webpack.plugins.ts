@@ -22,7 +22,7 @@ export const plugins: any[] = [
         .find(item => item === process.env.MINDBUFFER_ENVIRONMENT) || 'production'
     ),
     __DEBUG__: JSON.stringify(
-      (process.env.MINDBUFFER_DEBUG || '').toLowerCase() === 'true'
+      (process.env.MINDBUFFER_DEBUG || '').toLowerCase() === 'true' // default false
     )
   })
 ];
