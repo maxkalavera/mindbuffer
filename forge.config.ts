@@ -17,10 +17,39 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    new MakerSquirrel({}), 
-    new MakerZIP({}, ['darwin']), 
-    new MakerRpm({}), 
-    new MakerDeb({})
+    {
+      name: '@electron-forge/maker-dmg',
+      config: {
+        background: './resources/dmg/background.png',
+        icon: './resources/dmg/atom.icns',
+        format: 'ULFO'
+      }
+    },
+    {
+      name: '@electron-forge/maker-deb',
+      config: {
+        options: {
+          maintainer: 'Max Hernandez',
+          homepage: 'https://maxkalavera.github.io/'
+        }
+      }
+    },
+    {
+      name: '@electron-forge/maker-squirrel',
+      config: {}
+    }
+  ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'maxkalavera',
+          name: 'mindbuffer'
+        },
+        draft: true,
+      }
+    }
   ],
   plugins: [
     new AutoUnpackNativesPlugin({}),

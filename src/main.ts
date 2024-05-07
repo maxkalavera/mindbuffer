@@ -62,6 +62,14 @@ app.on('activate', async () => {
   }
 });
 
+app.whenReady().then(() => {
+  if (['development'].some((item) => item === __ENVIRONMENT__)) {
+    installExtension(REACT_DEVELOPER_TOOLS)
+      .then((name) => console.log(`Added Extension:  ${name}`))
+      .catch((err) => console.log('An error occurred: ', err));
+  }
+});
+
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 async function init() {
@@ -74,11 +82,3 @@ async function init() {
 function destroy() {
   app.quit();
 }
-
-app.whenReady().then(() => {
-  if (['development'].some((item) => item === __ENVIRONMENT__)) {
-    installExtension(REACT_DEVELOPER_TOOLS)
-      .then((name) => console.log(`Added Extension:  ${name}`))
-      .catch((err) => console.log('An error occurred: ', err));
-  }
-});

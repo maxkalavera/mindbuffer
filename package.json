@@ -1,8 +1,12 @@
 {
   "name": "mindbuffer",
+  "author": {
+    "name": "Max Hernandez",
+    "email": "maxhernandezcastillo@gmail.com"
+  },
+  "description": "A note's manager with the visuals of a Webchat",
   "productName": "MindBuffer",
   "version": "0.5.0",
-  "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
     "start": "MINDBUFFER_ENVIRONMENT=development MINDBUFFER_DEBUG=true electron-forge start",
@@ -25,6 +29,7 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.3.0",
     "@electron-forge/plugin-fuses": "^7.2.0",
     "@electron-forge/plugin-webpack": "^7.3.0",
+    "@electron-forge/publisher-github": "^7.4.0",
     "@electron/fuses": "^1.7.0",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
@@ -69,10 +74,6 @@
     "webpack-cli": "^5.1.4"
   },
   "keywords": [],
-  "author": {
-    "name": "Max Hernandez",
-    "email": "maxhernandezcastillo@gmail.com"
-  },
   "license": "MIT",
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.3",
