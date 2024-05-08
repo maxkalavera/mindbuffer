@@ -9,13 +9,13 @@
   "version": "0.5.4",
   "main": ".webpack/main",
   "scripts": {
-    "start": "MINDBUFFER_ENVIRONMENT=development MINDBUFFER_DEBUG=true electron-forge start",
+    "start": "cross-env MINDBUFFER_ENVIRONMENT=development MINDBUFFER_DEBUG=true electron-forge start",
     "package": "electron-forge package",
-    "make": "MINDBUFFER_ENVIRONMENT=production electron-forge make",
+    "make": "cross-env MINDBUFFER_ENVIRONMENT=production electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "test": "MINDBUFFER_ENVIRONMENT=testing electron-forge package && concurrently --kill-others --kill-others-on-fail -c \"gray,yellow\" \"./node_modules/.bin/chromedriver\" \"jest --runInBand\"",
-    "test-package": "MINDBUFFER_ENVIRONMENT=testing electron-forge package",
+    "test": "cross-env MINDBUFFER_ENVIRONMENT=testing electron-forge package && concurrently --kill-others --kill-others-on-fail -c \"gray,yellow\" \"./node_modules/.bin/chromedriver\" \"jest --runInBand\"",
+    "test-package": "cross-env MINDBUFFER_ENVIRONMENT=testing electron-forge package",
     "test-execute": "concurrently --kill-others --kill-others-on-fail -s \"last\" -c \"gray,yellow\" \"chromedriver\" \"jest --runInBand $TEST_FILE\""
   },
   "devDependencies": {
@@ -50,6 +50,7 @@
     "@vercel/webpack-asset-relocator-loader": "1.7.3",
     "babel-loader": "^9.1.3",
     "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
     "css-loader": "^6.0.0",
     "electron": "^30.0.1",
     "electron-chromedriver": "^30.0.1",

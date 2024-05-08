@@ -12,7 +12,11 @@ describe('Notepads operations', () => {
       .usingServer('http://localhost:9515')
       .withCapabilities({
         'goog:chromeOptions': {
-          binary: global.__BINARY_PATH__
+          binary: global.__BINARY_PATH__,
+          args: [
+            '--no-sandbox',
+            '--disable-dev-shm-usage',
+          ]
         }
       })
       .forBrowser('chrome')
