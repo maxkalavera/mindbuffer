@@ -16,7 +16,7 @@
     "lint": "eslint --ext .ts,.tsx .",
     "test": "MINDBUFFER_ENVIRONMENT=testing electron-forge package && concurrently --kill-others --kill-others-on-fail -c \"gray,yellow\" \"./node_modules/.bin/chromedriver\" \"jest --runInBand\"",
     "test-package": "MINDBUFFER_ENVIRONMENT=testing electron-forge package",
-    "test-execute": "concurrently --kill-others --kill-others-on-fail -c \"gray,yellow\" \"./node_modules/.bin/chromedriver\" \"jest --runInBand $TEST_FILE\""
+    "test-execute": "concurrently --kill-others --kill-others-on-fail -s \"last\" -c \"gray,yellow\" \"chromedriver\" \"jest --runInBand $TEST_FILE\""
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",
