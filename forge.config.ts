@@ -46,7 +46,6 @@ const config: ForgeConfig = {
           name: 'mindbuffer'
         },
         draft: true,
-        authToken: process.env.GITHUB_TOKEN,
       }
     }
   ],
