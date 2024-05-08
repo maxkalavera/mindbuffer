@@ -3,24 +3,13 @@ import webdriver, { By, Key, until } from 'selenium-webdriver';
 import { v4 as uuidv4 } from 'uuid';
 
 import { createNotepad, updateNotepad, deleteNotepad, countNotepads } from './notepads.operations'
+import buildWebdriver from './buildWebdriver';
 
 const driverRef: {current: webdriver.ThenableWebDriver} = {current: undefined}
 
 describe('Notepads operations', () => {
   beforeEach(() => {
-    driverRef.current = new webdriver.Builder()
-      .usingServer('http://localhost:9515')
-      .withCapabilities({
-        'goog:chromeOptions': {
-          binary: global.__BINARY_PATH__,
-          args: [
-            '--no-sandbox',
-            '--disable-dev-shm-usage',
-          ]
-        }
-      })
-      .forBrowser('chrome')
-      .build()
+    driverRef.current = buildWebdriver()
   });
   afterEach(async () => {
     await driverRef.current.quit()

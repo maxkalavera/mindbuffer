@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { createNote, countNotes } from './notes.operations'
 import { createNotepad, countNotepads } from './notepads.operations'
 import { createPage, countPages, clickPage } from './pages.operations'
-import { text } from '@fortawesome/fontawesome-svg-core';
+import buildWebdriver from './buildWebdriver';
 
 const driverRef: {current: webdriver.ThenableWebDriver} = {current: undefined}
 
@@ -31,15 +31,7 @@ const clearSearch = async (
 
 describe('General operations', () => {
   beforeEach(() => {
-    driverRef.current = new webdriver.Builder()
-      .usingServer('http://localhost:9515')
-      .withCapabilities({
-        'goog:chromeOptions': {
-          binary: global.__BINARY_PATH__,
-        }
-      })
-      .forBrowser('chrome')
-      .build()
+    driverRef.current = buildWebdriver()
   });
   afterEach(async () => {
     await driverRef.current.quit()
