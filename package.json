@@ -11,7 +11,7 @@
   "scripts": {
     "start": "cross-env MINDBUFFER_ENVIRONMENT=development MINDBUFFER_DEBUG=true electron-forge start",
     "package": "electron-forge package",
-    "make": "cross-env MINDBUFFER_ENVIRONMENT=production electron-forge make",
+    "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
     "test": "cross-env MINDBUFFER_ENVIRONMENT=testing electron-forge package && concurrently --kill-others --kill-others-on-fail -c \"gray,yellow\" \"chromedriver\" \"jest --runInBand\"",

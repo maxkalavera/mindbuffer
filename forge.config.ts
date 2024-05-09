@@ -9,14 +9,23 @@ import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
 
 import type { ForgeConfig } from '@electron-forge/shared-types';
+import { identity } from 'lodash';
 
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     executableName: JSONPackage.productName,
+    //osxSign: {}
   },
   rebuildConfig: {},
   makers: [
+    {
+      name: '@electron-forge/maker-zip',
+      config: {},
+      platforms: [
+        'darwin'
+      ],
+    },
     {
       name: '@electron-forge/maker-dmg',
       config: {
