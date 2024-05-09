@@ -23,7 +23,10 @@ const config: ForgeConfig = {
         background: './resources/dmg/background.png',
         icon: './resources/dmg/atom.icns',
         format: 'ULFO'
-      }
+      },
+      platforms: [
+        'darwin'
+      ],
     },
     {
       name: '@electron-forge/maker-deb',
