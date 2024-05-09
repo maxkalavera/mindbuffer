@@ -6,7 +6,7 @@
   },
   "description": "A note's manager with the visuals of a Webchat",
   "productName": "MindBuffer",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "main": ".webpack/main",
   "scripts": {
     "start": "cross-env MINDBUFFER_ENVIRONMENT=development MINDBUFFER_DEBUG=true electron-forge start",
