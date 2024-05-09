@@ -37,7 +37,7 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: '20'
-    - name: install rosetta:
+    - name: install rosetta
       run: softwareupdate --install-rosetta --agree-to-license
     - name: install dependencies
       run: yarn install
