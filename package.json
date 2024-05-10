@@ -4,7 +4,7 @@
     "name": "Max Hernandez",
     "email": "maxhernandezcastillo@gmail.com"
   },
-  "description": "A note's manager with the visuals of a Webchat",
+  "description": "A note's manager app with the visuals of a Webchat",
   "productName": "MindBuffer",
   "version": "0.5.7",
   "main": ".webpack/main",

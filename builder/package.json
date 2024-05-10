@@ -1,0 +1,23 @@
+{
+  "name": "mindbuffer",
+  "version": "0.5.7",
+  "description": "A note's manager app with the visuals of a Webchat",
+  "repository": "https://github.com/maxkalavera/mindbuffer",
+  "author": "Max Hernandez",
+  "license": "MIT",
+  "main": ".webpack/main/main.js",
+  "scripts": {
+    "webpack:build": "webpack --config webpack.config.js --mode development",
+    "electron:start": "electron .",
+    "start": "webpack --config webpack.config.js --mode development && electron ."
+  },
+  "devDependencies": {
+    "electron": "^30.0.3",
+    "html-webpack-plugin": "^5.6.0",
+    "ts-loader": "^9.5.1",
+    "tsconfig-paths-webpack-plugin": "^4.1.0",
+    "typescript": "^5.4.5",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
