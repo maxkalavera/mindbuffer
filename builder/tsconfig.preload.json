@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+      "target": "ES6",
+      "module": "commonjs",
+      "allowJs": true,
+      "resolveJsonModule": true,
+      "esModuleInterop": true,
+      "baseUrl": "src/",
+      "paths": {
+        "@src/*": ["*"],
+        "@renderer/*": ["src/renderer/*"],
+      },
+  },
+  "include": [
+      "./source/main/**/*",
+      "./source/commons/**/*"
+  ],
+  "exclude": [
+      ".webpack",
+      "node_modules"
+  ],
+  "ts-node": {
+    "files": true
+  }
+}

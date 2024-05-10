@@ -1,15 +1,14 @@
+/// <reference path="./main.d.ts" />
 import { app, BrowserWindow } from "electron"
 
 const createWindow = () => {
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      //preload: WEBPACK_PRELOAD_ENTRY
-    }
+  const mainWindow = new BrowserWindow({
+    height: 768,
+    width: 1080,
   })
 
-  win.loadFile(WEBPACK_HTML_INDEX_ENTRY)
+  mainWindow.loadFile(HTML_INDEX_ENTRY)
+  mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {

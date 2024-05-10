@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+      "target": "ES6",
+      "module": "commonjs",
+      "jsx": "react",
+      "allowJs": true,
+      "resolveJsonModule": true,
+      "esModuleInterop": true,
+      "baseUrl": "src/",
+      "paths": {
+        "@src/*": ["*"],
+        "@renderer/*": ["src/renderer/*"],
+      },
+  },
+  "include": [
+      "./source/renderer/**/*",
+      "./source/commons/**/*"
+  ],
+  "exclude": [
+      ".webpack",
+      "node_modules"
+  ],
+  "ts-node": {
+    "files": true
+  }
+}
