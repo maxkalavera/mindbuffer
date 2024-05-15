@@ -14,17 +14,14 @@ await esbuild.build({
   target: 'node20',
   platform: 'node',
   format: 'esm',
-  logLevel: "info",
   bundle: true,
-  minify: false,
-  sourcemap: true,
+  minify: globals.ENVIRONMENT === 'production' ? true : false,
+  sourcemap: globals.ENVIRONMENT === 'production' ? false : true,
+  logLevel: globals.ENVIRONMENT === 'production' ? 'silent' : "info",
   entryPoints: ["./source/main/main.ts"],
   outfile: resolve(outDir, './main.mjs'),
   tsconfig: './tsconfig.json',
-  external: [
-    'electron',
-    'sqlite3'
-  ],
+  external: pkg.electronMainDependencies || ['electron'],
   define: {
     globals: JSON.stringify(globals)
   },
@@ -49,22 +46,21 @@ await esbuild.build({
       after: {
         [resolve(outDir, './package.json')]: JSON.stringify({
           main: "main.mjs",
-          //type: "module",
           name: pkg.name,
           version: pkg.version,
           license: pkg.license,
           description: pkg.description,
           repository: pkg.repository,
-          devDependencies: {
-            "electron": pkg.devDependencies.electron,
-            "sqlite3": pkg.devDependencies.sqlite3,
-          },
+          devDependencies: Object.fromEntries(
+            Object.entries(pkg.devDependencies || {}).filter(([module, _])=> module === 'electron')),
+          dependencies: pkg.dependencies || {},
         }, null, 4)
       }
     }),
     clean({
       cleanOnStartPatterns: [
         './main.mjs',
+        './main.mjs.map',
         './resources',
         './electron-builder.config.ts',
         './package.json',

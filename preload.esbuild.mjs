@@ -28,6 +28,7 @@ await esbuild.build({
     clean({
       cleanOnStartPatterns: [
         './preload.js',
+        './preload.js.map',
       ].map((item) => resolve(outDir, item)),
     }),
   ],

@@ -5,6 +5,22 @@ import type { Configuration } from 'electron-builder'
 
 const pkg = JSON.parse(readFileSync(resolve('./package.json'), { encoding: 'utf8' }));
 
+const architectures = {
+  linux: [
+    "x64", // UMD 64 bits also compatible with Intel64
+    "arm64", // ARM 64 bits
+    //"armv7l", // ARM ussualy used in Android phones and Raspberry PI, not supported by Sqlite3
+  ],
+  mac: [
+    "x64", // UMD 64 bits also compatible with Intel64
+    "arm64" // ARM 64 bits
+  ],
+  win: [
+    "x64", // UMD 64 bits also compatible with Intel64
+    // "arm64", // ARM 64 bits, not supported by sqlite3
+  ]
+}
+
 export default {
   appId: pkg.name,
   productName: pkg.productName,
@@ -17,12 +33,12 @@ export default {
     // "icon": "./resources/linux/icons/",
     target: [
       {
+        target: "deb",
+        arch: architectures.linux
+      },
+      {
         target: "appImage",
-        arch: [
-          "x64",
-          "armv7l",
-          "arm64"
-        ]
+        arch: architectures.linux
       }
     ],
     category: "Utility",
@@ -36,7 +52,12 @@ export default {
     }
   },
   mac: {
-    target: ['dmg'],
+    target: [
+      {
+        target: 'dmg',
+        arch: architectures.mac
+      }
+    ],
     category: "public.app-category.productivity",
     darkModeSupport: false,
     // entitlements: "./resources/mac/entitlements.plist",
@@ -71,8 +92,14 @@ export default {
     //"icon": "./resources/build/icon.ico",
     artifactName: "${productName}-${os}-${arch}.${ext}",
     target: [
-      "nsis",
-      "portable",
+      {
+        target: "nsis",
+        arch: architectures.win
+      },
+      {
+        target: "portable",
+        arch: architectures.win
+      }
     ],
     "publisherName": pkg.author.name
   },

@@ -6,7 +6,6 @@
     "allowJs": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "moduleResolution": "node",
     "baseUrl": "source/",
     "paths": {
       "@main/*": ["main/*"],
