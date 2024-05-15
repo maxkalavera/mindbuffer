@@ -40,7 +40,7 @@ export default {
       await umzug.up()
     } catch (error) {
       ThrowFatalError({
-        content: 'Unable connecting to the database, the app will be closed',
+        content: 'Unable to connect to the database, the app will be closed',
         error: error,
       })
     }
@@ -55,7 +55,8 @@ export default {
       return true
     } catch (error) {
       ThrowFatalError({
-        content: 'Unable connecting to the database, the app will be closed'
+        content: 'Unable to connect to the database, the app will be closed',
+        error: error,
       })
       return false
     }

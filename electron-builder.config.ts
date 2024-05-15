@@ -10,6 +10,9 @@ export default {
   productName: pkg.productName,
   asar: true,
   npmRebuild: true,
+  directories: {
+    output: "distribution/"
+  },
   linux: {
     // "icon": "./resources/linux/icons/",
     target: [
@@ -63,9 +66,6 @@ export default {
       width: 640,
       height: 480
     }
-  },
-  directories: {
-    output: "dist"
   },
   win: {
     //"icon": "./resources/build/icon.ico",

@@ -2,11 +2,15 @@ import path from 'path'
 import { app } from 'electron'
 import Store from 'electron-store'
 
+const databaseLocations = {
+  'production': path.resolve(app.getPath('userData'), 'mindbuffer.db'),
+  'development' : '.run/mindbuffer.db', 
+  'testing': '.run/mindbuffer.test.db',
+}
+
 type StoreType = {
-  debug?: boolean,
   sidebarAperture?: number,
   selectedPageID?: string,
-  migrationsGlob?: string,
   dbPath?: string,
 }
 
@@ -14,14 +18,15 @@ const store = new Store<StoreType>({
   defaults: {
     sidebarAperture: 0.0,
     selectedPageID: '',
-    migrationsGlob: path.resolve('../', 'assets/migrations/*.{js,cjs,mjs,ts,cts,mts,sql}'),
-    dbPath: {
-      'development' : '.run/mindbuffer.db', 
-      'production': path.resolve(app.getPath('userData'), 'mindbuffer.db'),
-      'testing': '.run/mindbuffer.test.db',
-    }[globals.ENVIRONMENT] || path.resolve(app.getPath('userData'), 'mindbuffer.db'),
+    dbPath: databaseLocations['production'],
   }
 }) as Store<StoreType> & { set: (key: string, any) => void, get: (key: string) => any, clear: () => void, store: any }
+
+/*  Settings to set when app is started */
+{
+  store.set('dbPath', databaseLocations[globals.ENVIRONMENT] || databaseLocations['production'])
+}
+
 
 if (globals.RESET_SETTINGS_STORE)  {
   store.clear()

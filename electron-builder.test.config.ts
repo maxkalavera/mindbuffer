@@ -9,6 +9,9 @@ export default {
   appId: pkg.name,
   productName: pkg.productName,
   asar: false,
+  directories: {
+    output: "distribution/"
+  },
   linux: { target: ['dir'] },
   mac: { target: ['dir'] },
   win: { target: ['dir'] }

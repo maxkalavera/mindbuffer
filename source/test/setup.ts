@@ -7,7 +7,7 @@ const platformDict = {
   'linux': 'linux',
   'win32': 'win'
 }
-const baseDir = path.resolve('./.package', `./dist/${platformDict[platform()]}-${arch()}`)
+const baseDir = path.resolve('./.package', `./distribution/${platformDict[platform()]}-${arch()}`)
 
 switch(platform()) {
   case 'linux':
