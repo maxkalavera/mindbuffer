@@ -9,15 +9,11 @@
     "moduleResolution": "node",
     "baseUrl": "source/",
     "paths": {
-      "@main/*": ["main/*"],
       "@renderer/*": ["renderer/*"],
       "@commons/*": ["commons/*"]
     },
   },
   "include": [
-    "./source/**/*",
+    "./source/renderer/**/*",
   ],
-  "ts-node": {
-    "files": true
-  }
 }

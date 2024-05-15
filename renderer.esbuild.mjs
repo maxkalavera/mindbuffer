@@ -1,0 +1,29 @@
+import { resolve } from 'node:path';
+import esbuild from 'esbuild';
+import { clean } from 'esbuild-plugin-clean';
+import globals from './globals.esbuild.mjs'
+
+const outDir = './.package';
+
+await esbuild.build({
+  target: 'es2020',
+  platform: 'browser',
+  format: 'cjs',
+  logLevel: "info",
+  bundle: true,
+  minify: false,
+  sourcemap: true,
+  entryPoints: ["./source/renderer/renderer.tsx"],
+  outfile: resolve(outDir, './renderer.js'),
+  tsconfig: './tsconfig.web.json',
+  define: {
+    globals: JSON.stringify(globals)
+  },
+  plugins: [
+    clean({
+      cleanOnStartPatterns: [
+        './renderer.js',
+      ].map((item) => resolve(outDir, item)),
+    }),
+  ],
+}).catch(() => process.exit(1));
