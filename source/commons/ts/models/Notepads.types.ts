@@ -14,10 +14,19 @@ export interface NotepadData {
 
 export type Notepad = BaseModel & NotepadData
 
-export interface NotepadFiltersPayload {
+export interface NotepadsFiltersPayload {
   page?: number,
   search?: string,
   paginationOffset?: number,
   associatedPaginationPage?: number,
   associatedPaginationOffset?: number,
+}
+
+export interface NotepadsPagesFiltersPayload {
+  notepads: {
+    id: NotepadID,
+    page: number
+  }[],
+  search?: string,
+  paginationOffset?: number,
 }

@@ -6,21 +6,17 @@ export type PageID = number
 
 export interface PagePayload {
   name: string,
-  notepadId: NotepadID,
+  notepadID: NotepadID,
 }
 
 export interface PageData {
   name: string,
-  notepadId: NotepadID,
+  notepadID: NotepadID,
 }
 
 export type Page = BaseModel & PageData
 
-export interface PageFiltersPayload {
-  notepads: {
-    id: NotepadID,
-    page: number
-  }[],
-  search?: string,
+export interface PagesFiltersPayload {
+  page?: number,
   paginationOffset?: number,
 }

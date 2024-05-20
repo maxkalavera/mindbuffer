@@ -5,20 +5,20 @@ export type NoteID = number
 
 export interface NotePayload {
   content: string,
-  pageId: PageID,
+  pageID: PageID,
 }
 
 export interface NoteData {
   content: string,
-  pageId: PageID,
+  pageID: PageID,
   page?: Page,
 }
 
 export type Note = BaseModel & NoteData
 
-export interface NoteFiltersPayload {
-  page?: number,
+export interface NotesFiltersPayload {
   search?: string,
   pageID?: PageID,
+  page?: number,
   paginationOffset?: number,
 }

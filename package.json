@@ -22,7 +22,7 @@
     "build:linux": "npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package --linux",
     "build:all": "npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package ---mwl",
     "start:electron": "electron ./.package",
-    "start": "cross-env MINDBUFFER_ENVIRONMENT=development npm run build:prebuild && npm run start:electron",
+    "start": "cross-env MINDBUFFER_ENVIRONMENT=development npm run build:prebuild && concurrently --kill-others --kill-others-on-fail \"npm run start:electron\" \"babel-node -- renderer.esbuild.mjs --watch\"",
     "test:pack": "cross-env MINDBUFFER_ENVIRONMENT=testing npm run build",
     "test:start": "concurrently --kill-others --kill-others-on-fail -s \"last\" -c \"gray,yellow\" \"chromedriver\" \"jest --runInBand\"",
     "test": "npm run test:pack && npm run test:start"
@@ -67,9 +67,12 @@
     "uuid": "^9.0.1"
   },
   "dependencies": {
+    "better-sqlite3": "^9.5.0",
     "electron-devtools-installer": "^3.2.0",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^9.0.0",
+    "flat": "^6.0.1",
+    "knex": "^3.1.0",
     "lodash": "^4.17.21",
     "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7",

@@ -1,11 +1,8 @@
 import { app, ipcMain } from 'electron'
-import { QueryTypes } from 'sequelize'
+import { unflatten } from "flat"
 
-import toSerializable from '@main/utils/database/toSerializable'
 import { ThrowError } from '@main/utils/errors'
-import { groupByWidthAssociations } from '@main/utils/database/groupBy'
-import getSelectFields from '@main/utils/database/getSelectFields'
-import database from "@main/utils/database"
+import databaseAlt from '@main/utils/database.bettersqlite3'
 
 import type { 
   QueryHandler,
@@ -18,73 +15,30 @@ import type {
   PagePayload, 
   Page, 
   PageID,
-  PageFiltersPayload 
+  PagesFiltersPayload 
 } from '@commons/ts/models/Pages.types'
 import { Notepad } from '@commons/ts/models/Notepads.types'
+import knex from 'knex'
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.pages:getAll',
     async function getAll (_, payload) {
       const options = Object.assign({
-        search: '',
-        paginationOffset: 50,
-      }, payload)    
-      options.notepads.map((item) => item.page < 1 ?
-        {
-          ...item,
-          page: 1
-        } :
-        item
-      )
-      if (options.notepads.length === 0)
-        return
+        page: 1,
+        paginationOffset: globals.ASSOCIATED_PAGES_PAGINATION_OFFSET,
+      }, payload)
+      options.page = options.page < 1 ? 1 : options.page
 
-      try {
-        const data = await database.sequelize.query(`
-          ${
-            options.notepads.map((notepad) => 
-              `
-              SELECT *
-              FROM (
-                SELECT
-                  ROW_NUMBER () OVER (
-                    ORDER BY "pages"."createdAt"
-                  ) as rowNumber,
-                  ${getSelectFields(database.models.Page, {
-                    as: ({ tableName, fieldName }) => fieldName === 'notepadId' ?
-                      `${fieldName}` :
-                      `${tableName}.${fieldName}`
-                  })}
-                FROM "pages" 
-                WHERE "pages"."notepadId"=${notepad.id}
-              )
-              WHERE
-                rowNumber > ${options.paginationOffset * (notepad.page - 1)} AND
-                rowNumber <= ${options.paginationOffset * (notepad.page)}
-              `
-            ).join(' UNION ')
-          }
-        `, {
-          type: QueryTypes.SELECT,
-          replacements: [],
-          raw: true,
-          nest: true,
-        })
+      const data = await knex('pages')
+        .select('*')
+        .limit(options.paginationOffset)
+        .offset(options.paginationOffset * (options.page - 1))
 
-        return toSerializable({
-          values: groupByWidthAssociations(data, 'notepadId', ['pages'])
-        })
-      } catch (error) {
-        ThrowError({ 
-          content: 'Error retrieving data from database',
-          error: error,
-        })
-        return {
-          values: []
-        }
+      return {
+        values: data
       }
-    } as ModelQueryHandler<PageFiltersPayload, Page>
+    } as ModelQueryHandler<PagesFiltersPayload, Page>
   )
 })
 
@@ -92,24 +46,22 @@ app.on('ready', () => {
   ipcMain.handle(
     'database.pages:get',
     async function get (_, payload) {
-      const data = await database.models.Page.findOne({
-        where: {
-          id: payload.pageID
-        },
-        include: [
-          { model: database.models.Notepad, as: 'notepad'}
-        ],
-      })
-      return toSerializable({
-        value: data ? 
-          {
-            ...data.dataValues,
-            notepad: {
-              ...data.dataValues.notepad.dataValues
-            }
-          } as Page & { notepad: Notepad }
-          : undefined
-      })
+      const knex = databaseAlt.knex
+      const notepadsColumns = Object.keys(await knex('notepads').columnInfo())
+      const pagesColumns = Object.keys(await knex('pages').columnInfo())
+      const data = await knex('pages')
+        .select([
+          ...(pagesColumns.map((item) => ({[item]: `pages.${item}`}))),
+          ...(notepadsColumns.map((item) => ({[`notepad.${item}`]: `notepads.${item}`})))
+        ])
+        .from('pages')
+        .leftJoin('notepads', 'pages.notepadID', 'notepads.id')
+        .where({ 'pages.id': payload.pageID })
+
+      if (data.length === 0) {
+        throw('Row could not been got from database')
+      }
+      return {value: unflatten(data[0])}
     }  as QueryHandler<{ pageID: PageID}, { value: Page & { notepad: Notepad } }>
   )
 })
@@ -119,16 +71,16 @@ app.on('ready', () => {
     'database.pages:create',
     async function create (_, payload) {
       try {
-        const data = await database.models.Page.bulkCreate(payload.data as any)
-        return toSerializable({
-          values: data.map((item) => ({
-            ...item.dataValues,
-            notes: []
-          }))
-        })
+        const knex = databaseAlt.knex
+        const data = await knex('pages')
+          .returning('*')
+          .insert(payload.data)
+        return {
+          values: data as any[]
+        }
       } catch (error) {
         ThrowError({ 
-          content: 'Error retrieving data from database',
+          content: 'Row could not been created',
           error: error,
         })
       }
@@ -141,16 +93,18 @@ app.on('ready', () => {
     'database.pages:update',
     async function update (_, payload) {
       try {
-        const data = await database.models.Page.update(
-          payload.value as Page,
-          { where: { id: payload.value.id } }
-        )
-        if (data[0] === 1) {
-          return toSerializable({ value: payload.value })
+        const knex = databaseAlt.knex
+        const data = await knex('pages')
+          .where({ id: payload.value.id })
+          .update(payload.value, '*')
+        
+        if (data.length === 0) {
+          throw('Row could not been updated')
         }
+        return {value: data[0] as any}
       } catch (error) {
         ThrowError({ 
-          content: 'Error retrieving data from database',
+          content: 'Row could not been updated',
           error: error,
         })
       }
@@ -163,15 +117,23 @@ app.on('ready', () => {
     'database.pages:destroy',
     async function destroy (_, payload) {
       try {
-        const data =  await database.models.Page.destroy({ 
-          where: { id: payload.value.id } 
-        })
-        if (data === 1) {
-          return toSerializable({ value: payload.value })
+        const knex = databaseAlt.knex
+        const data = await knex('pages')
+          .where({ id: payload.value.id })
+          .delete('*')
+
+        if (data.length === 0) {
+          throw('Row could not been removed')
+        }
+        return {
+          value: {
+            id: undefined,
+            ...payload.value
+          }
         }
       } catch (error) {
         ThrowError({ 
-          content: 'Error retrieving data from database',
+          content: 'Row could not been removed',
           error: error,
         })
       }

@@ -1,11 +1,12 @@
 /// <reference path="../globals.d.ts" />
 import path from 'node:path'
+import { ThrowFatalError } from '@main/utils/errors'
 import { getResourcesDir, getPreloadEntry } from "@main/utils/resources"
 import { app, BrowserWindow } from "electron"
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import checkSquirrelStartup from 'electron-squirrel-startup'
-import database from '@main/utils/database'
-import '@main/handlers/commons.handler'
+//import database from '@main/utils/database'
+import databaseAlt from '@main/utils/database.bettersqlite3'
 import '@main/handlers/notepads.handler'
 import '@main/handlers/pages.handler'
 import '@main/handlers/notes.handler'
@@ -68,8 +69,8 @@ app.whenReady().then(() => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 async function init() {
-  if (await database.testConnection()) {
-    await database.init()
+  if (await databaseAlt.testConnection()) {
+    await databaseAlt.init()
   }
   createWindow()
 }

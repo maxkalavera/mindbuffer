@@ -1,9 +1,10 @@
-import path from 'node:path'
 
 export default {
   ENVIRONMENT: ['development', 'production', 'testing']
     .find(item => item === process.env.MINDBUFFER_ENVIRONMENT) || 'production',
-  DEBUG: (process.env.MINDBUFFER_DEBUG || '').toLowerCase() === 'true', // default false
+  DEBUG:
+    process.env.MINDBUFFER_ENVIRONMENT === 'development' ||
+    (process.env.MINDBUFFER_DEBUG || '').toLowerCase() === 'true', // default false
   RESET_SETTINGS_STORE:
     (process.env.MINDBUFFER_RESET_SETTINGS_STORE || '').toLowerCase() === 'true', // default false
   PAGINATION_OFFSET: 

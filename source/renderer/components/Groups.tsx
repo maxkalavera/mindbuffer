@@ -135,7 +135,6 @@ export default function Groups({
           className={styles['add-button']} 
           icon={faPlus}
           onClick={() => {
-            console.log('CLICKED')
             showModal(
               <CreateNotepad />,
               'New Notepad'

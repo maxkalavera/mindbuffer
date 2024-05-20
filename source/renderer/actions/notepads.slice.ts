@@ -65,6 +65,7 @@ export const updateNotepadThunk = createAsyncThunk(
   'notepads/updateNotepad',
   async (payload: { value: Notepad }, thunkAPI) => {
     const response = await window.electronAPI.notepads.update(payload)
+    console.log('updateNotepadThunk', response)
 
     if (thunkAPI.signal.aborted)
       throw 'edcb2bd6-6314-403d-aa98-5847a90c2fbd'
@@ -94,7 +95,7 @@ export const destroyNotepadThunk = createAsyncThunk(
 )
 
 export const createpageThunk = createAsyncThunk(
-  'notes/createPage',
+  'notepads/createPage',
   async (payload: PagePayload, thunkAPI) => {
     const response = await window.electronAPI.pages.create({
       data: [payload]
@@ -168,7 +169,7 @@ export const fetchPagesThunk = createAsyncThunk(
       }))
     if (!notepads) 
       return { notepads: { values: [] } }
-    const response = await window.electronAPI.pages.getAll({
+    const response = await window.electronAPI.notepads.getPages({
       notepads: notepads,
       search: '',
     })
@@ -242,10 +243,10 @@ function update (
   state: NotepadsSliceState, 
   action: PayloadAction<{ values: Notepad[] }>
 ) {
-  state.values = state.values.map((item) => 
-    action.payload.values.find((paylodItem) => paylodItem.id === item.id) || 
-    item
-  )
+  state.values = state.values.map((item) => {
+    const newValues = action.payload.values.find((paylodItem) => paylodItem.id === item.id) || {}
+    return Object.assign(item, newValues)
+  })
 }
 
 function destroy (
@@ -261,12 +262,25 @@ function destroy (
   })
 }
 
+function addNotepadPages (
+  state: NotepadsSliceState, 
+  action: PayloadAction<{ values: Notepad[] }>
+) {
+  state.values = state.values.map((item) => {
+    const payloadItem = action.payload.values.find((payloadItem) => payloadItem.id === item.id)
+    return {
+      ...item,
+      pages: payloadItem ? [...item.pages, ...payloadItem.pages] : item.pages
+    }
+  })
+}
+
 function addPages (
   state: NotepadsSliceState, 
   action: PayloadAction<{ values: Page[] }>
 ) {
   state.values = state.values.map((item) => {
-    const payloadItem = action.payload.values.find((payloadItem) => payloadItem.notepadId === item.id)
+    const payloadItem = action.payload.values.find((payloadItem) => payloadItem.notepadID === item.id)
     return {
       ...item,
       pages: payloadItem ? [...item.pages, payloadItem] : item.pages
@@ -279,7 +293,7 @@ function updatePages (
   action: PayloadAction<{ values: Page[] }>
 ) {
   state.values = state.values.map((notepad) => {
-    const page = action.payload.values.find((page) => page.notepadId === notepad.id)
+    const page = action.payload.values.find((page) => page.notepadID === notepad.id)
     if (page) {
       notepad.pages = notepad.pages.map((item) => item.id === page.id ? page : item)
     }
@@ -292,7 +306,7 @@ function destroyPages (
   action: PayloadAction<{ values: Page[] }>
 ) {
   state.values = state.values.map((notepad) => {
-    const page = action.payload.values.find((page) => page.notepadId === notepad.id)
+    const page = action.payload.values.find((page) => page.notepadID === notepad.id)
     if (page) {
       notepad.pages = notepad.pages.filter((item) => item.id !== page.id)
     }
@@ -357,11 +371,11 @@ const notepadsSlice = createSlice({
       })
     })
     builder.addCase(createNotepadThunk.fulfilled, (state, action) => {
-      addBotom(state, { ...action, payload: { values: action.payload.values }})
+      addTop(state, { ...action, payload: { values: action.payload.values }})
       action.payload.values.forEach((notepad) => {
         state.paginationMap[notepad.id].hasNext = false
       })
-      state.scrollEndHash += 1
+      state.scrollBeginingHash += 1
     })
     builder.addCase(updateNotepadThunk.fulfilled, (state, action) => {
       update(state, {...action, payload: { values: [action.payload.value] }})
@@ -400,12 +414,16 @@ const notepadsSlice = createSlice({
     builder.addCase(fetchPagesThunk.fulfilled, (state, action) => {
       // Add received pages to every fetched notepad
       action.payload.notepads.values.forEach((payloadNotepad: any) => {
-        const notepad = state.values.find((notepad) => notepad.id === payloadNotepad.notepadId)
+        const notepad = state.values.find((notepad) => notepad.id === payloadNotepad.id)
         notepad.pages = [...notepad.pages, ...payloadNotepad.pages]
-
-        state.paginationMap[payloadNotepad.notepadId].isLoading = false
-        state.paginationMap[payloadNotepad.notepadId].hash += 1
+        state.paginationMap[payloadNotepad.id].hash += 1
       })
+
+      action.meta.arg.notepads
+        .forEach((notepadID) => {
+          state.paginationMap[notepadID].isLoading = false
+        })
+
     })
   }
 })

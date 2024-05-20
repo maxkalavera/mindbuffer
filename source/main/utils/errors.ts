@@ -14,14 +14,14 @@ export function ThrowError ({
   error=undefined,
 }: ThrowErrorParams = {} ) {
   if (error && globals.ENVIRONMENT !== 'testing') {
+    const detail = `Type: Error\n\n` +
+      `Stack:\n${error.stack}\n\n` +
+      `Globals:\n${JSON.stringify(globals, undefined, 4)}\n\n` +
+      `Settings:\n${JSON.stringify(settings.store, undefined, 4)}\n\n`
+    globals.DEBUG ? console.log(detail) : ''
     dialog.showMessageBox(undefined, {
       message: content,
-      detail: globals.DEBUG ? 
-        `Type: Error\n\n` +
-        `Stack:\n${error.stack}\n\n` +
-        `Globals:\n${JSON.stringify(globals, undefined, 4)}\n\n` +
-        `Settings:\n${JSON.stringify(settings.store, undefined, 4)}\n\n` :
-        '',
+      detail: globals.DEBUG ? detail : '',
       type: 'error',
       title: title,
       buttons: [
@@ -37,14 +37,14 @@ export function ThrowFatalError ({
   error=undefined,
 }: ThrowErrorParams = {} ) {
   if (error && globals.ENVIRONMENT !== 'testing') {
+    const detail = `Type: Fatal Error\n\n` +
+      `Stack:\n${error.stack}\n\n` +
+      `Globals:\n${JSON.stringify(globals, undefined, 4)}\n\n` +
+      `Settings:\n${JSON.stringify(settings.store, undefined, 4)}\n\n`
+    globals.DEBUG ? console.log(detail) : ''
     dialog.showMessageBox(undefined, {
       message: content,
-      detail: globals.DEBUG ? 
-        `Type: Fatal Error\n\n` +
-        `Stack:\n${error.stack}\n\n` +
-        `Globals:\n${JSON.stringify(globals, undefined, 4)}\n\n` +
-        `Settings:\n${JSON.stringify(settings.store, undefined, 4)}\n\n` :
-        '',
+      detail: globals.DEBUG ? detail : '',
       type: 'error',
       title: title,
       buttons: [

@@ -51,6 +51,10 @@ await esbuild.build({
           license: pkg.license,
           description: pkg.description,
           repository: pkg.repository,
+          scripts: {
+            "rebuild": "electron-rebuild -f -w better-sqlite3",
+            //"postinstall": "electron-builder install-app-deps"
+          },
           devDependencies: Object.fromEntries(
             Object.entries(pkg.devDependencies || {}).filter(([module, _])=> module === 'electron')),
           dependencies: pkg.dependencies || {},

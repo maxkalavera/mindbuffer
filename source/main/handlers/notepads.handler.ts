@@ -1,11 +1,10 @@
 import { app, ipcMain } from 'electron'
-import { QueryTypes } from 'sequelize'
+import { unflatten } from "flat"
+import lodash from 'lodash'
 
-import toSerializable from '@main/utils/database/toSerializable'
+import groupByAssociation from '@main/utils/database/groupByAssociation'
 import { ThrowError } from '@main/utils/errors'
-import getSelectFields from '@main/utils/database/getSelectFields'
-import { groupByWidthAssociations } from '@main/utils/database/groupBy'
-import database from "@main/utils/database"
+import databaseAlt from '@main/utils/database.bettersqlite3'
 
 import type { 
   ModelQueryHandler,
@@ -16,103 +15,135 @@ import type {
 import type { 
   NotepadPayload, 
   Notepad, 
-  NotepadFiltersPayload 
+  NotepadsFiltersPayload ,
+  NotepadsPagesFiltersPayload
 } from '@commons/ts/models/Notepads.types'
 
 app.on('ready', () => {
   ipcMain.handle(
     'database.notepads:getAll',
     async function getAll (_, payload) {
+      /* -- Raw query
+
+      */
       const options = Object.assign({
         search: '',
-        pageID: undefined,
         page: 1,
-        paginationOffset: 20,
+        paginationOffset: globals.PAGINATION_OFFSET,
         associatedPaginationPage: 1,
-        associatedPaginationOffset: 50,
+        associatedPaginationOffset: globals.ASSOCIATED_PAGES_PAGINATION_OFFSET,
       }, payload)
       if (options.page < 1) options.page = 1
-    
-      const queryParams = {
-        limit: options.paginationOffset,
-        offset: options.paginationOffset * (options.page - 1),
-        associatedLimitLeft: options.associatedPaginationOffset * (options.associatedPaginationPage - 1),
-        associatedLimitRight: options.associatedPaginationOffset * (options.associatedPaginationPage),
-      } as any
 
-      if (options.search) {
-        queryParams.search = `"${options.search}"`
-      }
-
-      try {
-        const data = await database.sequelize.query(`
-        SELECT * 
-        FROM (
-            SELECT
-                ROW_NUMBER () OVER (
-                    PARTITION BY "notepads"."id"
-                    ORDER BY "pages"."createdAt"
-                ) as notepadsRowNumber,
-                ${
-                  getSelectFields(database.models.Notepad)
-                },
-                ${
-                  getSelectFields(
-                    database.models.Page, 
-                    {
-                      as: ({ fieldName }) => `pages.${fieldName}`
-                    }
-                  )
-                }
-            FROM "notepads"
-            LEFT OUTER JOIN "pages" 
-            ON "notepads"."id"="pages"."notepadId"
-            WHERE
-                "notepads"."id" IN (
-                    SELECT id FROM "notepads" LIMIT $$limit OFFSET $$offset
-                )
-                ${
-                  queryParams.search ?
-                    `
-                    AND
-                    "pages"."id" IN (
-                        SELECT pageId FROM "notes"
-                        WHERE
-                            id IN (
-                                select noteID 
-                                FROM searches 
-                                WHERE noteContent 
-                                MATCH $$search
-                                ORDER BY 
-                                    rank DESC, 
-                                    noteID DESC
-                            )  
-                    )
-                    ` :
-                    ''
-
-                }
-        )
+      const knex = databaseAlt.knex
+      const notepadsColumns = Object.keys(await knex('notepads').columnInfo())
+      const pagesColumns = Object.keys(await knex('pages').columnInfo())
+      const data = await knex('notepads')
+        .select([
+          ...notepadsColumns,
+          ...(pagesColumns.map((item) => ({[`pages.${item}`]: `pages:${item}`})))
+        ])
+        .from(knex.raw(
+          `(SELECT 
+            ROW_NUMBER () OVER (
+                PARTITION BY "notepads"."id"
+                ORDER BY "pages"."created_at") AS notepadsRow,
+            ${notepadsColumns.map(item => `"notepads"."${item}" as "${item}"`).join(',\n')},
+            ${pagesColumns.map(item => `"pages"."${item}" as "pages:${item}"`).join(',\n')}
+        FROM "notepads"
+        LEFT OUTER JOIN "pages" ON "notepads"."id"="pages"."notepadID"
         WHERE
-            notepadsRowNumber > $$associatedLimitLeft AND
-            notepadsRowNumber <= $$associatedLimitRight
-        `, {
-          type: QueryTypes.SELECT,
-          bind: queryParams,
-          raw: true,
-          nest: true,
-        })
-        return toSerializable({
-          values: groupByWidthAssociations(data, 'id', ['pages'])
-        })
-      } catch (error) {
-        ThrowError({ 
-          content: 'Error retrieving data from database',
-          error: error,
-        })
+            IIF(
+                ?='',
+                "notepads"."id" IN (
+                    SELECT id
+                    FROM "notepads"
+                    LIMIT ?
+                    OFFSET ?
+                ),
+                "pages"."id" IN (
+                    SELECT pageId
+                    FROM "notes"
+                    WHERE id IN (
+                        SELECT noteID
+                        FROM searches
+                        WHERE noteContent MATCH ?
+                        ORDER BY rank DESC, noteID ASC) 
+                )
+            ))`,
+            [
+              options.search || '',
+              options.paginationOffset,
+              options.paginationOffset * (options.page - 1),
+              options.search || '',
+            ]
+        ))
+        .where(knex.raw(
+          `notepadsRow > ? AND notepadsRow <= ?`,
+          [
+            options.associatedPaginationOffset * (options.associatedPaginationPage - 1),
+            options.associatedPaginationOffset * (options.associatedPaginationPage)
+          ]
+        ))
+        .orderBy([{column: 'created_at', order: 'desc'}])
+
+      const unflattened = (unflatten({ref: data}) as any).ref
+      return {
+        values: groupByAssociation(unflattened, ['pages']),
       }
-     return undefined
-    } as ModelQueryHandler<NotepadFiltersPayload, Notepad>
+    } as ModelQueryHandler<NotepadsFiltersPayload, Notepad>
+  )
+})
+
+app.on('ready', () => {
+  ipcMain.handle(
+    'database.notepads.pages:get',
+    async function getAll (_, payload) {
+      const options = Object.assign({
+        search: '',
+        paginationOffset: globals.ASSOCIATED_PAGES_PAGINATION_OFFSET,
+      }, payload)
+      const knex = databaseAlt.knex
+      const pagesColumns = Object.keys(await knex('pages').columnInfo())
+      var data = []
+      if (options.notepads.length > 0) {
+        data = await knex
+          .select([
+            'id',
+            ...(pagesColumns.map((item) => ({[`pages.${item}`]: `pages:${item}`})))
+          ])
+          .from(
+            knex.union(function () {
+              options.notepads.map((notepad) => {
+                this
+                  .select('*')
+                  .from(function () {
+                    this
+                      .rowNumber('rowNumber', 'created_at')
+                      .select([
+                        ...(pagesColumns.map((item) => ({[`pages:${item}`]: `pages.${item}`}))),
+                        {'id': `pages.notepadID`}
+                      ])
+                      .from('pages')
+                      .where('notepadID', notepad.id)
+                  })
+                  .andWhereBetween(
+                    'rowNumber', 
+                    [
+                      options.paginationOffset * (notepad.page - 1), 
+                      options.paginationOffset * notepad.page
+                    ]
+                  )
+              })
+            })
+          )
+      }
+
+      const unflattened = (unflatten({ref: data}) as any).ref
+      return {
+        values: groupByAssociation(unflattened, ['pages'])
+      }
+    } as ModelQueryHandler<NotepadsPagesFiltersPayload, Notepad>
   )
 })
 
@@ -121,16 +152,16 @@ app.on('ready', () => {
     'database.notepads:create',
     async function create (_, payload) {
       try {
-        const response = await database.models.Notepad.bulkCreate(payload.data as any)
-        return toSerializable({
-          values: response.map((item) => ({
-            ...item.dataValues,
-            pages: [],
-          }))
-        })
+        const knex = databaseAlt.knex
+        const data = await knex('notepads')
+          .returning('*')
+          .insert(payload.data) as Notepad[]
+        return {
+          values: data.map((item) => ({...item, pages: []})) as any[]
+        }
       } catch (error) {
         ThrowError({ 
-          content: 'Error retrieving data from database',
+          content: 'Row could not been created',
           error: error,
         })
       }
@@ -143,17 +174,18 @@ app.on('ready', () => {
     'database.notepads:update',
     async function update (_, payload) {
       try {
-        const response = await database.models.Notepad.update(
-          payload.value, 
-          { where: { id: payload.value.id } }
-        )
-
-        if (response[0] === 1) {
-          return toSerializable({ value: payload.value })
+        const knex = databaseAlt.knex
+        const columns = Object.keys(await knex('notepads').columnInfo())
+        const data = await knex('notepads')
+          .where({ id: payload.value.id })
+          .update(lodash.pick(payload.value, columns), '*')
+        if (data.length === 0) {
+          throw('Row could not been updated')
         }
+        return {value: data[0] as any}
       } catch (error) {
         ThrowError({ 
-          content: 'Error retrieving data from database',
+          content: 'Row could not been updated',
           error: error,
         })
       }
@@ -166,15 +198,23 @@ app.on('ready', () => {
     'database.notepads:destroy',
     async function destroy (_, payload) {
       try {
-        const response = await database.models.Notepad.destroy({ 
-          where: { id: payload.value.id } 
-        })
-        if (response === 1) {
-          return toSerializable({ value: payload.value })
+        const knex = databaseAlt.knex
+        const data = await knex('notepads')
+          .where({ id: payload.value.id })
+          .delete('*')
+
+        if (data.length === 0) {
+          throw('Row could not been removed')
+        }
+        return {
+          value: {
+            id: undefined,
+            ...payload.value
+          }
         }
       } catch (error) {
         ThrowError({ 
-          content: 'Error retrieving data from database',
+          content: 'Row could not been removed',
           error: error,
         })
       }

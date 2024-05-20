@@ -4,8 +4,8 @@ import Store from 'electron-store'
 
 const databaseLocations = {
   'production': path.resolve(app.getPath('userData'), 'mindbuffer.db'),
-  'development' : '.run/mindbuffer.db', 
-  'testing': '.run/mindbuffer.test.db',
+  'development' : path.resolve('.run/mindbuffer.development.db'), 
+  'testing': path.resolve('.run/mindbuffer.test.db'),
 }
 
 type StoreType = {

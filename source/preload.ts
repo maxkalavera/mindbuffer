@@ -9,12 +9,11 @@ import type {
   ModelUpdateInvoker, 
   ModelDestroyInvoker 
 } from '@commons/ts/invokers.types'
-import type { NotePayload, Note, NoteFiltersPayload } from '@commons/ts/models/Notes.types'
-import type { PagePayload, Page, PageFiltersPayload, PageID } from '@commons/ts/models/Pages.types'
-import type { NotepadPayload, Notepad, NotepadFiltersPayload, NotepadID } from '@commons/ts/models/Notepads.types'
+import type { NotePayload, Note, NotesFiltersPayload } from '@commons/ts/models/Notes.types'
+import type { PagePayload, Page, PagesFiltersPayload, PageID } from '@commons/ts/models/Pages.types'
+import type { NotepadPayload, Notepad, NotepadsFiltersPayload, NotepadsPagesFiltersPayload, NotepadID } from '@commons/ts/models/Notepads.types'
 
 export const electronAPI = {
-  commons: {},
   settings: {
     sidebarAperture: {
       get: () => 
@@ -32,7 +31,7 @@ export const electronAPI = {
   notes: {
     getAll: ((payload) => {
       return ipcRenderer.invoke('database.notes:getAll', payload)
-    }) as ModelQueryInvoker<NoteFiltersPayload, Note>,
+    }) as ModelQueryInvoker<NotesFiltersPayload, Note>,
     create: ((payload) => {
       return ipcRenderer.invoke('database.notes:create', payload)
     }) as ModelCreateInvoker<NotePayload, Note>,
@@ -44,9 +43,17 @@ export const electronAPI = {
     }) as ModelDestroyInvoker<Note>,
   },
   notepads: {
-    getAll: ((payload: NotepadFiltersPayload) => {
+    getAll: ((payload: NotepadsFiltersPayload) => {
       return ipcRenderer.invoke('database.notepads:getAll', payload)
-    }) as ModelQueryInvoker<NotepadFiltersPayload, Notepad>,
+    }) as ModelQueryInvoker<NotepadsFiltersPayload, Notepad>,
+    getPages: ((payload: NotepadsPagesFiltersPayload) => {
+      return ipcRenderer.invoke('database.notepads.pages:get', payload)
+    }) as QueryInvoker<NotepadsPagesFiltersPayload, {
+      values: {
+        id: NotepadID,
+        pages: Page[]
+      }[]
+    }>,
     create: ((payload) => {
       return ipcRenderer.invoke('database.notepads:create', payload)
     }) as ModelCreateInvoker<NotepadPayload, Notepad>,
@@ -58,11 +65,11 @@ export const electronAPI = {
     }) as ModelDestroyInvoker<Notepad>,
   },
   pages: {
-    getAll: ((payload: PageFiltersPayload) => {
+    getAll: ((payload: PagesFiltersPayload) => {
       return ipcRenderer.invoke('database.pages:getAll', payload)
-    }) as QueryInvoker<PageFiltersPayload, {
+    }) as QueryInvoker<PagesFiltersPayload, {
       values: {
-        notepadId: NotepadID,
+        id: NotepadID,
         pages: Page[]
       }[]
     }>,

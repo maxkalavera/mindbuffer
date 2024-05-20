@@ -4,8 +4,7 @@ import { clean } from 'esbuild-plugin-clean';
 import globals from './globals.esbuild.mjs'
 
 const outDir = './.package';
-
-await esbuild.build({
+const config = {
   target: 'es2020',
   platform: 'browser',
   format: 'cjs',
@@ -26,4 +25,11 @@ await esbuild.build({
       ].map((item) => resolve(outDir, item)),
     }),
   ],
-}).catch(() => process.exit(1));
+}
+
+if (process.argv.some((item) => item === '--watch')) {
+  const context = await esbuild.context(config)
+  await context.watch()
+} else {
+  await esbuild.build(config)
+}

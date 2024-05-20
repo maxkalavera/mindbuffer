@@ -1,9 +1,7 @@
 import { app, ipcMain } from 'electron'
-import { QueryTypes } from 'sequelize'
 
-import toSerializable from '@main/utils/database/toSerializable'
 import { ThrowError } from '@main/utils/errors'
-import database from "@main/utils/database"
+import databaseAlt from '@main/utils/database.bettersqlite3'
 
 import type { 
   ModelQueryHandler,
@@ -13,7 +11,7 @@ import type {
 } from '@commons/ts/handlers.types'
 import type {
   NotePayload, 
-  NoteFiltersPayload, 
+  NotesFiltersPayload, 
   Note 
 } from '@commons/ts/models/Notes.types'
 
@@ -21,71 +19,63 @@ app.on('ready', () => {
   ipcMain.handle(
     'database.notes:getAll',
     async function getAll (_, payload) {
-      const options = Object.assign({
-        search: '',
-        pageID: undefined,
-        page: 1,
-        paginationOffset: 20
-      }, payload)
-      if (options.page < 1) options.page = 1
-    
-      const queryParams = {
-        limit: options.paginationOffset,
-        offset: options.paginationOffset * (options.page - 1),
-      } as any
+      /* 
+        -- Raw query
+        -- pageID or 0
+        -- search or ''
 
-      if (options.search) {
-        queryParams.search = `"${options.search}"`
-      }
-      if (options.pageID) {
-        queryParams.pageID = options.pageID
-      }
+        SELECT *
+        FROM `notes`
+        WHERE IIF(?=0, 1, pageID=?)
+          AND IIF(?='', 1, id in
+                    (SELECT noteID
+                    FROM searches
+                    WHERE noteContent MATCH ?
+                    ORDER BY rank DESC, noteID DESC))
+      */
+      const options = Object.assign({
+        search: null,
+        pageID: null,
+        page: 1,
+        paginationOffset: globals.PAGINATION_OFFSET
+      }, payload)
+      options.page = options.page < 1 ? 1 : options.page
 
       try {
-        const data = await database.sequelize.query(`
-          SELECT * FROM "notes"
-          ${
-            queryParams.search || queryParams.pageID ?
-              `WHERE` : ''
-          }
-            ${queryParams.pageID ? `pageId = $$pageID` : ''}
-            ${queryParams.search && queryParams.pageID ? 'AND' : ''}
-            ${
-              queryParams.search ? 
-                `
-                  id IN (
-                    select noteID 
-                    FROM searches 
-                    WHERE noteContent 
-                    MATCH $$search
-                    ORDER BY 
-                        rank DESC, 
-                        noteID DESC
-                  )              
-                ` : ''
-            }
-          ${
-            !queryParams.search ?
-              `ORDER BY
-                updatedAt DESC
-              ` : ''
-          }
-          LIMIT $$limit OFFSET $$offset;
-        `, {
-          type: QueryTypes.SELECT,
-          bind: queryParams,
-          raw: true,
-        })
-        return toSerializable({
+        const knex = databaseAlt.knex
+        const data = await knex('notes')
+          .select('*')
+          .where(knex.raw(
+            `IIF(?=0, 1, pageID=?)`,
+            [
+              options.pageID || 0,
+              options.pageID || 0
+            ]
+          ))
+          .andWhere(knex.raw(
+            `IIF(?='', 1, id in
+                (SELECT noteID
+                FROM searches
+                WHERE noteContent MATCH ?
+                ORDER BY rank DESC, noteID DESC))
+            `, 
+            [
+              options.search || '', 
+              options.search || ''
+            ]
+          ))
+          .limit(options.paginationOffset)
+          .offset(options.paginationOffset * (options.page - 1))
+        return {
           values: data
-        })
+        } 
       } catch (error) {
         ThrowError({ 
           content: 'Error retrieving data from database',
           error: error,
         })
       } 
-    }  as ModelQueryHandler<NoteFiltersPayload, Note>
+    }  as ModelQueryHandler<NotesFiltersPayload, Note>
   )
 })
 
@@ -94,13 +84,16 @@ app.on('ready', () => {
     'database.notes:create',
     async function create (_, payload) {
       try {
-        const response = await database.models.Note.bulkCreate(payload.data as any)
-        return toSerializable({
-          values: response.map((item) => item.dataValues)
-        })
+        const knex = databaseAlt.knex
+        const data = await knex('notes')
+          .returning('*')
+          .insert(payload.data)
+        return {
+          values: data as any[]
+        }
       } catch (error) {
         ThrowError({ 
-          content: 'Error retrieving data from database',
+          content: 'Row could not been created',
           error: error,
         })
       }
@@ -113,17 +106,18 @@ app.on('ready', () => {
     'database.note:update',
     async function update (_, payload) {
       try {
-        const response = await database.models.Note.update(
-          payload.value, 
-          { where: { id: payload.value.id } }
-        )
+        const knex = databaseAlt.knex
+        const data = await knex('notes')
+          .where({ id: payload.value.id })
+          .update(payload.value, '*')
 
-        if (response[0] === 1) {
-          return toSerializable({ value: payload.value })
+        if (data.length === 0) {
+          throw('Row could not been updated')
         }
+        return {value: data as any}
       } catch (error) {
         ThrowError({ 
-          content: 'Error retrieving data from database',
+          content: 'Row could not been updated',
           error: error,
         })
       }
@@ -136,15 +130,23 @@ app.on('ready', () => {
     'database.notes:destroy',
     async function destroy (_, payload) {
       try {
-        const response = await database.models.Note.destroy({ 
-          where: { id: payload.value.id } 
-        })
-        if (response === 1) {
-          return toSerializable({ value: payload.value })
+        const knex = databaseAlt.knex
+        const data = await knex('notes')
+          .where({ id: payload.value.id })
+          .delete('*')
+
+          if (data.length === 0) {
+            throw('Row could not been removed')
+          }
+        return {
+          value: {
+            id: undefined,
+            ...payload.value
+          }
         }
       } catch (error) {
         ThrowError({ 
-          content: 'Error retrieving data from database',
+          content: 'Row could not been removed',
           error: error,
         })
       }

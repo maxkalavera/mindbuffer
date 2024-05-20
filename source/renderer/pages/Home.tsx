@@ -42,6 +42,7 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
+    // Fetch selected page
     let promise: any = undefined
     if (context.pages.selectedPageID === undefined) {
       const { setSelectedPage } = pagesSlice.actions
@@ -57,6 +58,7 @@ export default function Home() {
   }, [context.pages.selectedPageID])
 
   useEffect(() => {
+    // Fetch notes
     const { search } = context.commons
     const { selectedPageID } = context.pages
     const promise = store.dispatch(fetchNotesThunk({ 
@@ -70,7 +72,7 @@ export default function Home() {
   }, [context.commons.search, context.pages.selectedPageID])
 
   useEffect(() => {
-    /* Fetch notepads on search */
+    // Fetch notepads
     const promise = store.dispatch(fetchNotepadsThunk({ 
       page: 1, 
       search: context.pages.selectedPageID === undefined ? context.commons.search  : ''
