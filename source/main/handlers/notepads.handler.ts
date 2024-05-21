@@ -30,10 +30,10 @@ app.on('ready', () => {
         search: '',
         page: 1,
         paginationOffset: globals.PAGINATION_OFFSET,
-        associatedPaginationPage: 1,
+        associatedPage: 1,
         associatedPaginationOffset: globals.ASSOCIATED_PAGES_PAGINATION_OFFSET,
       }, payload)
-      if (options.page < 1) options.page = 1
+      options.page = options.page < 1 ? 1 : options.page
 
       const knex = databaseAlt.knex
       const notepadsColumns = Object.keys(await knex('notepads').columnInfo())
@@ -47,7 +47,7 @@ app.on('ready', () => {
           `(SELECT 
             ROW_NUMBER () OVER (
                 PARTITION BY "notepads"."id"
-                ORDER BY "pages"."created_at") AS notepadsRow,
+                ORDER BY "pages"."id") AS rowNumber,
             ${notepadsColumns.map(item => `"notepads"."${item}" as "${item}"`).join(',\n')},
             ${pagesColumns.map(item => `"pages"."${item}" as "pages:${item}"`).join(',\n')}
         FROM "notepads"
@@ -79,10 +79,10 @@ app.on('ready', () => {
             ]
         ))
         .where(knex.raw(
-          `notepadsRow > ? AND notepadsRow <= ?`,
+          `rowNumber > ? AND rowNumber <= ?`,
           [
-            options.associatedPaginationOffset * (options.associatedPaginationPage - 1),
-            options.associatedPaginationOffset * (options.associatedPaginationPage)
+            options.associatedPaginationOffset * (options.associatedPage - 1),
+            options.associatedPaginationOffset * (options.associatedPage)
           ]
         ))
         .orderBy([{column: 'created_at', order: 'desc'}])
@@ -100,9 +100,12 @@ app.on('ready', () => {
     'database.notepads.pages:get',
     async function getAll (_, payload) {
       const options = Object.assign({
+        page: 1,
         search: '',
         paginationOffset: globals.ASSOCIATED_PAGES_PAGINATION_OFFSET,
       }, payload)
+      options.page = options.page < 1 ? 1 : options.page
+
       const knex = databaseAlt.knex
       const pagesColumns = Object.keys(await knex('pages').columnInfo())
       var data = []
@@ -119,7 +122,7 @@ app.on('ready', () => {
                   .select('*')
                   .from(function () {
                     this
-                      .rowNumber('rowNumber', 'created_at')
+                      .rowNumber('rowNumber', 'id')
                       .select([
                         ...(pagesColumns.map((item) => ({[`pages:${item}`]: `pages.${item}`}))),
                         {'id': `pages.notepadID`}
@@ -127,13 +130,13 @@ app.on('ready', () => {
                       .from('pages')
                       .where('notepadID', notepad.id)
                   })
-                  .andWhereBetween(
-                    'rowNumber', 
+                  .where(knex.raw(
+                    `rowNumber > ? AND rowNumber <= ?`,
                     [
-                      options.paginationOffset * (notepad.page - 1), 
-                      options.paginationOffset * notepad.page
+                      options.paginationOffset * (notepad.page - 1),
+                      options.paginationOffset * (notepad.page)
                     ]
-                  )
+                  ))
               })
             })
           )

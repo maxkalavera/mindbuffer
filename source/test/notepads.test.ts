@@ -1,21 +1,12 @@
 import {describe, expect, test} from '@jest/globals';
-import webdriver, { By, Key, until } from 'selenium-webdriver';
+import { By, until } from 'selenium-webdriver';
 import { v4 as uuidv4 } from 'uuid';
 
 import { createNotepad, updateNotepad, deleteNotepad, countNotepads } from './notepads.operations'
-import buildWebdriver from './buildWebdriver';
-
-const driverRef: {current: webdriver.ThenableWebDriver} = {current: undefined}
 
 describe('Notepads operations', () => {
-  beforeEach(() => {
-    driverRef.current = buildWebdriver()
-  });
-  afterEach(async () => {
-    await driverRef.current.quit()
-  });
   test('Notepad is added it\'s container when created', async () => {
-    const driver = driverRef.current
+    const driver = global.webdriver
     const name = 'text:bK5oaojDzQ'
     await createNotepad(driver, name)
     expect(await driver.findElements(By.xpath(
@@ -23,8 +14,9 @@ describe('Notepads operations', () => {
       `//ancestor::div[contains(@class, 'class:notepad:8iwbWkd5Y1')]`
     ))).toHaveLength(1)
   })
+
   test('Notepad is modified from it\'s container when updated', async () => {
-    const driver = driverRef.current
+    const driver = global.webdriver
     const originalName = 'text:NWwVUyjCGx'
     const updatedName = 'text:txg393ydXN'
     await createNotepad(driver, originalName)
@@ -42,8 +34,9 @@ describe('Notepads operations', () => {
       `//ancestor::div[contains(@class, 'class:notepad:8iwbWkd5Y1')]`
     ))).toHaveLength(1)
   })
+
   test('Notepad is removed from it\'s container when deleted', async () => {
-    const driver = driverRef.current
+    const driver = global.webdriver
     const name = 'text:vfzbE9RYPL'
     await createNotepad(driver, name)
     expect(await driver.findElements(By.xpath(
@@ -56,9 +49,10 @@ describe('Notepads operations', () => {
       `//ancestor::div[contains(@class, 'class:notepad:8iwbWkd5Y1')]`
     ))).toHaveLength(0)
   })
+
   test('Notepad container should paginate when there is too many items', async () => {
+    const driver = global.webdriver
     const notepads = Array(25).fill(undefined).map(() => `text:${uuidv4()}`)
-    const driver = driverRef.current
     for(let i = 0; i < notepads.length; i++) {
       await createNotepad(driver, notepads[i])
     }

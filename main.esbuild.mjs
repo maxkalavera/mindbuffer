@@ -5,7 +5,7 @@ import { nodeExternalsPlugin } from 'esbuild-node-externals';
 import { copy } from 'esbuild-plugin-copy';
 import { clean } from 'esbuild-plugin-clean';
 import writeFilePlugin from 'esbuild-plugin-write-file';
-import globals from './globals.esbuild.mjs'
+import globals from './globals.mjs'
 
 const pkg = JSON.parse(readFileSync(resolve('./package.json'), { encoding: 'utf8' }));
 const outDir = './.package';

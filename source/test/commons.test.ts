@@ -1,13 +1,10 @@
 import {describe, expect, test} from '@jest/globals';
-import webdriver, { By, Key, until } from 'selenium-webdriver'
+import webdriver, { By, until } from 'selenium-webdriver'
 import { v4 as uuidv4 } from 'uuid';
 
 import { createNote, countNotes } from './notes.operations'
 import { createNotepad, countNotepads } from './notepads.operations'
 import { createPage, countPages, clickPage } from './pages.operations'
-import buildWebdriver from './buildWebdriver';
-
-const driverRef: {current: webdriver.ThenableWebDriver} = {current: undefined}
 
 const search = async (
   driver: webdriver.ThenableWebDriver,
@@ -30,14 +27,8 @@ const clearSearch = async (
 }
 
 describe('General operations', () => {
-  beforeEach(() => {
-    driverRef.current = buildWebdriver()
-  });
-  afterEach(async () => {
-    await driverRef.current.quit()
-  });
   test('Search should filter items by its keywords', async () => {
-    const driver = driverRef.current
+    const driver = global.webdriver
     const notepads = Array(5).fill(undefined).map(() => `text:${uuidv4()}`)
     const pages = Array(5).fill(undefined).map(() => `text:${uuidv4()}`)
     const notes = Array(5).fill(undefined).map(() => `text:${uuidv4()}`)

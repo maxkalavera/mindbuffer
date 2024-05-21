@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import esbuild from 'esbuild';
 import { clean } from 'esbuild-plugin-clean';
-import globals from './globals.esbuild.mjs'
+import globals from './globals.mjs'
 
 const outDir = './.package';
 const config = {

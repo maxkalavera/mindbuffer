@@ -1,22 +1,13 @@
 import {describe, expect, test} from '@jest/globals';
-import webdriver, { By, Key, until } from 'selenium-webdriver'
+import { By, until } from 'selenium-webdriver'
 import { v4 as uuidv4 } from 'uuid';
 
 import {createNote, deleteNote, countNotes} from './notes.operations'
-import buildWebdriver from './buildWebdriver';
-
-const driverRef: {current: webdriver.ThenableWebDriver} = {current: undefined}
 
 describe('Notes operations', () => {
-  beforeEach(() => {
-    driverRef.current = buildWebdriver()
-  });
-  afterEach(async () => {
-    await driverRef.current.quit()
-  });
   test('Note is added to note\'s board when created', async () => {
+    const driver = global.webdriver
     const textContent = 'text:Og7LikCQFm'
-    const driver = driverRef.current
     await createNote(driver, textContent)
     {
       const notesBoard = await driver.findElement(By.id('id:notes-board:Y8FAln8HKV'))
@@ -24,9 +15,10 @@ describe('Notes operations', () => {
       expect(notesBoardTextContent.includes(textContent)).toBeTruthy()
     }
   });
+
   test('Note is deleted when delete\'s operation is confirmed', async () => {
+    const driver = global.webdriver
     const textContent = 'text:NXIdNyzgq9'
-    const driver = driverRef.current
     await createNote(driver, textContent)
     await deleteNote(driver, textContent)
     {
@@ -35,9 +27,10 @@ describe('Notes operations', () => {
       expect(notesBoardTextContent.includes(textContent)).not.toBeTruthy()
     }
   });
+
   test('Notes board should paginate when there is too many items', async () => {
+    const driver = global.webdriver
     const notes = Array(25).fill(undefined).map(() => `text:${uuidv4()}`)
-    const driver = driverRef.current
     for(let i = 0; i < notes.length; i++) {
       await createNote(driver, notes[i])
     }

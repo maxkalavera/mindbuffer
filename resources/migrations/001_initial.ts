@@ -13,6 +13,7 @@ exports.up = function (knex) {
       table.foreign('notepadID')
         .references('notepads.id')
         .deferrable()
+        .onDelete("CASCADE")
     })
     .createTable('notes', function (table) {
       table.increments('id')
@@ -22,6 +23,7 @@ exports.up = function (knex) {
       table.foreign('pageID')
         .references('pages.id')
         .deferrable()
+        .onDelete("CASCADE")
     })
     .raw(`CREATE VIRTUAL TABLE searches USING fts5(noteID, noteContent);`)
     .raw(`

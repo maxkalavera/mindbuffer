@@ -1,13 +1,16 @@
-/* @ts-ignore */
-import type { Config } from 'jest';
+import globals from './globals.mjs'
 
-const config: Config = {
+const config = {
   verbose: true,
   testEnvironment: 'node',
   testTimeout: 10 * 1000,
   openHandlesTimeout: 5 * 1000,
   moduleDirectories: ["node_modules", "source/test"],
-  setupFiles: [
+  rootDir: './',
+  //setupFiles: [
+  //  "<rootDir>/source/test/setup.ts",
+  //],
+  setupFilesAfterEnv: [
     "<rootDir>/source/test/setup.ts",
   ],
   transformIgnorePatterns: [
@@ -19,7 +22,8 @@ const config: Config = {
   transform: {
     '^.+\\.(ts|tsx)?$': 'ts-jest',
     "^.+\\.(js|jsx)$": 'babel-jest',
-  }
+  },
+  globals,
 };
 
 export default config;

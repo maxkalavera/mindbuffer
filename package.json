@@ -11,8 +11,7 @@
   "license": "MIT",
   "scripts": {
     "build:main:install": "npm --prefix ./.package install ./.package",
-    "build:main:esbuild": "babel-node main.esbuild.mjs",
-    "build:main": "npm run build:main:esbuild && npm run build:main:install",
+    "build:main": "babel-node main.esbuild.mjs && npm run build:main:install",
     "build:preload": "babel-node preload.esbuild.mjs",
     "build:renderer": "babel-node renderer.esbuild.mjs",
     "build:prebuild": "npm run build:main && npm run build:preload && npm run build:renderer",

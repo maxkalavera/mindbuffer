@@ -1,5 +1,9 @@
 import path from 'path'
 import { platform, arch } from 'os'
+import { beforeEach, afterEach } from '@jest/globals';
+import webdriver from 'selenium-webdriver'
+
+import buildWebdriver from './buildWebdriver';
 import pkg from '../../package.json'
 
 const platformDict = {
@@ -21,4 +25,14 @@ switch(platform()) {
     break;
 }
 
-jest.retryTimes(3)
+jest.retryTimes(global.DEBUG ? 0 : 2)
+
+global.webdriver = undefined as webdriver.ThenableWebDriver
+beforeEach(() => {
+  global.webdriver = buildWebdriver()
+});
+afterEach(async () => {
+  if (!global.DEBUG) {
+    await global.webdriver.quit()
+  }
+});
