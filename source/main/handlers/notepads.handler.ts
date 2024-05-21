@@ -75,7 +75,7 @@ app.on('ready', () => {
               options.search || '',
               options.paginationOffset,
               options.paginationOffset * (options.page - 1),
-              options.search || '',
+              `"${options.search}"` || '""',
             ]
         ))
         .where(knex.raw(

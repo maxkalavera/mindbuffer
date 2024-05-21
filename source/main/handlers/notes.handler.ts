@@ -61,7 +61,7 @@ app.on('ready', () => {
             `, 
             [
               options.search || '', 
-              options.search || ''
+              `"${options.search}"` || '""'
             ]
           ))
           .limit(options.paginationOffset)

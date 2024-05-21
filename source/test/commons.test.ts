@@ -27,7 +27,7 @@ const clearSearch = async (
 }
 
 describe('General operations', () => {
-  test('Search should filter items by its keywords', async () => {
+  test('Search should filter items by its keywords #6LGdgVNDb0', async () => {
     const driver = global.webdriver
     const notepads = Array(5).fill(undefined).map(() => `text:${uuidv4()}`)
     const pages = Array(5).fill(undefined).map(() => `text:${uuidv4()}`)
