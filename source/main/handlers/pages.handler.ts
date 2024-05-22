@@ -2,7 +2,7 @@ import { app, ipcMain } from 'electron'
 import { unflatten } from "flat"
 
 import { ThrowError } from '@main/utils/errors'
-import databaseAlt from '@main/utils/database.bettersqlite3'
+import database from '@main/utils/database'
 
 import type { 
   QueryHandler,
@@ -46,7 +46,7 @@ app.on('ready', () => {
   ipcMain.handle(
     'database.pages:get',
     async function get (_, payload) {
-      const knex = databaseAlt.knex
+      const knex = database.knex
       const notepadsColumns = Object.keys(await knex('notepads').columnInfo())
       const pagesColumns = Object.keys(await knex('pages').columnInfo())
       const data = await knex('pages')
@@ -71,7 +71,7 @@ app.on('ready', () => {
     'database.pages:create',
     async function create (_, payload) {
       try {
-        const knex = databaseAlt.knex
+        const knex = database.knex
         const data = await knex('pages')
           .returning('*')
           .insert(payload.data)
@@ -93,7 +93,7 @@ app.on('ready', () => {
     'database.pages:update',
     async function update (_, payload) {
       try {
-        const knex = databaseAlt.knex
+        const knex = database.knex
         const data = await knex('pages')
           .where({ id: payload.value.id })
           .update(payload.value, '*')
@@ -117,7 +117,7 @@ app.on('ready', () => {
     'database.pages:destroy',
     async function destroy (_, payload) {
       try {
-        const knex = databaseAlt.knex
+        const knex = database.knex
         const data = await knex('pages')
           .where({ id: payload.value.id })
           .delete('*')

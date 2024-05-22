@@ -4,7 +4,7 @@ import lodash from 'lodash'
 
 import groupByAssociation from '@main/utils/database/groupByAssociation'
 import { ThrowError } from '@main/utils/errors'
-import databaseAlt from '@main/utils/database.bettersqlite3'
+import database from '@main/utils/database'
 
 import type { 
   ModelQueryHandler,
@@ -35,7 +35,7 @@ app.on('ready', () => {
       }, payload)
       options.page = options.page < 1 ? 1 : options.page
 
-      const knex = databaseAlt.knex
+      const knex = database.knex
       const notepadsColumns = Object.keys(await knex('notepads').columnInfo())
       const pagesColumns = Object.keys(await knex('pages').columnInfo())
       const data = await knex('notepads')
@@ -106,7 +106,7 @@ app.on('ready', () => {
       }, payload)
       options.page = options.page < 1 ? 1 : options.page
 
-      const knex = databaseAlt.knex
+      const knex = database.knex
       const pagesColumns = Object.keys(await knex('pages').columnInfo())
       var data = []
       if (options.notepads.length > 0) {
@@ -155,7 +155,7 @@ app.on('ready', () => {
     'database.notepads:create',
     async function create (_, payload) {
       try {
-        const knex = databaseAlt.knex
+        const knex = database.knex
         const data = await knex('notepads')
           .returning('*')
           .insert(payload.data) as Notepad[]
@@ -177,7 +177,7 @@ app.on('ready', () => {
     'database.notepads:update',
     async function update (_, payload) {
       try {
-        const knex = databaseAlt.knex
+        const knex = database.knex
         const columns = Object.keys(await knex('notepads').columnInfo())
         const data = await knex('notepads')
           .where({ id: payload.value.id })
@@ -201,7 +201,7 @@ app.on('ready', () => {
     'database.notepads:destroy',
     async function destroy (_, payload) {
       try {
-        const knex = databaseAlt.knex
+        const knex = database.knex
         const data = await knex('notepads')
           .where({ id: payload.value.id })
           .delete('*')

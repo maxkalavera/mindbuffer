@@ -9,8 +9,13 @@
     "email": "maxhernandezcastillo@gmail.com"
   },
   "license": "MIT",
+  "engines": {
+    "node": "20.11.x",
+    "npm": "10.7.x"
+  },
   "scripts": {
     "build:main:install": "npm --prefix ./.package install ./.package",
+    "build:main:rebuild": "npm --prefix ./.package run rebuild",
     "build:main": "babel-node main.esbuild.mjs && npm run build:main:install",
     "build:preload": "babel-node preload.esbuild.mjs",
     "build:renderer": "babel-node renderer.esbuild.mjs",
@@ -19,7 +24,7 @@
     "build:mac": "npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package --mac",
     "build:win": "npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package --win",
     "build:linux": "npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package --linux",
-    "build:all": "npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package ---mwl",
+    "build:all": "npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package -mwl",
     "start:electron": "electron ./.package",
     "start": "cross-env MINDBUFFER_ENVIRONMENT=development npm run build:prebuild && concurrently --kill-others --kill-others-on-fail \"npm run start:electron\" \"babel-node -- renderer.esbuild.mjs --watch\"",
     "test:pack": "cross-env MINDBUFFER_ENVIRONMENT=testing npm run build",
@@ -46,6 +51,7 @@
     "electron": "30.0.3",
     "electron-builder": "^24.13.3",
     "electron-chromedriver": "30.0.3",
+    "electron-rebuild": "^3.2.9",
     "esbuild": "0.21.1",
     "esbuild-node-externals": "^1.13.1",
     "esbuild-plugin-clean": "^1.0.1",
@@ -66,7 +72,7 @@
     "uuid": "^9.0.1"
   },
   "dependencies": {
-    "better-sqlite3": "^9.5.0",
+    "better-sqlite3": "9.5.x",
     "electron-devtools-installer": "^3.2.0",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^9.0.0",
@@ -74,7 +80,10 @@
     "knex": "^3.1.0",
     "lodash": "^4.17.21",
     "sequelize": "^6.37.3",
-    "sqlite3": "^5.1.7",
     "umzug": "^3.8.0"
+  },
+  "peerDependencies": {
+    "better-sqlite3": "9.5.x",
+    "electron": "30.0.x"
   }
 }

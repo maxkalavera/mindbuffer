@@ -1,57 +1,49 @@
-import { Sequelize } from "sequelize"
-import sqlite3 from 'sqlite3'
+import path from 'node:path'
+import fs from 'node:fs'
+import knex from 'knex'
 
-import { ThrowFatalError } from "@main/utils/errors"
-import buildSeeder from "@main/utils/database/seeder"
-import buildMigrator from '@main/utils/database/migrator'
 import settings from '@main/utils/settings'
+import emptyDatabase from '@main/utils/database/emptyDatabase'
+import { getResourcesDir } from "@main/utils/resources"
+import { ThrowFatalError } from '@main/utils/errors';
 
-const MINDBUFFER_APPLY_TESTING_DATA = (process.env.MINDBUFFER_APPLY_TESTING_DATA || '').toLowerCase() === 'true'
-
-export const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  dialectModule: sqlite3,
-  logging: settings.get('debug') as boolean,
-  storage: settings.get('dbPath') as string,
+// Create folder for db if it doesn't exists
+if (!fs.existsSync(path.dirname(settings.get('dbPath')))){
+  fs.mkdirSync(path.dirname(settings.get('dbPath')))
+}
+const QueriesManager = knex({
+  client: 'better-sqlite3',
+  debug: globals.DEBUG,
+  connection: {
+    filename: settings.get('dbPath') as string,
+  },
+  useNullAsDefault: true,
 })
 
-const umzug = buildMigrator(sequelize)
-const seeder = buildSeeder(sequelize)
-
-const modelDefiners: ((sequelize: Sequelize) => void)[] = [
-  require('@main/models/Note.model').modelDefiner,
-  require('@main/models/Notepad.model').modelDefiner,
-  require('@main/models/Page.model').modelDefiner,
-]
-modelDefiners.forEach(async (definer) => definer(sequelize))
-
-const associationsDefiners: ((sequelize: Sequelize) => void)[] = [
-  require('@main/models/Note.model').associationsDefiner,
-  require('@main/models/Notepad.model').associationsDefiner,
-  require('@main/models/Page.model').associationsDefiner,
-]
-associationsDefiners.forEach(async (definer) => definer(sequelize))
-
 export default {
-  sequelize: sequelize,
-  models: sequelize.models,
+  knex: QueriesManager,
   init: async function () {
+    // Run setup migrations
     try {
-      await umzug.up()
+      await QueriesManager.migrate.up({
+        directory: path.resolve(getResourcesDir(), './migrations'),
+        extension: 'ts',
+        tableName: 'knex_migrations'
+      })
+
+      if (globals.ENVIRONMENT === 'testing') {
+        await emptyDatabase(QueriesManager)
+      }
     } catch (error) {
       ThrowFatalError({
-        content: 'Unable to connect to the database, the app will be closed',
+        content: 'Unable to set up the database, the app will be closed',
         error: error,
       })
     }
-    if (globals.ENVIRONMENT === 'testing' || MINDBUFFER_APPLY_TESTING_DATA) {
-      await seeder.emptyDatabase()
-      await seeder.up()
-    }
   },
-  testConnection: async function () {
+  testConnection: async function (): Promise<Boolean> {
     try {
-      await this.sequelize.authenticate()
+      await QueriesManager.raw('SELECT 1')
       return true
     } catch (error) {
       ThrowFatalError({

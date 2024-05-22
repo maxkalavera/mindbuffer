@@ -56,7 +56,10 @@ await esbuild.build({
             //"postinstall": "electron-builder install-app-deps"
           },
           devDependencies: Object.fromEntries(
-            Object.entries(pkg.devDependencies || {}).filter(([module, _])=> module === 'electron')),
+            Object.entries(pkg.devDependencies || {}).filter(([module, _]) => [
+              'electron',
+              'electron-rebuild'
+            ].some(item => item === module))),
           dependencies: pkg.dependencies || {},
         }, null, 4)
       }
