@@ -58,6 +58,7 @@ export default {
     hardenedRuntime: true,
     //"icon": "./resources/mac/icons/icon.icns",
     //notarize: { "teamId": "" }
+    publish: ['github']
   },
   dmg: {
     artifactName: "${productName}-${os}-${arch}.${ext}",
