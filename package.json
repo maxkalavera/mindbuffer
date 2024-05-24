@@ -18,7 +18,7 @@
     "host": "https://github.com/maxkalavera/mindbuffer"
   },
   "scripts": {
-    "build:main:install": "npm --prefix ./.package install ./.package",
+    "build:main:install": "npm --prefix ./.package install ./.package && npm --prefix ./.package run rebuild",
     "build:main:rebuild": "npm --prefix ./.package run rebuild",
     "build:main": "babel-node main.esbuild.mjs && npm run build:main:install",
     "build:preload": "babel-node preload.esbuild.mjs",

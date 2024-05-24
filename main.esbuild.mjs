@@ -57,8 +57,8 @@ await esbuild.build({
           binary: pkg.binary,
           peerDependencies:pkg.peerDependencies,
           scripts: {
-            //"rebuild": "electron-rebuild -f -w better-sqlite3",
-            //...(globals.ENVIRONMENT === 'production' ? {"postinstall": "electron-builder install-app-deps"}: {})
+            "rebuild": "electron-rebuild -f -w better-sqlite3",
+            //...(globals.ENVIRONMENT === 'development' ? {"postinstall": "electron-builder install-app-deps"}: {})
           },
           devDependencies: Object.fromEntries(
             Object.entries(pkg.devDependencies || {}).filter(([module, _]) => [

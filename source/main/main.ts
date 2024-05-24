@@ -27,7 +27,8 @@ const createWindow = () => {
     },
   })
 
-  mainWindow.loadFile(path.resolve(getResourcesDir(), 'index.html'))
+  console.log('----->', getResourcesDir())
+  mainWindow.loadFile(path.join(getResourcesDir(), 'index.html'))
   // Open the DevTools.
   if (['development'].some((item) => item === globals.ENVIRONMENT)) {
     mainWindow.webContents.openDevTools();

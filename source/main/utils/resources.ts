@@ -1,13 +1,14 @@
 import path from 'node:path'
+import { fileURLToPath } from 'url';
 
 export function getPreloadEntry () {
   /* @ts-ignore */
-  const __filePath = new URL(import.meta.url).pathname
-  return path.resolve(path.dirname(__filePath), './preload.js')
+  return path.join(path.dirname(fileURLToPath(import.meta.url)), './preload.js')
 }
 
 export function getResourcesDir () {
   /* @ts-ignore */
-  const __filePath = new URL(import.meta.url).pathname
-  return path.resolve(path.dirname(__filePath), './resources/')
+  console.log('fileURLToPath(import.meta.url)---->', fileURLToPath(import.meta.url))
+  /* @ts-ignore */
+  return path.join(path.dirname(fileURLToPath(import.meta.url)), './resources/')
 }
