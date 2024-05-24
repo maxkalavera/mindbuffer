@@ -10,8 +10,7 @@
     "email": "maxhernandezcastillo@gmail.com"
   },
   "engines": {
-    "node": "20.11.x",
-    "npm": "10.7.x"
+    "node": "20.11.x"
   },
   "binary": {
     "module_name": "mindbuffer",
