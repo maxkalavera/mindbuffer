@@ -19,7 +19,7 @@ jobs:
     - name: update packages
       run: sudo apt update
     - name: install dependencies
-      run: sudo apt install -y gcc-multilib
+      run: sudo apt install -y gcc-multilib g++-multilib
     - name: install dependencies
       run: yarn install
     - name: build current system distributables
