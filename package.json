@@ -94,7 +94,6 @@
     "architectures": {
       "linux": [
         "x64",
-        "ia32",
         "arm64",
         "armv7l"
       ],
@@ -103,7 +102,6 @@
         "arm64"
       ],
       "win": [
-        "ia32",
         "x64",
         "arm64"
       ]
