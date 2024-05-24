@@ -52,6 +52,8 @@ jobs:
       uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
       with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        draft: true
         files: |
           ${{ github.workspace }}/.package/distribution/MindBuffer-mac-x64.dmg
           ${{ github.workspace }}/.package/distribution/MindBuffer-mac-arm64.dmg
