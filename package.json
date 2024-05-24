@@ -94,16 +94,17 @@
     "architectures": {
       "linux": [
         "x64",
+        "ia32",
         "arm64",
-        "armv7"
+        "armv7l"
       ],
       "mac": [
         "x64",
         "arm64"
       ],
       "win": [
+        "ia32",
         "x64",
-        "x86",
         "arm64"
       ]
     }

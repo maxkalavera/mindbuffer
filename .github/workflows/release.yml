@@ -44,7 +44,7 @@ jobs:
     - name: install dependencies
       run: yarn install
     - name: build current system distributables
-      run: yarn build
+      run: yarn run build:darwin
 
 #  publish_on_win:
 #    runs-on: windows-latest
