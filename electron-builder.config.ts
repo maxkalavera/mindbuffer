@@ -1,25 +1,17 @@
 import { readFileSync} from 'node:fs'
 import { resolve } from 'node:path'
+import rebuild from '@electron/rebuild'
 
 import type { Configuration } from 'electron-builder'
 
 const pkg = JSON.parse(readFileSync(resolve('./package.json'), { encoding: 'utf8' }));
 
-const architectures = {
-  linux: [
-    "x64", // UMD 64 bits also compatible with Intel64
-    "arm64", // ARM 64 bits
-    //"armv7l", // ARM ussualy used in Android phones and Raspberry PI, not supported by Sqlite3
-  ],
-  mac: [
+/*
+  Architectures:
     "x64", // UMD 64 bits also compatible with Intel64
     "arm64" // ARM 64 bits
-  ],
-  win: [
-    "x64", // UMD 64 bits also compatible with Intel64
-    // "arm64", // ARM 64 bits, not supported by sqlite3
-  ]
-}
+    "armv7l" // ARM ussualy used in Android phones and Raspberry PI, not supported by Sqlite3
+*/
 
 export default {
   appId: pkg.name,
@@ -34,11 +26,11 @@ export default {
     target: [
       {
         target: "deb",
-        arch: architectures.linux
+        arch: pkg.build.architectures.linux
       },
       {
         target: "appImage",
-        arch: architectures.linux
+        arch: pkg.build.architectures.linux
       }
     ],
     category: "Utility",
@@ -55,7 +47,7 @@ export default {
     target: [
       {
         target: 'dmg',
-        arch: architectures.mac
+        arch: pkg.build.architectures.mac
       }
     ],
     category: "public.app-category.productivity",
@@ -94,11 +86,11 @@ export default {
     target: [
       {
         target: "nsis",
-        arch: architectures.win
+        arch: pkg.build.architectures.win
       },
       {
         target: "portable",
-        arch: architectures.win
+        arch: pkg.build.architectures.win
       }
     ],
     "publisherName": pkg.author.name

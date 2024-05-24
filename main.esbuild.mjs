@@ -38,7 +38,7 @@ await esbuild.build({
             ['./electron-builder.test.config.ts'] : 
             ['./electron-builder.config.ts'],
           to: ['./electron-builder.config.ts']
-        }
+        },
       ],
       watch: false,
     }),
@@ -48,17 +48,22 @@ await esbuild.build({
           main: "main.mjs",
           name: pkg.name,
           version: pkg.version,
-          license: pkg.license,
+          productName: pkg.productName,
           description: pkg.description,
           repository: pkg.repository,
+          license: pkg.license,
+          author: pkg.author,
+          engines: pkg.engines,
+          binary: pkg.binary,
+          peerDependencies:pkg.peerDependencies,
           scripts: {
-            "rebuild": "electron-rebuild -f -w better-sqlite3",
-            //"postinstall": "electron-builder install-app-deps"
+            //"rebuild": "electron-rebuild -f -w better-sqlite3",
+            //...(globals.ENVIRONMENT === 'production' ? {"postinstall": "electron-builder install-app-deps"}: {})
           },
           devDependencies: Object.fromEntries(
             Object.entries(pkg.devDependencies || {}).filter(([module, _]) => [
               'electron',
-              'electron-rebuild'
+              '@electron/rebuild',
             ].some(item => item === module))),
           dependencies: pkg.dependencies || {},
         }, null, 4)
@@ -71,6 +76,7 @@ await esbuild.build({
         './resources',
         './electron-builder.config.ts',
         './package.json',
+        './install-native-dependencies.mjs',
       ].map((item) => resolve(outDir, item)),
     }),
   ],
