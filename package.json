@@ -25,10 +25,10 @@
     "build:preload": "babel-node preload.esbuild.mjs",
     "build:renderer": "babel-node renderer.esbuild.mjs",
     "build:prebuild": "npm run build:main && npm run build:preload && npm run build:renderer",
-    "build": "npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package",
-    "build:mac": "npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package --mac",
-    "build:win": "npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package --win",
-    "build:linux": "npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package --linux",
+    "build": "rimraf ./.package && npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package",
+    "build:darwin": "rimraf ./.package && npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package --mac",
+    "build:win32": "rimraf ./.package && npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package --win",
+    "build:linux": "rimraf ./.package && npm run build:prebuild && electron-builder build --config electron-builder.config.ts --projectDir ./.package --linux",
     "start:electron": "electron ./.package",
     "start": "cross-env MINDBUFFER_ENVIRONMENT=development npm run build:prebuild && concurrently --kill-others --kill-others-on-fail \"npm run start:electron\" \"babel-node -- renderer.esbuild.mjs --watch\"",
     "test:pack": "cross-env MINDBUFFER_ENVIRONMENT=testing npm run build",
@@ -95,14 +95,17 @@
     "architectures": {
       "linux": [
         "x64",
-        "arm64"
+        "arm64",
+        "armv7"
       ],
       "mac": [
         "x64",
         "arm64"
       ],
       "win": [
-        "x64"
+        "x64",
+        "x86",
+        "arm64"
       ]
     }
   }
