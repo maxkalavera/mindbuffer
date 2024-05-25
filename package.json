@@ -1,6 +1,6 @@
 {
   "name": "mindbuffer",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "productName": "MindBuffer",
   "description": "A note's manager app with the visuals of a Webchat",
   "repository": "https://github.com/maxkalavera/mindbuffer",
