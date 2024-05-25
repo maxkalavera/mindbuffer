@@ -8,7 +8,5 @@ export function getPreloadEntry () {
 
 export function getResourcesDir () {
   /* @ts-ignore */
-  console.log('fileURLToPath(import.meta.url)---->', fileURLToPath(import.meta.url))
-  /* @ts-ignore */
   return path.join(path.dirname(fileURLToPath(import.meta.url)), './resources/')
 }

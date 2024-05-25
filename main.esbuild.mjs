@@ -35,9 +35,9 @@ await esbuild.build({
         },
         {
           from: globals.ENVIRONMENT === 'testing' ? 
-            ['./electron-builder.test.config.ts'] : 
-            ['./electron-builder.config.ts'],
-          to: ['./electron-builder.config.ts']
+            ['./electron-builder.test.config.js'] : 
+            ['./electron-builder.config.js'],
+          to: ['./electron-builder.config.js']
         },
       ],
       watch: false,
@@ -74,9 +74,8 @@ await esbuild.build({
         './main.mjs',
         './main.mjs.map',
         './resources',
-        './electron-builder.config.ts',
+        './electron-builder.config.js',
         './package.json',
-        './install-native-dependencies.mjs',
       ].map((item) => resolve(outDir, item)),
     }),
   ],

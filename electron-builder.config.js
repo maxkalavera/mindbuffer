@@ -1,8 +1,5 @@
-import { readFileSync} from 'node:fs'
-import { resolve } from 'node:path'
-import rebuild from '@electron/rebuild'
-
-import type { Configuration } from 'electron-builder'
+const { readFileSync } = require('node:fs')
+const { resolve } = require('node:path')
 
 const pkg = JSON.parse(readFileSync(resolve('./package.json'), { encoding: 'utf8' }));
 
@@ -13,7 +10,7 @@ const pkg = JSON.parse(readFileSync(resolve('./package.json'), { encoding: 'utf8
     "armv7l" // ARM ussualy used in Android phones and Raspberry PI, not supported by Sqlite3
 */
 
-export default {
+module.exports = {
   appId: pkg.name,
   productName: pkg.productName,
   asar: true,
@@ -28,10 +25,6 @@ export default {
         target: "deb",
         arch: pkg.build.architectures.linux
       },
-      {
-        target: "appImage",
-        arch: pkg.build.architectures.linux
-      }
     ],
     category: "Utility",
     synopsis: pkg.package,
@@ -89,10 +82,6 @@ export default {
         target: "nsis",
         arch: pkg.build.architectures.win
       },
-      {
-        target: "portable",
-        arch: pkg.build.architectures.win
-      }
     ],
     "publisherName": pkg.author.name
   },
@@ -104,4 +93,4 @@ export default {
   portable: {
     artifactName: "${productName}-${os}-${version}-portable.${ext}"
   }
-} as Configuration;
+};
