@@ -11,17 +11,20 @@ const platformDict = {
   'linux': 'linux',
   'win32': 'win'
 }
-const baseDir = path.resolve('./.package', `./distribution/${platformDict[platform()]}-${arch()}`)
+const distributionDir = path.resolve('./.package/distribution/')
 
 switch(platform()) {
   case 'linux':
-    global.__BINARY_PATH__ = path.resolve(baseDir, `${pkg.productName}`)
+    global.__BINARY_PATH__ = path.resolve(distributionDir, `linux-unpacked/${pkg.name}`)
     break;
   case 'darwin':
-    global.__BINARY_PATH__ = path.resolve(baseDir, `${pkg.productName}.app/Contents/MacOS/${pkg.productName}`)
+    global.__BINARY_PATH__ = path.resolve(
+      distributionDir, 
+      `${platformDict[platform()]}-${arch()}/${pkg.productName}.app/Contents/MacOS/${pkg.productName}`
+    )
     break;
   case 'win32':
-    global.__BINARY_PATH__ = path.resolve(baseDir, `${pkg.productName}.exe`)
+    global.__BINARY_PATH__ = path.resolve(distributionDir, `win-unpacked/${pkg.productName}.exe`)
     break;
 }
 

@@ -11,10 +11,6 @@ jobs:
         node-version: '20.11.x'
     - name: install dependencies
       run: yarn install
-    - name: pack test file
-      run: npm run test:pack
-    - name: show distribution folder contents
-      run: ls -R .package/distribution
     - name: build
       run: yarn run test
 
@@ -39,9 +35,5 @@ jobs:
         node-version: '20.11.x'
     - name: install dependencies
       run: yarn install
-    - name: pack test file
-      run: npm run test:pack
-    - name: show distribution folder contents
-      run: ls -R .package/distribution
     - name: build
       run: yarn run test
