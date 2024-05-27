@@ -3,13 +3,6 @@ const { resolve } = require('node:path')
 
 const pkg = JSON.parse(readFileSync(resolve('./package.json'), { encoding: 'utf8' }));
 
-/*
-  Architectures:
-    "x64", // UMD 64 bits also compatible with Intel64
-    "arm64" // ARM 64 bits
-    "armv7l" // ARM ussualy used in Android phones and Raspberry PI, not supported by Sqlite3
-*/
-
 module.exports = {
   appId: pkg.name,
   productName: pkg.productName,
