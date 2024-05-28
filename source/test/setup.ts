@@ -29,8 +29,8 @@ switch(platform()) {
 }
 
 global.webdriver = undefined as webdriver.ThenableWebDriver
-beforeEach(() => {
-  global.webdriver = buildWebdriver()
+beforeEach(async () => {
+  global.webdriver = await buildWebdriver()
 });
 afterEach(async () => {
   if (!global.DEBUG) {
@@ -38,5 +38,4 @@ afterEach(async () => {
   }
 });
 
-//jest.retryTimes(global.DEBUG ? 0 : 2)
 jest.retryTimes(0)

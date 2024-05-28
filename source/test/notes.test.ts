@@ -37,11 +37,11 @@ describe('Notes operations', () => {
     }
     await driver.wait(until.elementLocated(By.xpath(
       `//*[contains(text(),'${notes[notes.length - 1]}')]`     
-    )), 3000)
+    )), WAIT_UNTIL_TIMEOUT)
     await driver.navigate().refresh()
     await driver.wait(until.elementLocated(By.xpath(
       `//*[contains(text(),'${notes[0]}')]`     
-    )), 3000)
+    )), WAIT_UNTIL_TIMEOUT)
     expect(await countNotes(driver)).toEqual(20)
     await driver.executeScript(
       `const notesBoard = document.getElementById('id:notes-board:Y8FAln8HKV');` +
@@ -52,7 +52,7 @@ describe('Notes operations', () => {
         `//*[@id='id:notes-board:Y8FAln8HKV']` +
         `//descendant::*[contains(text(),'${notes[notes.length - 1]}')]`
       ))
-    )    
+    , WAIT_UNTIL_TIMEOUT)    
     expect(await countNotes(driver)).toEqual(25)
-  }, MEDIUM);
+  }, LONG_TIMEOUT);
 });

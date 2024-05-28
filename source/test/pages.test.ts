@@ -77,7 +77,7 @@ describe('Pages operations', () => {
     await driver.wait(until.elementsLocated(By.xpath(
       `//*[@id='id:notepad-list-container:7MLMomsYBt']` +
       `//descendant::*[contains(text(),'${pages[pages.length - 1]}')]`
-    )))
+    )), WAIT_UNTIL_TIMEOUT)
     expect(await countPages(driver)).toEqual(75)
-  }, MEDIUM)
+  }, LONG_TIMEOUT)
 })

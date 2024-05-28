@@ -8,6 +8,9 @@ declare const globals: {
   ASSOCIATED_PAGES_PAGINATION_OFFSET: number
 };
 
-declare const SHORT;
-declare const MEDIUM;
-declare const LONG;
+declare const WAIT_UNTIL_TIMEOUT;
+declare const EXTRA_SHORT_TIMEOUT;
+declare const SHORT_TIMEOUT;
+declare const REGULAR_TIMEOUT;
+declare const LONG_TIMEOUT;
+declare const EXTRA_LONG_TIMEOUT

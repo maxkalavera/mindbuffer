@@ -48,7 +48,7 @@ describe('General operations', () => {
  
     await driver.wait(until.elementLocated(By.xpath(
         `//*[contains(text(),'${notes[notes.length - 1]}')]`     
-    )), 3000)
+    )), WAIT_UNTIL_TIMEOUT)
     expect(await countNotepads(driver)).toEqual(5)
     expect(await countPages(driver)).toEqual(5)
     expect(await countNotes(driver)).toEqual(5)
@@ -58,9 +58,9 @@ describe('General operations', () => {
       return (await driver.findElements(By.xpath(
         `//*[contains(text(),'${notes[notes.length - 1]}')]`     
       ))).length === 0
-    }, 3000)
+    }, WAIT_UNTIL_TIMEOUT)
     expect(await countNotepads(driver)).toEqual(1)
     expect(await countPages(driver)).toEqual(1)
     expect(await countNotes(driver)).toEqual(1)
-  }, MEDIUM)
+  })
 })

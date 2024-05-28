@@ -36,7 +36,7 @@ describe('Notepads operations', () => {
     ))).toHaveLength(1)
   })
 
-  test('Notepad is removed from it\'s container when deleted', async () => {
+  test('Notepad is removed from it\'s container when deleted #qgZ84s8G0C', async () => {
     const driver = global.webdriver
     const name = 'text:vfzbE9RYPL'
     await createNotepad(driver, name)
@@ -60,11 +60,11 @@ describe('Notepads operations', () => {
 
     await driver.wait(until.elementLocated(By.xpath(
       `//*[contains(text(),'${notepads[notepads.length - 1]}')]`     
-    )), 3000)
+    )), WAIT_UNTIL_TIMEOUT)
     await driver.navigate().refresh()
     await driver.wait(until.elementLocated(By.xpath(
       `//*[contains(text(),'${notepads[0]}')]`
-    )), 3000)
+    )), WAIT_UNTIL_TIMEOUT)
     expect(await countNotepads(driver)).toEqual(20)
     await driver.executeScript(
       `const notepadContainer = document.getElementById('id:notepad-list-container:7MLMomsYBt');` +
@@ -73,7 +73,7 @@ describe('Notepads operations', () => {
     await driver.wait(until.elementLocated(By.xpath(
       `//*[@id='id:notepad-list-container:7MLMomsYBt']` +
       `//descendant::*[contains(text(),'${notepads[notepads.length - 1]}')]`
-    )), 3000)
+    )), WAIT_UNTIL_TIMEOUT)
     expect(await countNotepads(driver)).toEqual(25)
-  }, MEDIUM)
+  }, LONG_TIMEOUT)
 })

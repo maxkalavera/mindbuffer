@@ -1,9 +1,14 @@
 import webdriver from 'selenium-webdriver'
 
-export default function buildWebdriver (): webdriver.ThenableWebDriver {
-  return new webdriver.Builder()
+export default async function buildWebdriver (): Promise<webdriver.ThenableWebDriver> {
+  const driver = new webdriver.Builder()
     .usingServer('http://localhost:9515')
     .withCapabilities({
+      'timeouts': {
+        implicit: EXTRA_SHORT_TIMEOUT, 
+        pageLoad: EXTRA_LONG_TIMEOUT, 
+        script: REGULAR_TIMEOUT
+      },
       'goog:chromeOptions': {
         binary: global.__BINARY_PATH__,
         args: [
@@ -12,8 +17,11 @@ export default function buildWebdriver (): webdriver.ThenableWebDriver {
           '--disable-dev-shm-usage',
           '--disable-extensions',
         ]
+      
       }
     })
     .forBrowser('chrome')
     .build()
+
+  return driver;
 }
