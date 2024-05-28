@@ -1,3 +1,4 @@
+/// <reference path="../globals.d.ts" />
 import {describe, expect, test} from '@jest/globals';
 import { By, until } from 'selenium-webdriver'
 import { v4 as uuidv4 } from 'uuid';
@@ -47,5 +48,5 @@ describe('Notes operations', () => {
       ))
     )    
     expect(await countNotes(driver)).toEqual(25)
-  }, 30 * 1000);
+  }, MEDIUM);
 });

@@ -28,8 +28,6 @@ switch(platform()) {
     break;
 }
 
-jest.retryTimes(global.DEBUG ? 0 : 2)
-
 global.webdriver = undefined as webdriver.ThenableWebDriver
 beforeEach(() => {
   global.webdriver = buildWebdriver()
@@ -39,3 +37,5 @@ afterEach(async () => {
     await global.webdriver.quit()
   }
 });
+
+jest.retryTimes(global.DEBUG ? 0 : 2)

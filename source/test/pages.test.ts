@@ -1,3 +1,4 @@
+/// <reference path="../globals.d.ts" />
 import {describe, expect, test} from '@jest/globals';
 import { By, until } from 'selenium-webdriver';
 import { v4 as uuidv4 } from 'uuid';
@@ -66,7 +67,9 @@ describe('Pages operations', () => {
       await createPage(driver, notepadName, pages[i])
     }
     await driver.navigate().refresh()
+    console.log('----->', await countPages(driver))
     expect(await countPages(driver)).toEqual(50)
+
     await driver.executeScript(
       // pages are placed inside the same list that notepads
       `const notepadContainer = document.getElementById('id:notepad-list-container:7MLMomsYBt');` +
@@ -77,5 +80,5 @@ describe('Pages operations', () => {
       `//descendant::*[contains(text(),'${pages[pages.length - 1]}')]`
     )))
     expect(await countPages(driver)).toEqual(75)
-  }, 30 * 1000)
+  }, MEDIUM)
 })

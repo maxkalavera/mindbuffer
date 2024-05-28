@@ -7,3 +7,7 @@ declare const globals: {
   PAGINATION_OFFSET: number,
   ASSOCIATED_PAGES_PAGINATION_OFFSET: number
 };
+
+declare const SHORT;
+declare const MEDIUM;
+declare const LONG;
