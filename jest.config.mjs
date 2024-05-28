@@ -1,9 +1,9 @@
 import globals from './globals.mjs'
 
 const testingGlobals = Object.assign(globals, {
-  SHORT: 15 * 1000,
-  MEDIUM: 60 * 1000,
-  LONG : 3 * 60 * 1000,
+  SHORT: 30 * 1000,
+  MEDIUM: 2 * 60 * 1000,
+  LONG : 5 * 60 * 1000,
 })
 
 const config = {

@@ -67,7 +67,6 @@ describe('Pages operations', () => {
       await createPage(driver, notepadName, pages[i])
     }
     await driver.navigate().refresh()
-    console.log('----->', await countPages(driver))
     expect(await countPages(driver)).toEqual(50)
 
     await driver.executeScript(
