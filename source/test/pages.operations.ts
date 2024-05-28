@@ -77,9 +77,11 @@ export const deletePage = async (
     `//descendant::*[contains(@class, 'class:page-options-delete-button:excgDO3li2')]`
   )))
   await driver.wait(until.elementIsVisible(updatePageButton))
+  await driver.wait(until.elementIsEnabled(updatePageButton))
   await updatePageButton.click()
   const confirmButton = driver.wait(until.elementLocated(By.className('class:modal-confirm-button:fHIbu0jVfe')))
   await driver.wait(until.elementIsVisible(confirmButton))
+  await driver.wait(until.elementIsEnabled(confirmButton))
   await confirmButton.click()
 }
 
@@ -101,5 +103,6 @@ export const clickPage = async (
     `//ancestor-or-self::*[contains(@class, 'class:page:8o3bzP8yoT')]`
   )))
   await driver.wait(until.elementIsVisible(page))
+  await driver.wait(until.elementIsEnabled(page))
   await page.click()
 }

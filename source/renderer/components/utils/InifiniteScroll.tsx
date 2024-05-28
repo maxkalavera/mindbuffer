@@ -94,13 +94,11 @@ export default function InifiniteScroll ({
     if (inverse) {
       containerRef.current.scroll({
         top: 0,
-        // @ts-ignore
         behavior: 'instant',
       })
     } else {
       containerRef.current.scroll({ 
         top: containerRef.current.scrollHeight,
-        // @ts-ignore
         behavior: 'instant',
       })
     }

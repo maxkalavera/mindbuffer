@@ -51,22 +51,29 @@ describe('Notepads operations', () => {
     ))).toHaveLength(0)
   })
 
-  test('Notepad container should paginate when there is too many items', async () => {
+  test('Notepad container should paginate when there is too many items #5MG57jsx1u', async () => {
     const driver = global.webdriver
     const notepads = Array(25).fill(undefined).map(() => `text:${uuidv4()}`)
     for(let i = 0; i < notepads.length; i++) {
       await createNotepad(driver, notepads[i])
     }
+
+    await driver.wait(until.elementLocated(By.xpath(
+      `//*[contains(text(),'${notepads[notepads.length - 1]}')]`     
+    )), 3000)
     await driver.navigate().refresh()
+    await driver.wait(until.elementLocated(By.xpath(
+      `//*[contains(text(),'${notepads[0]}')]`
+    )), 3000)
     expect(await countNotepads(driver)).toEqual(20)
     await driver.executeScript(
       `const notepadContainer = document.getElementById('id:notepad-list-container:7MLMomsYBt');` +
       `notepadContainer.scrollTo(0, notepadContainer.scrollHeight);`
     )
-    await driver.wait(until.elementsLocated(By.xpath(
+    await driver.wait(until.elementLocated(By.xpath(
       `//*[@id='id:notepad-list-container:7MLMomsYBt']` +
       `//descendant::*[contains(text(),'${notepads[notepads.length - 1]}')]`
-    )))
+    )), 3000)
     expect(await countNotepads(driver)).toEqual(25)
   }, MEDIUM)
 })

@@ -38,4 +38,5 @@ afterEach(async () => {
   }
 });
 
-jest.retryTimes(global.DEBUG ? 0 : 2)
+//jest.retryTimes(global.DEBUG ? 0 : 2)
+jest.retryTimes(0)

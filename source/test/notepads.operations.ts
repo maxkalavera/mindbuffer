@@ -13,8 +13,11 @@ export const createNotepad = async (
     '//descendant::input'
   )))
   await driver.wait(until.elementIsVisible(nameInput))
+  await driver.wait(until.elementIsEnabled(nameInput))
   await nameInput.sendKeys(name)
   const confirmButton = await driver.wait(until.elementLocated(By.className('class:modal-confirm-button:fHIbu0jVfe')))
+  await driver.wait(until.elementIsVisible(confirmButton))
+  await driver.wait(until.elementIsEnabled(confirmButton))
   await confirmButton.click()
 }
 
@@ -29,6 +32,7 @@ export const updateNotepad = async (
     `//descendant::*[contains(@class, 'class:notepad-options-button:GrWzrbooC9')]`
   )))
   await driver.wait(until.elementIsVisible(optionsButton))
+  await driver.wait(until.elementIsEnabled(optionsButton))
   await optionsButton.click()
   const editButton = await driver.wait(until.elementLocated(By.xpath(
     `//*[contains(text(), '${name}')]` +
@@ -36,15 +40,19 @@ export const updateNotepad = async (
     `//descendant::*[contains(@class, 'class:notepad-options-edit-button:OJSSF5T46S')]`
   )))
   await driver.wait(until.elementIsVisible(editButton))
+  await driver.wait(until.elementIsEnabled(editButton))
   await editButton.click()
   const nameInput = await driver.wait(until.elementLocated(By.xpath(
     `//div[contains(@class, 'class:create-notepad-name-input:hWmi28rONe')]` +
     `//descendant::input`
   )))
   await driver.wait(until.elementIsVisible(nameInput))
+  await driver.wait(until.elementIsEnabled(nameInput))
   await nameInput.clear()
   await nameInput.sendKeys(newName)
   const confirmButton = await driver.wait(until.elementLocated(By.className('class:modal-confirm-button:fHIbu0jVfe')))
+  await driver.wait(until.elementIsVisible(confirmButton))
+  await driver.wait(until.elementIsEnabled(confirmButton))
   await confirmButton.click()
 }
 
@@ -58,6 +66,7 @@ export const deleteNotepad = async (
     `//descendant::*[contains(@class, 'class:notepad-options-button:GrWzrbooC9')]`
   )))
   await driver.wait(until.elementIsVisible(optionsButton))
+  await driver.wait(until.elementIsEnabled(optionsButton))
   await optionsButton.click()
   const deleteButton = await driver.wait(until.elementLocated(By.xpath(
     `//*[contains(text(), '${name}')]` +
@@ -65,9 +74,11 @@ export const deleteNotepad = async (
     `//descendant::*[contains(@class, 'class:notepad-options-delete-button:r6ukcuDrQL')]`
   )))
   await driver.wait(until.elementIsVisible(deleteButton))
+  await driver.wait(until.elementIsEnabled(deleteButton))
   await deleteButton.click()
   const confirmButton = await driver.wait(until.elementLocated(By.className('class:modal-confirm-button:fHIbu0jVfe')))
   await driver.wait(until.elementIsVisible(confirmButton))
+  await driver.wait(until.elementIsEnabled(confirmButton))
   await confirmButton.click()
 }
 

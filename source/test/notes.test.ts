@@ -29,13 +29,19 @@ describe('Notes operations', () => {
     }
   });
 
-  test('Notes board should paginate when there is too many items', async () => {
+  test('Notes board should paginate when there is too many items #E1qQS4raeE', async () => {
     const driver = global.webdriver
     const notes = Array(25).fill(undefined).map(() => `text:${uuidv4()}`)
     for(let i = 0; i < notes.length; i++) {
       await createNote(driver, notes[i])
     }
+    await driver.wait(until.elementLocated(By.xpath(
+      `//*[contains(text(),'${notes[notes.length - 1]}')]`     
+    )), 3000)
     await driver.navigate().refresh()
+    await driver.wait(until.elementLocated(By.xpath(
+      `//*[contains(text(),'${notes[0]}')]`     
+    )), 3000)
     expect(await countNotes(driver)).toEqual(20)
     await driver.executeScript(
       `const notesBoard = document.getElementById('id:notes-board:Y8FAln8HKV');` +
@@ -44,7 +50,7 @@ describe('Notes operations', () => {
     await driver.wait(
       until.elementsLocated(By.xpath(
         `//*[@id='id:notes-board:Y8FAln8HKV']` +
-        `//descendant::*[contains(text(),'${notes[0]}')]`
+        `//descendant::*[contains(text(),'${notes[notes.length - 1]}')]`
       ))
     )    
     expect(await countNotes(driver)).toEqual(25)

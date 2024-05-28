@@ -13,10 +13,13 @@ const search = async (
 ) => {
   const searchInput = await driver.wait(until.elementLocated(By.id('id:searchbar-input:aPNkesepop')))
   await driver.wait(until.elementIsVisible(searchInput))
+  await driver.wait(until.elementIsEnabled(searchInput))
   await searchInput.sendKeys(content)
   const sendSearchButton = await driver.wait(until.elementLocated(By.id('id:searchbar-send-button:OGUB40c5DM')))
   await driver.wait(until.elementIsVisible(sendSearchButton))
+  await driver.wait(until.elementIsEnabled(sendSearchButton))
   await sendSearchButton.click()
+  until.elementIsEnabled
 }
 
 const clearSearch = async (
@@ -24,6 +27,7 @@ const clearSearch = async (
 ) => {
   const clearSearchButton = await driver.wait(until.elementLocated(By.id('id:searchbar-clear-button:KlsiLQF3zr')))
   await driver.wait(until.elementIsVisible(clearSearchButton))
+  await driver.wait(until.elementIsEnabled(clearSearchButton))
   await clearSearchButton.click()
 }
 
@@ -41,11 +45,20 @@ describe('General operations', () => {
       await clickPage(driver, pages[i])
     }
     await search(driver, 'text')
+ 
+    await driver.wait(until.elementLocated(By.xpath(
+        `//*[contains(text(),'${notes[notes.length - 1]}')]`     
+    )), 3000)
     expect(await countNotepads(driver)).toEqual(5)
     expect(await countPages(driver)).toEqual(5)
     expect(await countNotes(driver)).toEqual(5)
     await clearSearch(driver)
     await search(driver, notes[0])
+    await driver.wait(async () => {
+      return (await driver.findElements(By.xpath(
+        `//*[contains(text(),'${notes[notes.length - 1]}')]`     
+      ))).length === 0
+    }, 3000)
     expect(await countNotepads(driver)).toEqual(1)
     expect(await countPages(driver)).toEqual(1)
     expect(await countNotes(driver)).toEqual(1)

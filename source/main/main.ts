@@ -1,6 +1,5 @@
 /// <reference path="../globals.d.ts" />
 import path from 'node:path'
-import { ThrowFatalError } from '@main/utils/errors'
 import { getResourcesDir, getPreloadEntry } from "@main/utils/resources"
 import { app, BrowserWindow } from "electron"
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
