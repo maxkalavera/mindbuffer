@@ -1,11 +1,12 @@
 /// <reference path="../globals.d.ts" />
 import {describe, expect, test} from '@jest/globals';
 import webdriver, { By, until } from 'selenium-webdriver'
-import { v4 as uuidv4 } from 'uuid';
 
-import { createNote, countNotes } from './notes.operations'
-import { createNotepad, countNotepads } from './notepads.operations'
-import { createPage, countPages, clickPage } from './pages.operations'
+import seed from './utils/seed';
+import emptyDatabase from './utils/emptyDatabase';
+import { countNotes } from './notes.operations'
+import { countNotepads } from './notepads.operations'
+import { countPages } from './pages.operations'
 
 const search = async (
   driver: webdriver.ThenableWebDriver,
@@ -34,31 +35,24 @@ const clearSearch = async (
 describe('General operations', () => {
   test('Search should filter items by its keywords #6LGdgVNDb0', async () => {
     const driver = global.webdriver
-    const notepads = Array(5).fill(undefined).map(() => `text:${uuidv4()}`)
-    const pages = Array(5).fill(undefined).map(() => `text:${uuidv4()}`)
-    const notes = Array(5).fill(undefined).map(() => `text:${uuidv4()}`)
-    for(let i = 0; i < notes.length; i++) {
-      await createNotepad(driver, notepads[i])
-      await createPage(driver, notepads[i], pages[i])
-      await clickPage(driver, pages[i])
-      await createNote(driver, notes[i])
-      await clickPage(driver, pages[i])
-    }
+    await emptyDatabase(global.queries)
+    await seed(global.queries, '6LGdgVNDb0')
+    await driver.navigate().refresh()
+
+    // Search for multiple items
     await search(driver, 'text')
- 
     await driver.wait(until.elementLocated(By.xpath(
-        `//*[contains(text(),'${notes[notes.length - 1]}')]`     
+        `//*[contains(text(),'text:04v3yu51Hh')]`     
     )), WAIT_UNTIL_TIMEOUT)
     expect(await countNotepads(driver)).toEqual(5)
     expect(await countPages(driver)).toEqual(5)
     expect(await countNotes(driver)).toEqual(5)
     await clearSearch(driver)
-    await search(driver, notes[0])
-    await driver.wait(async () => {
-      return (await driver.findElements(By.xpath(
-        `//*[contains(text(),'${notes[notes.length - 1]}')]`     
-      ))).length === 0
-    }, WAIT_UNTIL_TIMEOUT)
+    // Search for specific item
+    await search(driver, 'text:jq7UI8KMvB')
+    await driver.wait(until.elementLocated(By.xpath(
+      `//*[contains(text(),'text:jq7UI8KMvB')]`
+    )), WAIT_UNTIL_TIMEOUT)
     expect(await countNotepads(driver)).toEqual(1)
     expect(await countPages(driver)).toEqual(1)
     expect(await countNotes(driver)).toEqual(1)

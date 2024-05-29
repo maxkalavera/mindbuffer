@@ -48,7 +48,7 @@ export default function Home() {
       const { setSelectedPage } = pagesSlice.actions
       store.dispatch(setSelectedPage({ value: undefined }))
     } else {
-      promise = store.dispatch(fetchSelectedPageThunk({
+      store.dispatch(fetchSelectedPageThunk({
         pageID: context.pages.selectedPageID
       }))
     }

@@ -50,7 +50,9 @@ export const updateNotepad = async (
   await driver.wait(until.elementIsEnabled(nameInput), WAIT_UNTIL_TIMEOUT)
   await nameInput.clear()
   await nameInput.sendKeys(newName)
-  const confirmButton = await driver.wait(until.elementLocated(By.className('class:modal-confirm-button:fHIbu0jVfe')), WAIT_UNTIL_TIMEOUT)
+  const confirmButton = await driver.wait(
+    until.elementLocated(By.className('class:modal-confirm-button:fHIbu0jVfe'))
+  , WAIT_UNTIL_TIMEOUT)
   await driver.wait(until.elementIsVisible(confirmButton), WAIT_UNTIL_TIMEOUT)
   await driver.wait(until.elementIsEnabled(confirmButton), WAIT_UNTIL_TIMEOUT)
   await confirmButton.click()
@@ -76,8 +78,9 @@ export const deleteNotepad = async (
   await driver.wait(until.elementIsVisible(deleteButton), WAIT_UNTIL_TIMEOUT)
   await driver.wait(until.elementIsEnabled(deleteButton), WAIT_UNTIL_TIMEOUT)
   await deleteButton.click()
-  const confirmButton = await driver.wait(until.elementLocated(By.className('class:modal-confirm-button:fHIbu0jVfe')), WAIT_UNTIL_TIMEOUT)
-  await driver.wait(until.elementIsVisible(confirmButton), WAIT_UNTIL_TIMEOUT)
+  const confirmButton = await driver.wait(
+    until.elementLocated(By.className('class:modal-confirm-button:fHIbu0jVfe')), WAIT_UNTIL_TIMEOUT)
+    await driver.wait(until.elementIsVisible(confirmButton), WAIT_UNTIL_TIMEOUT)
   await driver.wait(until.elementIsEnabled(confirmButton), WAIT_UNTIL_TIMEOUT)
   await confirmButton.click()
 }

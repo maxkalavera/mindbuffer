@@ -3,7 +3,6 @@ import fs from 'node:fs'
 import knex from 'knex'
 
 import settings from '@main/utils/settings'
-import emptyDatabase from '@main/utils/database/emptyDatabase'
 import { getResourcesDir } from "@main/utils/resources"
 import { ThrowFatalError } from '@main/utils/errors';
 
@@ -30,10 +29,6 @@ export default {
         extension: 'ts',
         tableName: 'knex_migrations'
       })
-
-      if (globals.ENVIRONMENT === 'testing') {
-        await emptyDatabase(QueriesManager)
-      }
     } catch (error) {
       ThrowFatalError({
         content: 'Unable to set up the database, the app will be closed',

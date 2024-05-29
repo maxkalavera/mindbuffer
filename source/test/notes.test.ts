@@ -1,46 +1,48 @@
 /// <reference path="../globals.d.ts" />
 import {describe, expect, test} from '@jest/globals';
-import { By, until } from 'selenium-webdriver'
+import webdriver, { By, until } from 'selenium-webdriver'
 import { v4 as uuidv4 } from 'uuid';
 
+import emptyDatabase from './utils/emptyDatabase';
+import seed from './utils/seed';
 import {createNote, deleteNote, countNotes} from './notes.operations'
 
 describe('Notes operations', () => {
-  test('Note is added to note\'s board when created', async () => {
+  test('Note is added to note\'s board when created #hJh8yfxfy6', async () => {
     const driver = global.webdriver
+    await emptyDatabase(global.queries)
+    await driver.navigate().refresh()
+
     const textContent = 'text:Og7LikCQFm'
     await createNote(driver, textContent)
-    {
-      const notesBoard = await driver.findElement(By.id('id:notes-board:Y8FAln8HKV'))
-      const notesBoardTextContent = await notesBoard.getText()
-      expect(notesBoardTextContent.includes(textContent)).toBeTruthy()
-    }
+    expect(await driver.findElement(By.xpath(
+      `//*[@id='id:notes-board:Y8FAln8HKV']` +
+      `//descendant::*[contains(text(),'${textContent}')]`
+    ))).toBeDefined()
   });
 
-  test('Note is deleted when delete\'s operation is confirmed', async () => {
+  test('Note is deleted when delete\'s operation is confirmed #HbHdvSxtjY', async () => {
     const driver = global.webdriver
+    await emptyDatabase(global.queries)
+    await seed(global.queries, 'HbHdvSxtjY')
+    await driver.navigate().refresh()
+
     const textContent = 'text:NXIdNyzgq9'
-    await createNote(driver, textContent)
     await deleteNote(driver, textContent)
-    {
-      const notesBoard = await driver.findElement(By.id('id:notes-board:Y8FAln8HKV'))
-      const notesBoardTextContent = await notesBoard.getText()
-      expect(notesBoardTextContent.includes(textContent)).not.toBeTruthy()
-    }
+    driver.findElement(By.xpath(
+      `//*[@id='id:notes-board:Y8FAln8HKV']` +
+      `//descendant::*[contains(text(),'${textContent}')]`
+    )).catch(error => expect(error).toBeInstanceOf(webdriver.error.NoSuchElementError))
   });
 
   test('Notes board should paginate when there is too many items #E1qQS4raeE', async () => {
     const driver = global.webdriver
-    const notes = Array(25).fill(undefined).map(() => `text:${uuidv4()}`)
-    for(let i = 0; i < notes.length; i++) {
-      await createNote(driver, notes[i])
-    }
-    await driver.wait(until.elementLocated(By.xpath(
-      `//*[contains(text(),'${notes[notes.length - 1]}')]`     
-    )), WAIT_UNTIL_TIMEOUT)
+    await emptyDatabase(global.queries)
+    await seed(global.queries, 'E1qQS4raeE')
     await driver.navigate().refresh()
+
     await driver.wait(until.elementLocated(By.xpath(
-      `//*[contains(text(),'${notes[0]}')]`     
+      `//*[contains(text(),'text:teoGsC8JN6')]`     
     )), WAIT_UNTIL_TIMEOUT)
     expect(await countNotes(driver)).toEqual(20)
     await driver.executeScript(
@@ -50,7 +52,7 @@ describe('Notes operations', () => {
     await driver.wait(
       until.elementsLocated(By.xpath(
         `//*[@id='id:notes-board:Y8FAln8HKV']` +
-        `//descendant::*[contains(text(),'${notes[notes.length - 1]}')]`
+        `//descendant::*[contains(text(),'text:V5BfHdvxKv')]`
       ))
     , WAIT_UNTIL_TIMEOUT)    
     expect(await countNotes(driver)).toEqual(25)

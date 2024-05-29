@@ -4,14 +4,18 @@ import { clean } from 'esbuild-plugin-clean';
 import globals from './globals.mjs'
 
 const outDir = './.package';
+const isPackaged = globals.ENVIRONMENT === 'production' || 
+  (globals.ENVIRONMENT === 'testing' && !globals.DEBUG)
+
 const config = {
   target: 'es2020',
   platform: 'browser',
   format: 'cjs',
   logLevel: "info",
   bundle: true,
-  minify: false,
-  sourcemap: true,
+  bundle: true,
+  minify: isPackaged ? true : false,
+  sourcemap: isPackaged ? false : true,
   entryPoints: ["./source/renderer/renderer.tsx"],
   outfile: resolve(outDir, './renderer.js'),
   tsconfig: './tsconfig.web.json',

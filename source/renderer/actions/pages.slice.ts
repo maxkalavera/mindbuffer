@@ -67,6 +67,8 @@ const pagesSlice = createSlice({
       state.loadingSelectedPage = true
     })
     builder.addCase(fetchSelectedPageThunk.rejected, (state, action) => {
+      state.selectedPageID = undefined
+      state.selectedPage = undefined
       state.loadingSelectedPage = false
     })
     builder.addCase(fetchSelectedPageThunk.fulfilled, (state, action) => {

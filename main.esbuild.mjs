@@ -7,17 +7,19 @@ import { clean } from 'esbuild-plugin-clean';
 import writeFilePlugin from 'esbuild-plugin-write-file';
 import globals from './globals.mjs'
 
-const pkg = JSON.parse(readFileSync(resolve('./package.json'), { encoding: 'utf8' }));
 const outDir = './.package';
+const pkg = JSON.parse(readFileSync(resolve('./package.json'), { encoding: 'utf8' }));
+const isPackaged = globals.ENVIRONMENT === 'production' || 
+  (globals.ENVIRONMENT === 'testing' && !globals.DEBUG)
 
 await esbuild.build({
   target: 'node20',
   platform: 'node',
   format: 'esm',
   bundle: true,
-  minify: globals.ENVIRONMENT === 'production' ? true : false,
-  sourcemap: globals.ENVIRONMENT === 'production' ? false : true,
-  logLevel: globals.ENVIRONMENT === 'production' ? 'silent' : "info",
+  minify: isPackaged ? true : false,
+  sourcemap: isPackaged ? false : true,
+  logLevel: isPackaged ? 'silent' : "info",
   entryPoints: ["./source/main/main.ts"],
   outfile: resolve(outDir, './main.mjs'),
   tsconfig: './tsconfig.json',
@@ -57,7 +59,7 @@ await esbuild.build({
           binary: pkg.binary,
           peerDependencies:pkg.peerDependencies,
           scripts: {
-            "rebuild": "electron-rebuild -f -w better-sqlite3",
+            "rebuild": "electron-rebuild -f -w better-sqlite3 -m .",
             //...(globals.ENVIRONMENT === 'development' ? {"postinstall": "electron-builder install-app-deps"}: {})
           },
           devDependencies: Object.fromEntries(

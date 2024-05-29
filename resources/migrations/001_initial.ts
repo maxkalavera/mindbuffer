@@ -9,10 +9,11 @@ exports.up = function (knex) {
       table.increments('id')
       table.timestamps(true, true)
       table.string('name', 255).notNullable()
-      table.integer('notepadID').unsigned()
+      table.integer('notepadID')
+        .unsigned()
+        .notNullable()
       table.foreign('notepadID')
         .references('notepads.id')
-        .deferrable()
         .onDelete("CASCADE")
     })
     .createTable('notes', function (table) {

@@ -5,6 +5,8 @@ import { clean } from 'esbuild-plugin-clean';
 import globals from './globals.mjs'
 
 const outDir = './.package';
+const isPackaged = globals.ENVIRONMENT === 'production' || 
+  (globals.ENVIRONMENT === 'testing' && !globals.DEBUG)
 
 await esbuild.build({
   target: 'es2020',
@@ -12,8 +14,9 @@ await esbuild.build({
   format: 'cjs',
   logLevel: "info",
   bundle: true,
-  minify: false,
-  sourcemap: true,
+  minify: isPackaged ? true : false,
+  sourcemap: isPackaged ? false : true,
+  logLevel: isPackaged ? 'silent' : "info",
   entryPoints: ["./source/preload.ts"],
   outfile: resolve(outDir, './preload.js'),
   tsconfig: './tsconfig.json',

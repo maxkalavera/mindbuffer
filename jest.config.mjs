@@ -1,12 +1,21 @@
 import globals from './globals.mjs'
+import { platform } from 'node:os'
 
-const testingGlobals = Object.assign(globals, {
-  WAIT_UNTIL_TIMEOUT: 10 * 1000,
-  EXTRA_SHORT_TIMEOUT: 5 * 1000,
-  SHORT_TIMEOUT: 10 * 1000,
-  REGULAR_TIMEOUT: 30 * 1000,
-  LONG_TIMEOUT : 2 * 60 * 1000,
-  EXTRA_LONG_TIMEOUT: 5 * 60 * 1000,
+const testingGlobals = Object.assign(globals, 
+  platform() === 'win32'? {
+    WAIT_UNTIL_TIMEOUT: 30 * 1000,
+    EXTRA_SHORT_TIMEOUT: 15 * 1000,
+    SHORT_TIMEOUT: 30 * 1000,
+    REGULAR_TIMEOUT: 2 * 60 * 1000,
+    LONG_TIMEOUT : 5 * 60 * 1000,
+    EXTRA_LONG_TIMEOUT: 10 * 60 * 1000,
+  } : { // For MacOS and Linux
+    WAIT_UNTIL_TIMEOUT: 15 * 1000,
+    EXTRA_SHORT_TIMEOUT: 5 * 1000,
+    SHORT_TIMEOUT: 10 * 1000,
+    REGULAR_TIMEOUT: 30 * 1000,
+    LONG_TIMEOUT : 2 * 60 * 1000,
+    EXTRA_LONG_TIMEOUT: 5 * 60 * 1000,
 })
 
 const config = {

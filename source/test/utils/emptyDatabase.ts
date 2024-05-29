@@ -1,9 +1,10 @@
+import path from 'node:path'
 import knex from 'knex'
 
-export default async function emptyDatabase (knex: knex.Knex<any, unknown[]>) {
+export default async function emptyDatabase (queries: knex.Knex<any, unknown[]>) {
   try {
-    await knex.transaction(async (context) => {
-      const tables = (await context.raw("SELECT name FROM sqlite_schema WHERE type ='table'"))
+    await queries.transaction(async (context) => {
+      const tables = await (await context.raw("SELECT name FROM sqlite_schema WHERE type ='table'"))
         .map((item) => item.name)
         .filter((name) => ![ // Exclude this tables
           'knex_migrations',

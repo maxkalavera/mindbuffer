@@ -40,7 +40,7 @@ function AddNoteInput({
 
     store.dispatch(createNoteThunk({
       content: state.inputValue,
-      pageId: context.selectedPageID || null,
+      pageID: context.selectedPageID || null,
     })).then(() => {
       showAlert({ message: 'Note created', type: 'success'})
     })

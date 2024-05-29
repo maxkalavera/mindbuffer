@@ -11,6 +11,7 @@ export const createPage = async (
     `//descendant::*[contains(@class, 'class:notepad-options-button:GrWzrbooC9')]` // Options button
   )), WAIT_UNTIL_TIMEOUT)
   await driver.wait(until.elementIsVisible(notepadOptionsButton), WAIT_UNTIL_TIMEOUT)
+  await driver.wait(until.elementIsEnabled(notepadOptionsButton), WAIT_UNTIL_TIMEOUT)
   await notepadOptionsButton.click()
   const createPageButton = await driver.wait(until.elementLocated(By.xpath(
     `//*[contains(text(), '${notepadName}')]` + // Notepad text element
@@ -18,12 +19,14 @@ export const createPage = async (
     `//descendant::*[contains(@class, 'class:notepad-options-create-page-button:LLAk9dX9bP')]` // Create Page button
   )), WAIT_UNTIL_TIMEOUT)
   await driver.wait(until.elementIsVisible(createPageButton), WAIT_UNTIL_TIMEOUT)
+  await driver.wait(until.elementIsEnabled(createPageButton), WAIT_UNTIL_TIMEOUT)
   await createPageButton.click()
   const nameInput = await driver.wait(until.elementLocated(By.xpath(
     `//div[contains(@class, 'class:page-modal-name-input-wrapper:o0Tmq3A18Z')]` +
     `//descendant::input`
   )), WAIT_UNTIL_TIMEOUT)
   await driver.wait(until.elementIsVisible(nameInput), WAIT_UNTIL_TIMEOUT)
+  await driver.wait(until.elementIsEnabled(nameInput), WAIT_UNTIL_TIMEOUT)
   await nameInput.clear()
   await nameInput.sendKeys(name)
   const confirmButton = await driver.findElement(By.className('class:modal-confirm-button:fHIbu0jVfe'))
@@ -41,6 +44,7 @@ export const updatePage = async (
     `//descendant::*[contains(@class, 'class:page-options-button:WvlSIUCzRC')]`
   )), WAIT_UNTIL_TIMEOUT)
   await driver.wait(until.elementIsVisible(pageOptionsButton), WAIT_UNTIL_TIMEOUT)
+  await driver.wait(until.elementIsEnabled(pageOptionsButton), WAIT_UNTIL_TIMEOUT)
   await pageOptionsButton.click()
   const updatePageButton = await driver.wait(until.elementLocated(By.xpath(
     `//*[contains(text(), '${name}')]` +
@@ -48,12 +52,14 @@ export const updatePage = async (
     `//descendant::*[contains(@class, 'class:page-options-edit-button:1bWdLl8T87')]`
   )), WAIT_UNTIL_TIMEOUT)
   await driver.wait(until.elementIsVisible(updatePageButton), WAIT_UNTIL_TIMEOUT)
+  await driver.wait(until.elementIsEnabled(updatePageButton), WAIT_UNTIL_TIMEOUT)
   await updatePageButton.click()
   const nameInput = await driver.wait(until.elementLocated(By.xpath(
     `//div[contains(@class, \'class:page-modal-name-input-wrapper:o0Tmq3A18Z\')]` +
     `//descendant::input`
   )), WAIT_UNTIL_TIMEOUT)
   await driver.wait(until.elementIsVisible(nameInput), WAIT_UNTIL_TIMEOUT)
+  await driver.wait(until.elementIsEnabled(nameInput), WAIT_UNTIL_TIMEOUT)
   await nameInput.clear()
   await nameInput.sendKeys(newName)
   const confirmButton = await driver.wait(until.elementLocated(By.className('class:modal-confirm-button:fHIbu0jVfe')), WAIT_UNTIL_TIMEOUT)
@@ -70,6 +76,7 @@ export const deletePage = async (
     `//descendant::*[contains(@class, 'class:page-options-button:WvlSIUCzRC')]`
   )), WAIT_UNTIL_TIMEOUT)
   await driver.wait(until.elementIsVisible(pageOptionsButton), WAIT_UNTIL_TIMEOUT)
+  await driver.wait(until.elementIsEnabled(pageOptionsButton), WAIT_UNTIL_TIMEOUT)
   await pageOptionsButton.click()
   const updatePageButton = await driver.wait(until.elementLocated(By.xpath(
     `//*[contains(text(), '${name}')]` +

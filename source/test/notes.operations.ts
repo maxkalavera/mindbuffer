@@ -23,6 +23,7 @@ export const deleteNote = async (
     `//ancestor::div[contains(@class, 'class:text-note:7BoiMerq5D')]`
   )), WAIT_UNTIL_TIMEOUT)
   await driver.wait(until.elementIsVisible(createdNote), WAIT_UNTIL_TIMEOUT)
+  await driver.wait(until.elementIsEnabled(createdNote), WAIT_UNTIL_TIMEOUT)
   expect(createdNote).not.toBeUndefined()
   expect((await createdNote.getText()).includes(content)).toBeTruthy()
   const optionsButton = await driver.wait(until.elementLocated(By.className('class:note-options-button:TMKI1oxDBJ')), WAIT_UNTIL_TIMEOUT)
