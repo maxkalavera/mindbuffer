@@ -55,4 +55,4 @@ afterAll(async () => {
 })
 
 // When DEBUG mode deactivate retries
-jest.retryTimes(!global.DEBUG ? 0 : 2)
+jest.retryTimes(global.DEBUG ? 0 : 2)
