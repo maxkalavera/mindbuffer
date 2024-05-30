@@ -51,9 +51,9 @@
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "dompurify": "^3.1.3",
-    "electron": "30.0.x",
-    "electron-builder": "24.6.3",
-    "electron-chromedriver": "30.0.3",
+    "electron": "30.0.9",
+    "electron-builder": "24.13.3",
+    "electron-chromedriver": "30.0.9",
     "esbuild": "0.21.1",
     "esbuild-node-externals": "^1.13.1",
     "esbuild-plugin-clean": "^1.0.1",
@@ -76,7 +76,7 @@
     "uuid": "^9.0.1"
   },
   "dependencies": {
-    "better-sqlite3": "10.0.x",
+    "better-sqlite3": "10.1.0",
     "electron-devtools-installer": "^3.2.0",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^9.0.0",
