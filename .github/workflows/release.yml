@@ -16,6 +16,8 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: '20.11.x'
+    - name: install requirements
+      run: sudo apt install -y build-essential 
     - name: install dependencies
       run: yarn install
     - name: build current system distributables
