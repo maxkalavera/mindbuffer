@@ -12,11 +12,11 @@ export default async function buildWebdriver (): Promise<webdriver.ThenableWebDr
       'goog:chromeOptions': {
         binary: global.__BINARY_PATH__,
         args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-extensions',
-          '--remote-debugging-pipe',
+          //'--no-sandbox',
+          //'--disable-setuid-sandbox',
+          //'--disable-dev-shm-usage',
+          //'--disable-extensions',
+          //'--remote-debugging-pipe',
         ]
       
       }
