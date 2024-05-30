@@ -13,7 +13,7 @@ export default async function buildWebdriver (): Promise<webdriver.ThenableWebDr
         binary: global.__BINARY_PATH__,
         args: [
           '--headless',
-          '--no-sandbox',
+          //'--no-sandbox',
           '--disable-dev-shm-usage',
           //'--disable-extensions',
           //'--disable-setuid-sandbox',
