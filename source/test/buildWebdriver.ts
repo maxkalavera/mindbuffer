@@ -16,7 +16,7 @@ export default async function buildWebdriver (): Promise<webdriver.ThenableWebDr
           //'--disable-setuid-sandbox',
           //'--disable-dev-shm-usage',
           //'--disable-extensions',
-          //'--remote-debugging-pipe',
+          '--remote-debugging-pipe',
         ]
       
       }
