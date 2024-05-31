@@ -13,7 +13,7 @@ jobs:
     - name: install dependencies
       run: yarn install
     - name: run tests
-      run: yarn run test
+      run: yarn run playwright
 
   build_on_mac:
     runs-on: macos-latest
@@ -26,7 +26,7 @@ jobs:
     - name: install dependencies
       run: yarn install
     - name: run tests
-      run: yarn run test
+      run: yarn run playwright
 
   build_on_win:
     runs-on: windows-latest
@@ -39,4 +39,4 @@ jobs:
     - name: install dependencies
       run: yarn install
     - name: run tests
-      run: yarn run test
+      run: yarn run playwright

@@ -22,7 +22,7 @@ const createWindow = () => {
     height: 768,
     width: 1080,
     // If testing and not debuging mode run in headless mode, in background
-    show: globals.ENVIRONMENT !== 'testing' || globals.DEBUG === true,
+    //show: globals.ENVIRONMENT !== 'testing' || globals.DEBUG === true,
     webPreferences: {
       preload: getPreloadEntry(),
     },

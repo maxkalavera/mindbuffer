@@ -3,7 +3,7 @@ import esbuild from 'esbuild';
 import { clean } from 'esbuild-plugin-clean';
 import globals from './globals.mjs'
 
-const outDir = './.package';
+const outputDir = './.package';
 const isPackaged = globals.ENVIRONMENT === 'production' || 
   (globals.ENVIRONMENT === 'testing' && !globals.DEBUG)
 
@@ -17,7 +17,7 @@ const config = {
   minify: isPackaged ? true : false,
   sourcemap: isPackaged ? false : true,
   entryPoints: ["./source/renderer/renderer.tsx"],
-  outfile: resolve(outDir, './renderer.js'),
+  outfile: resolve(outputDir, './renderer.js'),
   tsconfig: './tsconfig.web.json',
   define: {
     globals: JSON.stringify(globals)
@@ -26,7 +26,7 @@ const config = {
     clean({
       cleanOnStartPatterns: [
         './renderer.js',
-      ].map((item) => resolve(outDir, item)),
+      ].map((item) => resolve(outputDir, item)),
     }),
   ],
 }

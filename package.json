@@ -31,7 +31,10 @@
     "start": "cross-env MINDBUFFER_ENVIRONMENT=development npm run build:prebuild && concurrently --kill-others --kill-others-on-fail \"npm run start:electron\" \"babel-node -- renderer.esbuild.mjs --watch\"",
     "test:build": "rimraf ./.package && cross-env MINDBUFFER_ENVIRONMENT=testing npm run build:prebuild && cross-env MINDBUFFER_ENVIRONMENT=testing electron-builder build --config electron-builder.config.js --projectDir ./.package",
     "test:start": "cross-env MINDBUFFER_ENVIRONMENT=testing concurrently --kill-others --kill-others-on-fail -s \"first\" -c \"gray,yellow\" \"chromedriver\" \"jest --runInBand --detectOpenHandles --forceExit\"",
-    "test": "npm run test:build && npm run test:start"
+    "test": "npm run test:build && npm run test:start",
+    "playwright:build": "cross-env MINDBUFFER_ENVIRONMENT=testing npm run build:prebuild",
+    "playwright:start": "playwright test --config=./playwright.config.ts",
+    "playwright": "npm run playwright:build && npm run playwright:start"
   },
   "devDependencies": {
     "@babel/node": "^7.23.9",
@@ -40,6 +43,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@jest/globals": "^29.7.0",
+    "@playwright/test": "^1.44.1",
     "@reduxjs/toolkit": "^2.2.4",
     "@types/css-modules": "^1.0.5",
     "@types/dompurify": "^3.0.5",

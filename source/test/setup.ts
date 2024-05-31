@@ -1,10 +1,8 @@
 import path from 'path'
 import { platform, arch } from 'os'
-import { beforeEach, afterEach } from '@jest/globals';
 import webdriver from 'selenium-webdriver'
 import knex from 'knex'
 
-import emptyDatabase from './utils/emptyDatabase';
 import buildWebdriver from './buildWebdriver';
 import pkg from '../../package.json'
 

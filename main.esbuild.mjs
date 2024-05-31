@@ -35,6 +35,15 @@ await esbuild.build({
           from: ['./resources/**/*'],
           to: ['./resources'],
         },
+        globals.ENVIRONMENT === 'testing' ? {
+          from: ['./playwright/**/*'],
+          to: ['./playwright'],
+        } : {},
+        
+        globals.ENVIRONMENT === 'testing' ? {
+          from: ['./playwright.config.ts'],
+          to: ['./playwright.config.ts'],
+        } : {},
         {
           from: globals.ENVIRONMENT === 'testing' ? 
             ['./electron-builder.test.config.js'] : 
@@ -66,6 +75,7 @@ await esbuild.build({
             Object.entries(pkg.devDependencies || {}).filter(([module, _]) => [
               'electron',
               '@electron/rebuild',
+              '@playwright/test',
             ].some(item => item === module))),
           dependencies: pkg.dependencies || {},
         }, null, 4)
@@ -75,9 +85,11 @@ await esbuild.build({
       cleanOnStartPatterns: [
         './main.mjs',
         './main.mjs.map',
-        './resources',
+        './resources/',
         './electron-builder.config.js',
         './package.json',
+        './playwright/',
+        './playwright.config.ts',
       ].map((item) => resolve(outDir, item)),
     }),
   ],

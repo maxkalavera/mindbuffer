@@ -20,7 +20,6 @@ const search = async (
   await driver.wait(until.elementIsVisible(sendSearchButton))
   await driver.wait(until.elementIsEnabled(sendSearchButton))
   await sendSearchButton.click()
-  until.elementIsEnabled
 }
 
 const clearSearch = async (
