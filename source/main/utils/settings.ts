@@ -22,9 +22,9 @@ const store = new Store<StoreType>({
   }
 }) as Store<StoreType> & { set: (key: string, any) => void, get: (key: string) => any, clear: () => void, store: any }
 
-/*  Settings to set when app is started */
+/*  Settings setted when app is starting */
 {
-  store.set('dbPath', databaseLocations[globals.ENVIRONMENT] || databaseLocations['production'])
+  store.set('dbPath', process.env.MINDBUFFER_DB_PATH || databaseLocations[globals.ENVIRONMENT] || databaseLocations['production'])
 }
 
 

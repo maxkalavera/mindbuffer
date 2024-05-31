@@ -11,7 +11,9 @@ const search = async (
   page: Page,
   content: string,
 ) => {
+  // Set search text into search bar
   await page.locator(`xpath=//*[@id='id:searchbar-input:aPNkesepop']`).fill(content);
+  // Click search button
   await page.locator(`xpath=//*[@id='id:searchbar-send-button:OGUB40c5DM']`).click();
 }
 
@@ -21,9 +23,8 @@ const clearSearch = async (
   await page.locator(`xpath=//*[@id='id:searchbar-clear-button:KlsiLQF3zr']`).click();
 }
 
-test('Search should filter items by its keywords #6LGdgVNDb0', async ({ page, seed }) => {
-  await seed('6LGdgVNDb0');
-
+test('Search should filter items by its keywords #6LGdgVNDb0', async ({ launchElectron }) => {
+  const page = await launchElectron('6LGdgVNDb0');
   // Search for multiple items
   await search(page, 'text');
   expect(await countNotepads(page)).toEqual(5);
@@ -34,4 +35,8 @@ test('Search should filter items by its keywords #6LGdgVNDb0', async ({ page, se
   expect(await countNotepads(page)).toEqual(1);
   expect(await countPages(page)).toEqual(1);
   expect(await countNotes(page)).toEqual(1);
+  await clearSearch(page);
+  expect(await countNotepads(page)).toEqual(5);
+  expect(await countPages(page)).toEqual(5);
+  expect(await countNotes(page)).toEqual(5);
 });
