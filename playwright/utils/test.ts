@@ -23,8 +23,11 @@ export const test = base.extend<{
     )
   },
   page: async ({}, use) => {
-    electronApp = await _electron.launch({ args: [entrypoint] })
-    use(await electronApp.firstWindow())
+    electronApp = await _electron.launch({ 
+      args: [entrypoint],
+      env: { ...process.env, NODE_ENV: 'development' },
+    });
+    use(await electronApp.firstWindow());
   }
 });
 
