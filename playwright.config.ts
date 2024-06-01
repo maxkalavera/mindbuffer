@@ -4,7 +4,7 @@ import { defineConfig, devices } from '@playwright/test';
 import globals from './globals.mjs';
 
 const outputDir = path.resolve('./.run');
-const testDir = path.resolve('./playwright');
+const testDir = path.resolve('./test');
 
 export default defineConfig({
   outputDir: outputDir,
