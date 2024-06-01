@@ -4,22 +4,33 @@ export const createNote = async (
   page: Page,
   content: string,
 ) => {
-  /*
-  const textArea = await driver.wait(until.elementLocated(By.id('id:create-note-textarea:ZtAZE54FsV')), WAIT_UNTIL_TIMEOUT)
-  await driver.wait(until.elementIsVisible(textArea), WAIT_UNTIL_TIMEOUT)
-  await driver.wait(until.elementIsEnabled(textArea), WAIT_UNTIL_TIMEOUT)
-  await textArea.sendKeys(content)
-  const sendButton = await driver.findElement(By.id('id:create-note-button:j2OnOhuazV'))
-  await driver.wait(until.elementIsVisible(sendButton), WAIT_UNTIL_TIMEOUT)
-  await driver.wait(until.elementIsEnabled(sendButton), WAIT_UNTIL_TIMEOUT)
-  await sendButton.click()
-  */
+    // Set search text into search bar
+    await page.locator(`xpath=//*[@id='id:create-note-textarea:ZtAZE54FsV']`).fill(content);
+    // Click search button
+    await page.locator(`xpath=//*[@id='id:create-note-button:j2OnOhuazV']`).click();
 }
 
 export const deleteNote = async (
   page: Page,
   content: string,
 ) => {
+  // Click specific notepad options button
+  await page.locator(
+    'xpath=' +
+    `//*[contains(text(),'${content}')]` +
+    `//ancestor::div[contains(@class, 'class:text-note:7BoiMerq5D')]` +
+    `//descendant::*[contains(@class, 'class:note-options-button:TMKI1oxDBJ')]`
+  ).click();
+  // Click delete option
+  await page.locator(
+    'xpath=' +
+    `//*[contains(text(),'${content}')]` +
+    `//ancestor::div[contains(@class, 'class:text-note:7BoiMerq5D')]` +
+    `//descendant::*[contains(@class, 'class:note-options-delete-button:CEXEVxvbnV')]`
+  ).click();
+  // Click confirm button
+  await page.locator(`xpath=//*[contains(@class, 'class:modal-confirm-button:fHIbu0jVfe')]`).click();
+
   /*
   const createdNote = await driver.wait(until.elementLocated(By.xpath(
     `//*[contains(text(),'${content}')]` +
@@ -28,6 +39,7 @@ export const deleteNote = async (
   await driver.wait(until.elementIsVisible(createdNote), WAIT_UNTIL_TIMEOUT)
   await driver.wait(until.elementIsEnabled(createdNote), WAIT_UNTIL_TIMEOUT)
   expect(createdNote).not.toBeUndefined()
+
   expect((await createdNote.getText()).includes(content)).toBeTruthy()
   const optionsButton = await driver.wait(until.elementLocated(By.className('class:note-options-button:TMKI1oxDBJ')), WAIT_UNTIL_TIMEOUT)
   await driver.wait(until.elementIsVisible(optionsButton), WAIT_UNTIL_TIMEOUT)

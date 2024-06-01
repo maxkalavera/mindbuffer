@@ -23,7 +23,7 @@ const clearSearch = async (
   await page.locator(`xpath=//*[@id='id:searchbar-clear-button:KlsiLQF3zr']`).click();
 }
 
-test.only('Search should filter items by its keywords #6LGdgVNDb0', async ({ launchElectron }) => {
+test('Search should filter items by its keywords #6LGdgVNDb0', async ({ launchElectron }) => {
   for await (const page of launchElectron('6LGdgVNDb0')) {
     // Search for multiple items
     await search(page, 'text');
