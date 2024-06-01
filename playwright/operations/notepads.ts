@@ -67,17 +67,6 @@ export const deleteNotepad = async (
   await page.locator(`xpath=//*[contains(@class, 'class:modal-confirm-button:fHIbu0jVfe')]`).click();
 };
 
-/*
-export const getNotepads = async (
-  page: Page,
-) => {
-  return (await driver.findElements(By.xpath(
-    `//*[@id='id:notepad-list-container:7MLMomsYBt']` +
-    `//descendant::*[contains(@class, 'class:notepad:8iwbWkd5Y1')]`
-  )))
-};
-*/
-
 export const countNotepads = async (
   page: Page,
 ) => {

@@ -31,7 +31,7 @@ test('Note is deleted when delete\'s operation is confirmed #HbHdvSxtjY', async 
   }
 });
 
-test.only('Notes board should paginate when there is too many items #E1qQS4raeE', async ({ launchElectron }) => {
+test('Notes board should paginate when there is too many items #E1qQS4raeE', async ({ launchElectron }) => {
   for await (const page of launchElectron('E1qQS4raeE')) {
     await page.locator(
       'xpath=' +

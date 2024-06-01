@@ -6,7 +6,6 @@ import { countNotes } from './operations/notes';
 import { countNotepads } from './operations/notepads';
 import { countPages } from './operations/pages';
 
-
 const search = async (
   page: Page,
   content: string,
