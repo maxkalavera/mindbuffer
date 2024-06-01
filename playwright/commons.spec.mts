@@ -23,20 +23,22 @@ const clearSearch = async (
   await page.locator(`xpath=//*[@id='id:searchbar-clear-button:KlsiLQF3zr']`).click();
 }
 
-test('Search should filter items by its keywords #6LGdgVNDb0', async ({ launchElectron }) => {
-  const page = await launchElectron('6LGdgVNDb0');
-  // Search for multiple items
-  await search(page, 'text');
-  expect(await countNotepads(page)).toEqual(5);
-  expect(await countPages(page)).toEqual(5);
-  expect(await countNotes(page)).toEqual(5);
-  // Search for specific item
-  await search(page, 'text:jq7UI8KMvB');
-  expect(await countNotepads(page)).toEqual(1);
-  expect(await countPages(page)).toEqual(1);
-  expect(await countNotes(page)).toEqual(1);
-  await clearSearch(page);
-  expect(await countNotepads(page)).toEqual(5);
-  expect(await countPages(page)).toEqual(5);
-  expect(await countNotes(page)).toEqual(5);
+test.only('Search should filter items by its keywords #6LGdgVNDb0', async ({ launchElectron }) => {
+  for await (const page of launchElectron('6LGdgVNDb0')) {
+    // Search for multiple items
+    await search(page, 'text');
+    expect(await countNotepads(page)).toEqual(5);
+    expect(await countPages(page)).toEqual(5);
+    expect(await countNotes(page)).toEqual(5);
+    // Search for specific item
+    await search(page, 'text:jq7UI8KMvB');
+    expect(await countNotepads(page)).toEqual(1);
+    expect(await countPages(page)).toEqual(1);
+    expect(await countNotes(page)).toEqual(1);
+    await clearSearch(page);
+    expect(await countNotepads(page)).toEqual(5);
+    expect(await countPages(page)).toEqual(5);
+    expect(await countNotes(page)).toEqual(5);
+  }
+
 });
