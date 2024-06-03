@@ -12,7 +12,7 @@ module.exports = {
     output: "distribution/"
   },
   linux: {
-    // "icon": "./resources/linux/icons/",
+    icon: "./resources/icons/icon.icns", // Build icons in .png format from icon.icns file
     target: [
       {
         target: "deb",
@@ -42,33 +42,15 @@ module.exports = {
     //entitlementsInherit: "./resources/mac/entitlements.plist",
     gatekeeperAssess: false,
     hardenedRuntime: true,
-    //"icon": "./resources/mac/icons/icon.icns",
+    icon: "./resources/icons/icon.icns",
     //notarize: { "teamId": "" }
     publish: ['github']
   },
   dmg: {
     artifactName: "${productName}-${os}-${arch}.${ext}",
-    // background: "./resources/mac/background.png",
-    contents: [
-      {
-        x: 396,
-        y: 345,
-        type: "link",
-        path: "/Applications"
-      },
-      {
-        x: 396,
-        y: 110,
-        type: "file"
-      }
-    ],
-    window: {
-      width: 640,
-      height: 480
-    }
   },
   win: {
-    //"icon": "./resources/build/icon.ico",
+    icon: "./resources/icons/icon.ico",
     artifactName: "${productName}-${os}-${arch}.${ext}",
     target: [
       {
