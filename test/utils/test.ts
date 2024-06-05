@@ -19,7 +19,7 @@ const connectDatabase = async (id: string): Promise<DatabaseType> => {
     client: 'sqlite3',
     debug: global.DEBUG,
     connection: {
-      filename: path.resolve(`.run/mindbuffer.test${id ? ('.' + id) : ''}.db`) as string,
+      filename: path.resolve(`.run/amberpad.test${id ? ('.' + id) : ''}.db`) as string,
     },
     useNullAsDefault: true,
   })
@@ -54,7 +54,7 @@ export const test = base.extend<{
       args: [entrypoint],
       env: {
         ...process.env,
-        MINDBUFFER_DB_PATH: `.run/mindbuffer.test${id ? ('.' + id) : ''}.db`,
+        AMBERPAD_DB_PATH: `.run/amberpad.test${id ? ('.' + id) : ''}.db`,
       }
     });
     //electronApp.on('console', async msg => { console.log(msg); });
@@ -63,7 +63,7 @@ export const test = base.extend<{
     } finally {
       await queries.destroy();
       unlink(
-        `.run/mindbuffer.test.${id ? ('.' + id) : ''}.db`, 
+        `.run/amberpad.test.${id ? ('.' + id) : ''}.db`, 
         (error) => error // If errors ignore
       );
       await electronApp.close();

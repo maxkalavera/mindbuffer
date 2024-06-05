@@ -3,9 +3,9 @@ import { app } from 'electron'
 import Store from 'electron-store'
 
 const databaseLocations = {
-  'production': path.resolve(app.getPath('userData'), 'mindbuffer.db'),
-  'development' : path.resolve('.run/mindbuffer.development.db'), 
-  'testing': path.resolve('.run/mindbuffer.test.db'),
+  'production': path.resolve(app.getPath('userData'), 'amberpad.db'),
+  'development' : path.resolve('.run/amberpad.development.db'), 
+  'testing': path.resolve('.run/amberpad.test.db'),
 }
 
 type StoreType = {
@@ -24,7 +24,7 @@ const store = new Store<StoreType>({
 
 /*  Settings setted when app is starting */
 {
-  store.set('dbPath', process.env.MINDBUFFER_DB_PATH || databaseLocations[globals.ENVIRONMENT] || databaseLocations['production'])
+  store.set('dbPath', process.env.AMBERPAD_DB_PATH || databaseLocations[globals.ENVIRONMENT] || databaseLocations['production'])
 }
 
 

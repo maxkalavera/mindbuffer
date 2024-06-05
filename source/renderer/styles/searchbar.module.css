@@ -1,7 +1,7 @@
 .container {
   box-sizing: border-box;
   width: 100%;
-  height: var(--row-sm);
+  height: var(--row-xs);
   max-width: var(--frame-xl);
   display: flex;
   flex-direction: row;
@@ -13,6 +13,8 @@
   border-radius: var(--border-radius);
   padding: none;
   outline: 1px solid var(--frame-border);
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .container:hover,

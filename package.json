@@ -1,9 +1,9 @@
 {
-  "name": "mindbuffer",
+  "name": "amberpad",
   "version": "0.12.1",
-  "productName": "MindBuffer",
+  "productName": "Amberpad",
   "description": "A note's manager app with the visuals of a Webchat",
-  "repository": "https://github.com/maxkalavera/mindbuffer",
+  "repository": "https://github.com/maxkalavera/amberpad",
   "license": "MIT",
   "author": {
     "name": "Max Hernandez",
@@ -13,9 +13,9 @@
     "node": "20.11.x"
   },
   "binary": {
-    "module_name": "mindbuffer",
+    "module_name": "amberpad",
     "module_path": "./bin",
-    "host": "https://github.com/maxkalavera/mindbuffer"
+    "host": "https://github.com/maxkalavera/amberpad"
   },
   "scripts": {
     "build:main:install": "npm --prefix ./.package install ./.package && npm --prefix ./.package run rebuild",
@@ -24,15 +24,15 @@
     "build:preload": "babel-node preload.esbuild.mjs",
     "build:renderer": "babel-node renderer.esbuild.mjs",
     "build:prebuild": "npm run build:main && npm run build:preload && npm run build:renderer",
-    "build:icons:darwin": "mkdirp ./.package/resources/icons/ && icon-gen -i ./resources/icons/amber.svg -o ./.package/resources/icons/ --icns --icns-name icon",
+    "build:icons:darwin": "mkdirp ./.package/resources/icons/ && icon-gen -i ./resources/icons/amber.svg -o ./.package/resources/icons/ --icns --icns-name icon --icns-sizes 16,32,64,128,256",
     "build:darwin": "rimraf ./.package && npm run build:prebuild && npm run build:icons:darwin && electron-builder build --config electron-builder.config.js --projectDir ./.package --mac",
-    "build:icons:win32": "mkdirp ./.package/resources/icons/ && icon-gen -i ./resources/icons/amber.svg -o ./.package/resources/icons/ --ico --ico-name icon",
+    "build:icons:win32": "mkdirp ./.package/resources/icons/ && icon-gen -i ./resources/icons/amber.svg -o ./.package/resources/icons/ --ico --ico-name icon --ico-sizes 16,32,64,128,256",
     "build:win32": "rimraf ./.package && npm run build:prebuild && npm run build:icons:win32 && electron-builder build --config electron-builder.config.js --projectDir ./.package --win",
     "build:icons:linux": "npm run build:icons:darwin",
     "build:linux": "rimraf ./.package && npm run build:prebuild && npm run build:icons:linux && electron-builder build --config electron-builder.config.js --projectDir ./.package --linux",
     "start:electron": "electron ./.package",
-    "start": "cross-env MINDBUFFER_ENVIRONMENT=development npm run build:prebuild && concurrently --kill-others --kill-others-on-fail \"npm run start:electron\" \"babel-node -- renderer.esbuild.mjs --watch\"",
-    "test:build": "cross-env MINDBUFFER_ENVIRONMENT=testing npm run build:prebuild",
+    "start": "cross-env AMBERPAD_ENVIRONMENT=development npm run build:prebuild && concurrently --kill-others --kill-others-on-fail \"npm run start:electron\" \"babel-node -- renderer.esbuild.mjs --watch\"",
+    "test:build": "cross-env AMBERPAD_ENVIRONMENT=testing npm run build:prebuild",
     "test:start": "playwright test --config=./playwright.config.ts",
     "test": "npm run test:build && npm run test:start"
   },
