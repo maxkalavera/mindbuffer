@@ -35,6 +35,7 @@ export default {
         error: error,
       })
     }
+    return this
   },
   testConnection: async function (): Promise<Boolean> {
     try {
