@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
 
 import globals from './globals.mjs';
 

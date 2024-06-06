@@ -24,7 +24,13 @@ const store = new Store<StoreType>({
 
 /*  Settings setted when app is starting */
 {
-  store.set('dbPath', process.env.AMBERPAD_DB_PATH || databaseLocations[globals.ENVIRONMENT] || databaseLocations['production'])
+  store.set(
+    'dbPath', 
+    // This variable is taken from process.env because it can change in an ongoing running
+    process.env.__TESTING_ENVRONMENT_DB_PATH ||  
+    databaseLocations[globals.ENVIRONMENT] || 
+    databaseLocations['production']
+  )
 }
 
 
