@@ -23,7 +23,7 @@ jobs:
     - name: build current system distributables
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: yarn run build:linux
+      run: yarn run publish:linux
 
   publish_on_mac:
     runs-on: macos-latest
@@ -42,7 +42,7 @@ jobs:
     - name: build current system distributables
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: yarn run build:darwin
+      run: yarn run publish:darwin
 
   publish_on_win:
     runs-on: windows-latest
@@ -56,4 +56,4 @@ jobs:
     - name: build current system distributables
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: yarn run build:win32
+      run: yarn run publish:win32

@@ -11,6 +11,11 @@ module.exports = {
   directories: {
     output: "distribution/"
   },
+  publish: [{
+    provider: "github",
+    owner: "maxkalavera",
+    repo: "amberpad"
+  }],
   linux: {
     icon: "./resources/icons/icon.icns", // Build icons in .png format from icon.icns file
     target: [
@@ -44,7 +49,6 @@ module.exports = {
     hardenedRuntime: true,
     icon: "./resources/icons/icon.icns",
     //notarize: { "teamId": "" }
-    publish: ['github']
   },
   dmg: {
     artifactName: "${productName}-${os}-${arch}.${ext}",
