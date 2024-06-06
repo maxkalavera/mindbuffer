@@ -10,6 +10,7 @@ import { ThrowFatalError } from '@main/utils/errors';
 if (!fs.existsSync(path.dirname(settings.get('dbPath')))){
   fs.mkdirSync(path.dirname(settings.get('dbPath')))
 }
+/*
 const QueriesManager = knex({
   client: 'better-sqlite3',
   debug: globals.DEBUG,
@@ -18,13 +19,30 @@ const QueriesManager = knex({
   },
   useNullAsDefault: true,
 })
+*/
 
 export default {
-  knex: QueriesManager,
+  //knex: QueriesManager,
+  queriesManager: undefined,
+  connectDatabase: async function () {
+    this.queriesManager = await knex({
+      client: 'better-sqlite3',
+      debug: globals.DEBUG,
+      connection: {
+        filename: settings.get('dbPath') as string,
+      },
+      useNullAsDefault: true,
+    });
+    return this.queriesManager;
+  },
   init: async function () {
+    if (this.queriesManager === undefined) {
+      this.queriesManager = await this.connectDatabase();
+    }
+
     // Run setup migrations
     try {
-      await QueriesManager.migrate.up({
+      await this.queriesManager.migrate.up({
         directory: path.resolve(getResourcesDir(), './migrations'),
         extension: 'ts',
         tableName: 'knex_migrations'
@@ -37,9 +55,18 @@ export default {
     }
     return this
   },
+  destroy: async function () {
+    this.queriesManager.destroy();
+  },
+  getManager: async function () {
+    if (this.queriesManager === undefined) {
+      this.queriesManager = await this.connectDatabase();
+    }
+    return this.queriesManager;
+  },
   testConnection: async function (): Promise<Boolean> {
     try {
-      await QueriesManager.raw('SELECT 1')
+      await this.queriesManager.raw('SELECT 1')
       return true
     } catch (error) {
       ThrowFatalError({

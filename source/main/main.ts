@@ -77,12 +77,10 @@ async function init() {
     windows[0].focus();
   }
 
-  if (appContext.database === undefined && await database.testConnection()) {
-    appContext.database = await database.init()
-  }  
+  await database.init();
 }
 
 function destroy() {
   app.quit();
-  appContext.database.knex.destroy()
+  appContext.database.destroy();
 }

@@ -42,7 +42,7 @@ app.on('ready', () => {
       options.page = options.page < 1 ? 1 : options.page
 
       try {
-        const knex = database.knex
+        const knex = await database.getManager();
         const data = await knex('notes')
           .select('*')
           .where(knex.raw(
@@ -84,7 +84,7 @@ app.on('ready', () => {
     'database.notes:create',
     async function create (_, payload) {
       try {
-        const knex = database.knex
+        const knex = await database.getManager();
         const data = await knex('notes')
           .returning('*')
           .insert(payload.data)
@@ -106,7 +106,7 @@ app.on('ready', () => {
     'database.note:update',
     async function update (_, payload) {
       try {
-        const knex = database.knex
+        const knex = await database.getManager();
         const data = await knex('notes')
           .where({ id: payload.value.id })
           .update(payload.value, '*')
@@ -130,7 +130,7 @@ app.on('ready', () => {
     'database.notes:destroy',
     async function destroy (_, payload) {
       try {
-        const knex = database.knex
+        const knex = await database.getManager();
         const data = await knex('notes')
           .where({ id: payload.value.id })
           .delete('*')
