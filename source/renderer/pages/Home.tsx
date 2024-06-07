@@ -91,6 +91,80 @@ export default function Home() {
   }, [])
 
   return (
+    <div      
+      className="
+        bg-zinc-950
+        size-full
+        flex flex-col justify-stretch items-stretch
+      "
+    >
+      <div
+        data-testid='header'
+        className="
+          h-12 px-4
+          flex flex-row gap-4 justify-center items-center
+        "
+      >
+        <SearchBar />
+      </div>
+      <div
+          data-testid='content'
+          className="
+            bg-brown-200
+            min-h-0
+            grow shrink basis-auto 
+            flex flex-row justiry-start items-stretch
+          "
+        >
+          <div 
+            data-testid='left'
+            className="
+              flex flex-col justify-start items-stretch
+            "
+          >
+            <div 
+              data-testid='divider' 
+              className="
+                bg-amber-500/[0.15]
+                h-6
+              " 
+            />
+            <Groups 
+              className="
+                bg-amber-500/[0.15]
+                min-w-0 px-4
+                grow shrink basis-auto
+              "
+            />
+          </div>
+          <div
+            data-testid='right'
+            className="
+              min-w-0
+              grow shrink basis-auto
+              flex flex-col
+            "
+          >
+            <div 
+              data-testid='divider' 
+              className="w-full h-6 bg-amber-500/[0.15]" 
+            />
+            <NotesBoard 
+              className="
+                px-4
+              "
+            />
+            <AddNoteInput 
+              className="
+                px-4
+              "
+            />
+          </div>
+        </div>
+    </div>
+  );
+  /*
+  return (
     <div className={styles.container}>
       <div className={styles.header}>
         <SearchBar />
@@ -117,4 +191,5 @@ export default function Home() {
       </div>
     </div>
   )
+  */
 }

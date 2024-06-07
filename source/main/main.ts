@@ -1,8 +1,5 @@
 /// <reference path="../globals.d.ts" />
-import path from 'node:path'
 import { app, BrowserWindow } from "electron"
-import { getResourcesDir, getPreloadEntry } from "@main/utils/resources"
-import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import checkSquirrelStartup from 'electron-squirrel-startup'
 import database from '@main/utils/database'
 import createMainWindow from '@main/services/mainWindow';
@@ -40,11 +37,13 @@ app.on('second-instance', init);
 app.whenReady()
   .then(init)
   .then(() => {
+    /*
     if (['development'].some((item) => item === globals.ENVIRONMENT)) {
       installExtension(REACT_DEVELOPER_TOOLS)
         .then((name) => console.log(`Added Extension:  ${name}`))
         .catch((err) => console.log('An error occurred: ', err));
     }
+    */
   })
 
 // In this file you can include the rest of your app's specific main process

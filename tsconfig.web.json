@@ -10,7 +10,8 @@
     "baseUrl": "source/",
     "paths": {
       "@renderer/*": ["renderer/*"],
-      "@commons/*": ["commons/*"]
+      "@ts/*": ["types/*"],
+      "@styles/*": ["styles/*"],
     },
   },
   "include": [

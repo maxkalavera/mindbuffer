@@ -8,7 +8,8 @@ import store from '@renderer/utils/store'
 import Router from '@renderer/components/Router'
 import { ModalProvider } from '@renderer/providers/Modal'
 import { AlertProvider } from '@renderer/providers/Alert'
-import '@renderer/styles/globals.css'
+//import '@renderer/styles/globals.css'
+import '@styles/renderer.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 

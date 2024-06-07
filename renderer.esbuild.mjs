@@ -1,6 +1,8 @@
 import { resolve } from 'node:path';
 import esbuild from 'esbuild';
 import { clean } from 'esbuild-plugin-clean';
+import { tailwindPlugin } from 'esbuild-plugin-tailwindcss';
+
 import globals from './globals.mjs'
 
 const outputDir = './.package';
@@ -20,9 +22,10 @@ const config = {
   outfile: resolve(outputDir, './renderer.js'),
   tsconfig: './tsconfig.web.json',
   define: {
-    globals: JSON.stringify(globals)
+    globals: JSON.stringify(globals),
   },
   plugins: [
+    tailwindPlugin({}),
     clean({
       cleanOnStartPatterns: [
         './renderer.js',
