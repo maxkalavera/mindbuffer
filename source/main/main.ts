@@ -5,6 +5,7 @@ import { getResourcesDir, getPreloadEntry } from "@main/utils/resources"
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import checkSquirrelStartup from 'electron-squirrel-startup'
 import database from '@main/utils/database'
+import createMainWindow from '@main/services/mainWindow';
 import '@main/handlers/notepads.handler'
 import '@main/handlers/pages.handler'
 import '@main/handlers/notes.handler'
@@ -46,26 +47,6 @@ app.whenReady()
     }
   })
 
-
-const createMainWindow = () => {
-  const window = new BrowserWindow({
-    height: 768,
-    width: 1080,
-    // If testing and not debuging mode run in headless mode, in background
-    show: globals.ENVIRONMENT !== 'testing' || globals.DEBUG === true,
-    webPreferences: {
-      preload: getPreloadEntry(),
-    },
-  })
-
-  window.loadFile(path.join(getResourcesDir(), 'index.html'))
-  // Open the DevTools.
-  if (['development'].some((item) => item === globals.ENVIRONMENT)) {
-    window.webContents.openDevTools();
-  }
-  return window
-}
-
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 async function init() {
@@ -77,7 +58,6 @@ async function init() {
     windows[0].show();
     windows[0].focus();
   }
-
   await database.init();
 }
 
