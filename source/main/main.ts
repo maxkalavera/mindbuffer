@@ -20,26 +20,7 @@ var appContext: {
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (checkSquirrelStartup) {
-  destroy()
-}
-
-const createWindow = () => {
-  const window = new BrowserWindow({
-    height: 768,
-    width: 1080,
-    // If testing and not debuging mode run in headless mode, in background
-    show: globals.ENVIRONMENT !== 'testing' || globals.DEBUG === true,
-    webPreferences: {
-      preload: getPreloadEntry(),
-    },
-  })
-
-  window.loadFile(path.join(getResourcesDir(), 'index.html'))
-  // Open the DevTools.
-  if (['development'].some((item) => item === globals.ENVIRONMENT)) {
-    window.webContents.openDevTools();
-  }
-  return window
+  destroy();
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -65,12 +46,32 @@ app.whenReady()
     }
   })
 
+
+const createMainWindow = () => {
+  const window = new BrowserWindow({
+    height: 768,
+    width: 1080,
+    // If testing and not debuging mode run in headless mode, in background
+    show: globals.ENVIRONMENT !== 'testing' || globals.DEBUG === true,
+    webPreferences: {
+      preload: getPreloadEntry(),
+    },
+  })
+
+  window.loadFile(path.join(getResourcesDir(), 'index.html'))
+  // Open the DevTools.
+  if (['development'].some((item) => item === globals.ENVIRONMENT)) {
+    window.webContents.openDevTools();
+  }
+  return window
+}
+
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 async function init() {
   let windows = BrowserWindow.getAllWindows();
   if (windows.length === 0) {
-    appContext.mainWindow = createWindow();
+    appContext.mainWindow = createMainWindow();
     windows = BrowserWindow.getAllWindows();
   } else {
     windows[0].show();
