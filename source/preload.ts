@@ -8,10 +8,25 @@ import type {
   ModelCreateInvoker, 
   ModelUpdateInvoker, 
   ModelDestroyInvoker 
-} from '@commons/ts/invokers.types'
-import type { NotePayload, Note, NotesFiltersPayload } from '@commons/ts/models/Notes.types'
-import type { PagePayload, Page, PagesFiltersPayload, PageID } from '@commons/ts/models/Pages.types'
-import type { NotepadPayload, Notepad, NotepadsFiltersPayload, NotepadsPagesFiltersPayload, NotepadID } from '@commons/ts/models/Notepads.types'
+} from '@ts/invokers.types'
+import type { 
+  NotePayload, 
+  Note, 
+  NotesFiltersPayload 
+} from 'ts/models/Notes.types'
+import type { 
+  PagePayload, 
+  Page, 
+  PagesFiltersPayload, 
+  PageID 
+} from '@ts/models/Pages.types'
+import type { 
+  NotepadPayload, 
+  Notepad, 
+  NotepadsFiltersPayload, 
+  NotepadsPagesFiltersPayload, 
+  NotepadID 
+} from '@ts/models/Notepads.types'
 
 export const electronAPI = {
   settings: {

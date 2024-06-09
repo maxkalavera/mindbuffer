@@ -1,5 +1,6 @@
 import { app, ipcMain } from 'electron'
 import { unflatten } from "flat"
+import knex from 'knex'
 
 import { ThrowError } from '@main/utils/errors'
 import database from '@main/utils/database'
@@ -10,15 +11,16 @@ import type {
   ModelCreateHandler,
   ModelUpdateHandler,
   ModelDestroyHandler,
-} from '@commons/ts/handlers.types'
+} from '@ts/handlers.types'
 import type { 
   PagePayload, 
   Page, 
   PageID,
   PagesFiltersPayload 
-} from '@commons/ts/models/Pages.types'
-import { Notepad } from '@commons/ts/models/Notepads.types'
-import knex from 'knex'
+} from '@ts/models/Pages.types'
+import { 
+  Notepad 
+} from '@ts/models/Notepads.types'
 
 app.on('ready', () => {
   ipcMain.handle(

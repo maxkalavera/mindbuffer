@@ -8,12 +8,12 @@ import type {
   ModelCreateHandler,
   ModelUpdateHandler,
   ModelDestroyHandler,
-} from '@commons/ts/handlers.types'
+} from 'ts/handlers.types'
 import type {
   NotePayload, 
   NotesFiltersPayload, 
   Note 
-} from '@commons/ts/models/Notes.types'
+} from '@ts/models/Notes.types'
 
 app.on('ready', () => {
   ipcMain.handle(

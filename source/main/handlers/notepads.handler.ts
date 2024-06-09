@@ -11,13 +11,13 @@ import type {
   ModelCreateHandler,
   ModelUpdateHandler,
   ModelDestroyHandler,
-} from '@commons/ts/handlers.types'
+} from '@ts/handlers.types'
 import type { 
   NotepadPayload, 
   Notepad, 
   NotepadsFiltersPayload ,
   NotepadsPagesFiltersPayload
-} from '@commons/ts/models/Notepads.types'
+} from '@ts/models/Notepads.types'
 
 app.on('ready', () => {
   ipcMain.handle(

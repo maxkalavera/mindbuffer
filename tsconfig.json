@@ -10,7 +10,7 @@
     "paths": {
       "@main/*": ["main/*"],
       "@renderer/*": ["renderer/*"],
-      "@commons/*": ["commons/*"]
+      "@ts/*": ["ts/*"]
     },
   },
   "include": [

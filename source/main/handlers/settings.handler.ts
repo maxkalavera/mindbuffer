@@ -2,7 +2,7 @@ import settings from '@main/utils/settings'
 import { app, ipcMain } from 'electron'
 
 import { ThrowError } from '@main/utils/errors'
-import { PageID } from '@commons/ts/models/Pages.types'
+import { PageID } from '@ts/models/Pages.types'
 
 app.on('ready', () => {
   ipcMain.handle(
