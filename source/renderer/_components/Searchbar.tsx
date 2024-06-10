@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react"
-import { TextField, IconButton } from "@radix-ui/themes"
-import { MagnifyingGlassIcon, Cross1Icon } from '@radix-ui/react-icons'
+import { faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-svg-icons"
 
-import store from "@renderer/utils/store"
 import commonsSlice from "@renderer/actions/commons.slice"
+import store from "@renderer/utils/store"
+import IconButton from "@renderer/components/IconButton"
+import styles from "@renderer/styles/searchbar.module.css"
 
-const Searchbar = () => {
+function Searchbar({
+  className = "",
+}: {
+  className?: string,
+}) {
   const [state, setState] = useState({
     search: '',
   })
@@ -57,40 +62,40 @@ const Searchbar = () => {
   }
 
   const sendSearchFlag = state.search === '' || 
-    state.search  !== context.commons.search;
+    state.search  !== context.commons.search
   return (
-    <TextField.Root
-      variant='soft'
-      placeholder='Search'
-      value={state.search}
-      onChange={(event) => onInputChange(event)}
-      onKeyDown={(event: any) => (event.code === "Enter") ? sendSearch(state.search) : null }
-    >
-      <TextField.Slot 
-        side='right'
-      >
-        {
-          sendSearchFlag ?
-            <IconButton
-              variant="ghost"
-              style={{cursor: 'pointer'}}
-              onClick={() => sendSearch(state.search)}
-            >
-              <MagnifyingGlassIcon height="18" width="18" />
-            </IconButton>
-          :          
+    <div className={`${className} ${styles.container}`}>
+      <input
+        id={globals.ENVIRONMENT === 'testing' ? 'id:searchbar-input:aPNkesepop' : ''}
+        type="text"
+        placeholder="Search..."
+        className={`${styles.input} ${className}`}
+        value={state.search}
+        onChange={(event) => onInputChange(event)}
+        onKeyDown={(event: any) => (event.code === "Enter") ? sendSearch(state.search) : null }
+      />
+      {
+        sendSearchFlag ?
+          (
             <IconButton 
-              variant="ghost"
-              style={{cursor: 'pointer'}}
+              id={globals.ENVIRONMENT === 'testing' ? 'id:searchbar-send-button:OGUB40c5DM' : ''}
+              className={styles.button}
+              icon={faMagnifyingGlass}
+              onClick={() => sendSearch(state.search)}
+            />
+          ) :
+          (
+            <IconButton 
+              id={globals.ENVIRONMENT === 'testing' ? 'id:searchbar-clear-button:KlsiLQF3zr' : ''}
+              className={styles.button}
+              icon={faXmark}
               onClick={() => clearSearch()}
-            >
-              <Cross1Icon height="18" width="18" />
-            </IconButton>
-        }
+            />
+          )
+      }
+    </div>
 
-      </TextField.Slot>
-    </TextField.Root>
-  )
+  );
 }
 
 export default Searchbar;

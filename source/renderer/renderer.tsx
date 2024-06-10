@@ -6,12 +6,9 @@ import { Provider as ReduxProvider } from 'react-redux'
 import { Theme } from '@radix-ui/themes'
 
 import store from '@renderer/utils/store'
-import Router from '@renderer/components/Router'
-import { ModalProvider } from '@renderer/providers/Modal'
-import { AlertProvider } from '@renderer/providers/Alert'
+import { Router } from '@renderer/routes'
 import '@radix-ui/themes/styles.css'
 import './renderer.css'
-//import '@renderer/styles/globals.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 
@@ -34,11 +31,7 @@ root.render(
   <React.StrictMode>
     <ReduxProvider store={store} >
       <ThemeWrapper>
-        <AlertProvider>
-          <ModalProvider>
-            <Router />
-          </ModalProvider>
-        </AlertProvider>
+        <Router />
       </ThemeWrapper>
     </ReduxProvider>
   </React.StrictMode>

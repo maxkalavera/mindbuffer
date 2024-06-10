@@ -1,106 +1,65 @@
-import React from "react"
-import { faEllipsisH, faTrash, faPen, faPlus } from '@fortawesome/free-solid-svg-icons'
+import React from 'react'
+import { Box, Flex, IconButton, Text } from '@radix-ui/themes'
+import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 
-import ElipsisSpinner from "@renderer/components/spinners/ElipsisSpinner"
-import UpdateNotepad from '@renderer/components/modals/UpdateNotepad'
-import DeleteNotepad from '@renderer/components/modals/DeleteNotepad'
-import { useModal } from '@renderer/providers/Modal'
-import CreatePage from '@renderer/components/modals/CreatePage'
-import DropdownMenu from "@renderer/components/DropdownMenu"
 import Page from '@renderer/components/Page'
-import IconButton from '@renderer/components/IconButton'
-import styles from '@renderer/styles/notepad.module.css'
-import type { Notepad } from "@commons/ts/models/Notepads.types"
 
-export default function Notepad ({
+import type { FlexProps } from '@radix-ui/themes'
+import type { NotepadType } from "@ts/models/Notepads.types"
+import { PageType } from '@ts/models/Pages.types'
+
+function Notepad ({
   data,
-  className='',
-  id='',
   loading=false,
-}: {
-  data: Notepad,
-  className?: string,
-  id?: string,
+  ...flexProps
+} : FlexProps & {
+  data: NotepadType,
   loading?: boolean,
 }) {
-  const { showModal } = useModal()
-
   return (
-    <div 
-      className={[
-        className,
-        styles.container,
-        globals.ENVIRONMENT === 'testing' ? 'class:notepad:8iwbWkd5Y1' : ''
-      ].join(' ')}
-      id={id}
+    <Flex
+      direction='column'
+      gap='2'
+      justify='start'
+      align='stretch'
+      {...flexProps}
     >
-      <div className={styles.header}>
-        <h4 className={`secondary-h4 ${styles.label}`}>
-          { data.name } 
-        </h4>
-        <DropdownMenu
-          className={globals.ENVIRONMENT === 'testing' ? 'class:notepad-options-button:GrWzrbooC9' : ''}
-          options={[
-            {
-              label: 'New Page',
-              icon: faPlus,
-              className: globals.ENVIRONMENT === 'testing' ? 'class:notepad-options-create-page-button:LLAk9dX9bP' : '',
-              onClick: () => showModal(
-                <CreatePage 
-                  notepad={data}
-                />, 'New Page'
-              )
-            },
-            {
-              label: 'Edit',
-              icon: faPen,
-              className: globals.ENVIRONMENT === 'testing' ? 'class:notepad-options-edit-button:OJSSF5T46S' : '',
-              onClick: () => showModal(
-                <UpdateNotepad
-                  value={data}
-                />, 
-                'Edit Notepad'
-              )
-            },
-            {
-              label: 'Delete',
-              icon: faTrash,
-              className: globals.ENVIRONMENT === 'testing' ? 'class:notepad-options-delete-button:r6ukcuDrQL' : '',
-              onClick: () => showModal(
-                <DeleteNotepad 
-                  value={data}
-                />, 
-                'Delete Notepad'
-              )
-            }
-          ]}
+      <Flex 
+        direction='row'
+        gap='4'
+        justify='between'
+        align='stretch'
+      >
+        <Text 
+          size='2' 
+          weight='bold'
         >
-          <IconButton
-            className={styles['options-button']}
-            icon={faEllipsisH}
-          />
-        </DropdownMenu>
-      </div>
-
-      <div className={styles.content}>
+          {data.name}
+        </Text>
+        <IconButton
+          size='1'
+          variant='ghost'
+        >
+          <DotsHorizontalIcon width='18' height='18' />
+        </IconButton>
+      </Flex>
+      <Flex
+        direction='column'
+        gap='0'
+        justify='start'
+        align='stretch'
+      >
         {
-          (data.pages ? data.pages : []).map((item: any, index: number) => (
+          (data.pages ? data.pages : []).map((item: PageType) => (
             <Page 
-              key={index} 
+              key={item.id} 
               data={item} 
             />
           ))
         }
-        {
-          loading ? 
-          (
-            <div className={styles['loader-row']}>
-              <ElipsisSpinner />
-            </div>
-          ) : 
-          null
-        }
-      </div>
-    </div>
+      </Flex>
+    </Flex>
   )
 }
+
+export default Notepad

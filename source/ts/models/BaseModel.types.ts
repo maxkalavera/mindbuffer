@@ -1,9 +1,9 @@
 
 
-export interface BaseModel {
+export interface BaseModelType {
   id: number,
   createdAt: Date,
   updatedAt: Date,
 } 
 
-export type BaseID = string | number
+export type BaseIDType = string | number

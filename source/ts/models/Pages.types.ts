@@ -1,22 +1,22 @@
 
-import { NotepadID } from '@commons/ts/models/Notepads.types'
-import { BaseModel } from '@commons/ts/models/BaseModel.types'
+import { NotepadIDType } from '@ts/models/Notepads.types'
+import { BaseModelType } from '@ts/models/BaseModel.types'
 
-export type PageID = number
+export type PageIDType = number
 
-export interface PagePayload {
+export interface PagePayloadType {
   name: string,
-  notepadID: NotepadID,
+  notepadID: NotepadIDType,
 }
 
-export interface PageData {
+export interface PageDataType {
   name: string,
-  notepadID: NotepadID,
+  notepadID: NotepadIDType,
 }
 
-export type Page = BaseModel & PageData
+export type PageType = BaseModelType & PageDataType
 
-export interface PagesFiltersPayload {
+export interface PagesFiltersPayloadType {
   page?: number,
   paginationOffset?: number,
 }

@@ -1,25 +1,25 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import store from "@renderer/utils/store"
 import { useAlert } from "@renderer/providers/Alert"
-import { createpageThunk } from "@renderer/actions/notepads.slice"
+import { updatePageThunk } from "@renderer/actions/notepads.slice"
 import { useModal } from '@renderer/providers/Modal'
 import Input from '@renderer/components/Input'
 import Button from "@renderer/components/Button"
-import styles from "@renderer/styles/create-page-modal.module.css"
+import styles from "@renderer/styles/update-page-modal.module.css"
 
-import type { Notepad } from "@commons/ts/models/Notepads.types"
+import type { PageType } from "@ts/models/Pages.types"
 
-export default function CreatePage ({
-  notepad,
+export default function UpdatePage ({
   className='',
+  value,
   onSuccess=()=>null,
   onCancel=()=>null,
 }: {
-  notepad: Notepad
   className?: string,
-  onSuccess?: (...args: any[]) => any,
-  onCancel?: (...args: any[]) => any,
+  value: PageType,
+  onSuccess?: (...args: any[]) => any
+  onCancel?: (...args: any[]) => any
 }) {
   const { showAlert } = useAlert()
   const { closeModal } = useModal()
@@ -27,31 +27,31 @@ export default function CreatePage ({
     name: '',
   })
 
-  const clearForm = () => {
+  useEffect(() => {
     setState({
-      name: '',
+      name: value.name,
     })
-  }
+  }, [JSON.stringify(value)])
 
-  const createPage = () => {
-    store.dispatch(createpageThunk({
-      name: state.name,
-      notepadId: notepad.id
+  const updatePage = () => {
+    store.dispatch(updatePageThunk({
+      value: {
+        ...value,
+        name: state.name,
+      }
     })).then(() => {
-      showAlert({ message: 'Page created', type: 'success' })
+      showAlert({ message: 'Page updated', type: 'success' })
     })
   }
 
   const _onCancel = () => {
     onCancel()
-    clearForm()
     closeModal()
   }
 
   const _onSuccess = () => {
-    createPage()
+    updatePage()
     onSuccess()
-    clearForm()
     closeModal()
   }
 
@@ -65,10 +65,9 @@ export default function CreatePage ({
         label={'Name:'}
         value={state.name}
         maxlength={50}
-        onChange={(event) => setState((prev) => ({
-          ...prev,
-          name: event.target.value,
-        }))}
+        onChange={(event) => setState({
+          name: event.target.value
+        })}
         onEnter={_onSuccess}
       />
       <div className={styles.options}>
@@ -79,7 +78,7 @@ export default function CreatePage ({
         />
         <Button
           className={globals.ENVIRONMENT === 'testing' ? `class:modal-confirm-button:fHIbu0jVfe` : ''}
-          label={'Send'}
+          label={'Save'}
           onClick={_onSuccess}
         />
       </div>

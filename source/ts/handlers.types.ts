@@ -1,10 +1,10 @@
 
 import type Electron from 'electron'
-import { BaseID, BaseModel } from "@commons/ts/models/BaseModel.types"
+import { BaseIDType, BaseModelType } from "@ts/models/BaseModel.types"
 
 export interface BasePayloadFilter {}
 
-export type QueryHandler<
+export type QueryHandlerType<
   PayloadFilter extends BasePayloadFilter, 
   Result
 > = (
@@ -12,9 +12,9 @@ export type QueryHandler<
   payload: PayloadFilter,
 ) => Promise<Result>
 
-export type ModelQueryHandler<
+export type ModelQueryHandlerType<
   PayloadFilter extends BasePayloadFilter, 
-  Model extends BaseModel
+  Model extends BaseModelType
 > = (
   event: Electron.IpcMainInvokeEvent,
   payload: PayloadFilter,
@@ -22,9 +22,9 @@ export type ModelQueryHandler<
   values: Model[]
 }>
 
-export type ModelCreateHandler<
+export type ModelCreateHandlerType<
   ModelPayload, 
-  Model extends BaseModel
+  Model extends BaseModelType
 > = (
   event: Electron.IpcMainInvokeEvent,
   payload: {
@@ -34,8 +34,8 @@ export type ModelCreateHandler<
   values: Model[]
 }>
 
-export type ModelUpdateHandler<
-  Model extends BaseModel
+export type ModelUpdateHandlerType<
+  Model extends BaseModelType
 > = (
   event: Electron.IpcMainInvokeEvent,
   payload: {
@@ -45,8 +45,8 @@ export type ModelUpdateHandler<
   value: Model
 }>
 
-export type ModelDestroyHandler<
-  Model extends BaseModel | BaseID
+export type ModelDestroyHandlerType<
+  Model extends BaseModelType | BaseIDType
 > = (
   event: Electron.IpcMainInvokeEvent,
   payload: {

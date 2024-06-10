@@ -4,8 +4,8 @@ import React, {
   ReactNode 
 } from "react"
 
-import BubbleSpinner from "@renderer/components/spinners/BubbleSpinner"
-import styles from '@renderer/styles/infinite-scroll.module.css'
+//import BubbleSpinner from "@renderer/components/spinners/BubbleSpinner"
+//import styles from '@renderer/styles/infinite-scroll.module.css'
 
 type ScrolledOverHash = string | number
 
@@ -204,15 +204,18 @@ export default function InifiniteScroll ({
   return (
     <div
       id={id}
-      className={`${className} ${styles.container}`}
+      //className={`${className} ${styles.container}`}
       ref={containerRef}
     >
       {
         loading && inverse ? 
         (
+          <></>
+          /*
           <div className={styles['loader-row']}>
             <BubbleSpinner inverse={true} />
           </div>
+          */
         ) : 
         null
       }
@@ -220,9 +223,12 @@ export default function InifiniteScroll ({
       {
         loading && !inverse ? 
           (
-            <div className={styles['loader-row']}>
-              <BubbleSpinner />
-            </div>
+            <></>
+            /*
+              <div className={styles['loader-row']}>
+                <BubbleSpinner />
+              </div>
+            */
           ) : 
           null
       }

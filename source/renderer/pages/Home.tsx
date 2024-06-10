@@ -1,21 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Flex, Section, Container, Box, Separator } from '@radix-ui/themes';
+import { Flex, Section, Box, Separator } from '@radix-ui/themes';
 
 import store from '@renderer/utils/store'
 import pagesSlice, { fetchSelectedPageThunk } from '@renderer/actions/pages.slice'
 import { fetchNotesThunk } from '@renderer/actions/notes.slice'
 import { fetchNotepadsThunk } from '@renderer/actions/notepads.slice'
-import Searchbar from '@renderer/_components/Searchbar';
-import ResizableSide from '@renderer/_components/utils/ResizableSide';
-/*
-import ResizableSide from '@renderer/components/ResizableSide'
-import Groups from '@renderer/components/Groups'
-import AlertBox from '@renderer/components/AlertBox'
-import NotesBoard from '@renderer/components/NotesBoard'
-import AddNoteInput from '@renderer/components/AddNoteInput'
-import SearchBar from '@renderer/components/SearchBar'
-import styles from '@renderer/styles/home.module.css'
-*/
+import ResizableSide from '@renderer/wrappers/ResizableSide';
+import Searchbar from '@renderer/components/Searchbar';
+import Sidebar from '@renderer/sections/Sidebar';
 
 export default function Home() {
   const [state, setState] = useState({
@@ -159,10 +151,19 @@ export default function Home() {
       >
         <ResizableSide
           open={globals.ENVIRONMENT === 'testing' ? true : undefined}
-          minWidth='64px'
+          minWidth='48px'
           maxWidth='520px'
           sidebarToggleHash={context.commons.sidebarToggleHash}
-          separator={'#'}
+          separator={
+            <Separator
+              style={{
+                cursor: 'col-resize'
+              }}
+              color='yellow'
+              orientation='vertical'
+              size='4'
+            />
+          }
           initialApeture={state.sidebarInitialAperture}
           onApertureChange={(aperture) => {
             (async () => {
@@ -171,17 +172,11 @@ export default function Home() {
             })()
           }}
         >
-          <Box
-            style={{ backgroundColor: 'red' }}
-          >
-            .
-          </Box>
+          <Sidebar />
         </ResizableSide>
         <Box 
           flexGrow='1'
-          style={{ backgroundColor: 'green' }}
         >
-          .
         </Box>
       </Flex>
     </Flex>

@@ -1,24 +1,24 @@
-import { BaseModel } from '@commons/ts/models/BaseModel.types'
-import type { Page, PageID } from '@commons/ts/models/Pages.types'
+import { BaseModelType } from '@ts/models/BaseModel.types'
+import type { PageType, PageIDType } from '@ts/models/Pages.types'
 
-export type NoteID = number
+export type NoteIDType = number
 
-export interface NotePayload {
+export interface NotePayloadType {
   content: string,
-  pageID: PageID,
+  pageID: PageIDType,
 }
 
-export interface NoteData {
+export interface NoteDataType {
   content: string,
-  pageID: PageID,
-  page?: Page,
+  pageID: PageIDType,
+  page?: PageType,
 }
 
-export type Note = BaseModel & NoteData
+export type NoteType = BaseModelType & NoteDataType
 
-export interface NotesFiltersPayload {
+export interface NotesFiltersPayloadType {
   search?: string,
-  pageID?: PageID,
+  pageID?: PageIDType,
   page?: number,
   paginationOffset?: number,
 }

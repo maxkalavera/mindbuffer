@@ -2,22 +2,22 @@ import React, { useEffect, useState } from "react"
 
 import store from "@renderer/utils/store"
 import { useAlert } from "@renderer/providers/Alert"
-import { updatePageThunk } from "@renderer/actions/notepads.slice"
+import { updateNotepadThunk } from "@renderer/actions/notepads.slice"
 import { useModal } from '@renderer/providers/Modal'
 import Input from '@renderer/components/Input'
 import Button from "@renderer/components/Button"
-import styles from "@renderer/styles/update-page-modal.module.css"
+import styles from "@renderer/styles/update-notepad-modal.module.css"
 
-import type { Page } from "@commons/ts/models/Pages.types"
+import type { NotepadType } from "@ts/models/Notepads.types"
 
-export default function UpdatePage ({
-  className='',
+export default function UpdateNotepad ({
   value,
+  className='',
   onSuccess=()=>null,
   onCancel=()=>null,
 }: {
+  value: NotepadType,
   className?: string,
-  value: Page,
   onSuccess?: (...args: any[]) => any
   onCancel?: (...args: any[]) => any
 }) {
@@ -33,14 +33,14 @@ export default function UpdatePage ({
     })
   }, [JSON.stringify(value)])
 
-  const updatePage = () => {
-    store.dispatch(updatePageThunk({
+  const updateNotepad = () => {
+    store.dispatch(updateNotepadThunk({
       value: {
         ...value,
-        name: state.name,
+        ...state,
       }
     })).then(() => {
-      showAlert({ message: 'Page updated', type: 'success' })
+      showAlert({ message: 'Notepad updated', type: 'success' })
     })
   }
 
@@ -50,7 +50,7 @@ export default function UpdatePage ({
   }
 
   const _onSuccess = () => {
-    updatePage()
+    updateNotepad()
     onSuccess()
     closeModal()
   }
@@ -60,7 +60,7 @@ export default function UpdatePage ({
       <Input
         className={[
           styles.input,
-          globals.ENVIRONMENT === 'testing' ? `class:page-modal-name-input-wrapper:o0Tmq3A18Z` : ''
+          globals.ENVIRONMENT === 'testing' ? 'class:create-notepad-name-input:hWmi28rONe' : ''
         ].join(' ')}
         label={'Name:'}
         value={state.name}

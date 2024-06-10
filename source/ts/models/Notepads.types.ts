@@ -1,20 +1,20 @@
-import type { Page, PageID } from '@commons/ts/models/Pages.types'
-import type { BaseModel } from '@commons/ts/models/BaseModel.types'
+import type { PageType, PageIDType } from '@ts/models/Pages.types'
+import type { BaseModelType } from '@ts/models/BaseModel.types'
 
-export type NotepadID = number
+export type NotepadIDType = number
 
-export interface NotepadPayload {
+export interface NotepadPayloadType {
   name: string
 }
 
-export interface NotepadData {
+export interface NotepadDataType {
   name: string
-  pages: Page[]
+  pages: PageType[]
 }
 
-export type Notepad = BaseModel & NotepadData
+export type NotepadType = BaseModelType & NotepadDataType
 
-export interface NotepadsFiltersPayload {
+export interface NotepadsFiltersPayloadType {
   page?: number,
   search?: string,
   paginationOffset?: number,
@@ -22,9 +22,9 @@ export interface NotepadsFiltersPayload {
   associatedPaginationOffset?: number,
 }
 
-export interface NotepadsPagesFiltersPayload {
+export interface NotepadsPagesFiltersPayloadType {
   notepads: {
-    id: NotepadID,
+    id: NotepadIDType,
     page: number
   }[],
   search?: string,
