@@ -47,6 +47,8 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@playwright/test": "^1.44.1",
+    "@radix-ui/react-icons": "^1.3.0",
+    "@radix-ui/themes": "^3.0.5",
     "@reduxjs/toolkit": "^2.2.4",
     "@types/css-modules": "^1.0.5",
     "@types/dompurify": "^3.0.5",
