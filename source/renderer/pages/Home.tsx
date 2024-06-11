@@ -8,6 +8,8 @@ import { fetchNotepadsThunk } from '@renderer/actions/notepads.slice'
 import ResizableSide from '@renderer/wrappers/ResizableSide';
 import Searchbar from '@renderer/components/Searchbar';
 import Sidebar from '@renderer/sections/Sidebar';
+import AddNote from '@renderer/sections/AddNote';
+import NotesBoard from '@renderer/sections/NotesBoard';
 
 export default function Home() {
   const [state, setState] = useState({
@@ -155,13 +157,12 @@ export default function Home() {
           maxWidth='520px'
           sidebarToggleHash={context.commons.sidebarToggleHash}
           separator={
-            <Separator
+            <div 
               style={{
+                width: '6px',
+                height: '100%',
                 cursor: 'col-resize'
               }}
-              color='yellow'
-              orientation='vertical'
-              size='4'
             />
           }
           initialApeture={state.sidebarInitialAperture}
@@ -177,6 +178,19 @@ export default function Home() {
         <Box 
           flexGrow='1'
         >
+          <Flex
+            display='flex'
+            direction='column'
+            gap='0'
+            justify='end'
+            align='stretch'
+          >
+            <NotesBoard 
+              flexGrow='1' 
+              style={{ backgroundColor: 'red' }}
+            />
+            <AddNote />
+          </Flex>
         </Box>
       </Flex>
     </Flex>

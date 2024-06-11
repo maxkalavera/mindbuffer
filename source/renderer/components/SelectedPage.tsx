@@ -37,6 +37,8 @@ export default function SelectedPage (props: BoxProps) {
     >
       <Card
         data-radius='none'
+        className='selected-page--card'
+        variant='surface'
       >
         <Flex
           direction='column'

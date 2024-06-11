@@ -1,0 +1,10 @@
+
+
+.selected-page--card {
+  background-color: var(--color-background);
+  box-shadow: 0 0 2px 0 color-mix(in oklab, var(--accent-a5), var(--accent-5) 25%);
+}
+
+.selected-page--card::before, .selected-page--card::after {
+  content: none;
+}

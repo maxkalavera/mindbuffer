@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import _ from 'lodash'
 import { Box, Flex, } from '@radix-ui/themes'
+import _ from 'lodash'
 
 import store from '@renderer/utils/store'
 import { fetchNotepadsThunk, fetchPagesThunk } from '@renderer/actions/notepads.slice'
