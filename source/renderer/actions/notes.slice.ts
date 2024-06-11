@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-import type { PageID } from '@commons/ts/models/Pages.types'
-import type { Note, NotePayload } from "@commons/ts/models/Notes.types"
+import type { PageIDType } from '@ts/models/Pages.types'
+import type { NoteType, NotePayloadType } from "@ts/models/Notes.types"
 
 export interface NotesSliceState {
-  values: Note[],
+  values: NoteType[],
   page: number,
   hasNextPage: boolean,
   adjustScrollHash: number,
@@ -19,7 +19,7 @@ export const fetchNotesThunk = createAsyncThunk(
     payload: { 
       page: number, 
       search: string,
-      pageID: PageID,
+      pageID: PageIDType,
     },
     thunkAPI
   ) => {
@@ -44,7 +44,7 @@ export const fetchNotesThunk = createAsyncThunk(
 
 export const createNoteThunk = createAsyncThunk(
   'notes/createNote',
-  async (payload: NotePayload, thunkAPI) => {
+  async (payload: NotePayloadType, thunkAPI) => {
     const response = await window.electronAPI.notes.create({
       data: [payload]
     })
@@ -61,7 +61,7 @@ export const createNoteThunk = createAsyncThunk(
 
 export const updateNoteThunk = createAsyncThunk(
   'notepads/updateNote',
-  async (payload: { value: Note }, thunkAPI) => {
+  async (payload: { value: NoteType }, thunkAPI) => {
     const response = await window.electronAPI.notes.update(payload)
 
     if (thunkAPI.signal.aborted)
@@ -76,7 +76,7 @@ export const updateNoteThunk = createAsyncThunk(
 
 export const destroyNoteThunk = createAsyncThunk(
   'notes/destroyNote',
-  async (payload: { value: Note }, thunkAPI) => {
+  async (payload: { value: NoteType }, thunkAPI) => {
     const response = await window.electronAPI.notes.destroy({
       value: payload.value
     })
@@ -93,14 +93,14 @@ export const destroyNoteThunk = createAsyncThunk(
 
 function set (
   state: NotesSliceState, 
-  action: PayloadAction<{ values: Note[] }>
+  action: PayloadAction<{ values: NoteType[] }>
 ) {
   state.values = action.payload.values
 }
 
 function addTop (
   state: NotesSliceState, 
-  action: PayloadAction<{ values: Note[] }>
+  action: PayloadAction<{ values: NoteType[] }>
 ) {
   state.values = 
     [...action.payload.values, ...state.values]
@@ -109,7 +109,7 @@ function addTop (
 
 function addBotom (
   state: NotesSliceState, 
-  action: PayloadAction<{ values: Note[] }>
+  action: PayloadAction<{ values: NoteType[] }>
 ) {
   state.values = 
     [...state.values, ...action.payload.values]
@@ -119,7 +119,7 @@ function addBotom (
 
 function update (
   state: NotesSliceState, 
-  action: PayloadAction<{ values: Note[] }>
+  action: PayloadAction<{ values: NoteType[] }>
 ) {
   state.values = state.values.map((item) => 
     action.payload.values.find((paylodItem) => paylodItem.id === item.id) || 
@@ -129,7 +129,7 @@ function update (
 
 function destroy (
   state: NotesSliceState, 
-  action: PayloadAction<{ values: Note[] }>
+  action: PayloadAction<{ values: NoteType[] }>
 ) {
   state.values = state.values.filter((item) =>
     !action.payload.values.some((payloadItem) => payloadItem.id === item.id)

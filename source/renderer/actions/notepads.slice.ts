@@ -1,18 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-import { Page, PagePayload } from '@commons/ts/models/Pages.types'
-import type { Notepad, NotepadID, NotepadPayload } from '@commons/ts/models/Notepads.types'
+import { PageType, PagePayloadType } from '@ts/models/Pages.types'
+import type { NotepadType, NotepadIDType, NotepadPayloadType } from '@ts/models/Notepads.types'
 
 export interface NotepadsSliceState {
-  values: Notepad[],
+  values: NotepadType[],
   page: number,
   hasNextPage: boolean,
   adjustScrollHash: number,
   scrollBeginingHash: number,
   scrollEndHash: number,
   loading: boolean,
-  paginationMap: {[key: NotepadID] : {
+  paginationMap: {[key: NotepadIDType] : {
     page: number,
     hasNext: boolean,
     isLoading: boolean,
@@ -46,7 +46,7 @@ export const fetchNotepadsThunk = createAsyncThunk(
 
 export const createNotepadThunk = createAsyncThunk(
   'notepads/createNotepad',
-  async (payload: NotepadPayload, thunkAPI) => {
+  async (payload: NotepadPayloadType, thunkAPI) => {
     const response = await window.electronAPI.notepads.create({
       data: [payload]
     })
@@ -63,7 +63,7 @@ export const createNotepadThunk = createAsyncThunk(
 
 export const updateNotepadThunk = createAsyncThunk(
   'notepads/updateNotepad',
-  async (payload: { value: Notepad }, thunkAPI) => {
+  async (payload: { value: NotepadType }, thunkAPI) => {
     const response = await window.electronAPI.notepads.update(payload)
     console.log('updateNotepadThunk', response)
 
@@ -79,7 +79,7 @@ export const updateNotepadThunk = createAsyncThunk(
 
 export const destroyNotepadThunk = createAsyncThunk(
   'notepads/destroyNotepad',
-  async (payload: { value: Notepad }, thunkAPI) => {
+  async (payload: { value: NotepadType }, thunkAPI) => {
     const response = await window.electronAPI.notepads.destroy({
       value: payload.value
     })
@@ -96,7 +96,7 @@ export const destroyNotepadThunk = createAsyncThunk(
 
 export const createpageThunk = createAsyncThunk(
   'notepads/createPage',
-  async (payload: PagePayload, thunkAPI) => {
+  async (payload: PagePayloadType, thunkAPI) => {
     const response = await window.electronAPI.pages.create({
       data: [payload]
     })
@@ -113,7 +113,7 @@ export const createpageThunk = createAsyncThunk(
 
 export const updatePageThunk = createAsyncThunk(
   'notepads/updatePage',
-  async (payload: { value: Page }, thunkAPI) => {
+  async (payload: { value: PageType }, thunkAPI) => {
     const response = await window.electronAPI.pages.update(payload)
 
     if (thunkAPI.signal.aborted)
@@ -128,7 +128,7 @@ export const updatePageThunk = createAsyncThunk(
 
 export const destroyPageThunk = createAsyncThunk(
   'notes/destroyPage',
-  async (payload: { value: Page }, thunkAPI) => {
+  async (payload: { value: PageType }, thunkAPI) => {
     const response = await window.electronAPI.pages.destroy({
       value: payload.value
     })
@@ -151,7 +151,7 @@ export const fetchPagesThunk = createAsyncThunk(
   'notepads/fetchPages',
   async (
     payload: { 
-      notepads: NotepadID[], 
+      notepads: NotepadIDType[], 
       search: string,
     }, 
     thunkAPI
@@ -188,7 +188,7 @@ export const fetchPagesThunk = createAsyncThunk(
 
 function set (
   state: NotepadsSliceState, 
-  action: PayloadAction<{ values: Notepad[] }>
+  action: PayloadAction<{ values: NotepadType[] }>
 ) {
   state.values = action.payload.values
   state.paginationMap = {}
@@ -205,7 +205,7 @@ function set (
 
 function addTop (
   state: NotepadsSliceState, 
-  action: PayloadAction<{ values: Notepad[] }>
+  action: PayloadAction<{ values: NotepadType[] }>
 ) {
   state.values = 
     [...action.payload.values, ...state.values]
@@ -223,7 +223,7 @@ function addTop (
 
 function addBotom (
   state: NotepadsSliceState, 
-  action: PayloadAction<{ values: Notepad[] }>
+  action: PayloadAction<{ values: NotepadType[] }>
 ) {
   state.values = 
     [...state.values, ...action.payload.values]
@@ -241,7 +241,7 @@ function addBotom (
 
 function update (
   state: NotepadsSliceState, 
-  action: PayloadAction<{ values: Notepad[] }>
+  action: PayloadAction<{ values: NotepadType[] }>
 ) {
   state.values = state.values.map((item) => {
     const newValues = action.payload.values.find((paylodItem) => paylodItem.id === item.id) || {}
@@ -251,7 +251,7 @@ function update (
 
 function destroy (
   state: NotepadsSliceState, 
-  action: PayloadAction<{ values: Notepad[] }>
+  action: PayloadAction<{ values: NotepadType[] }>
 ) {
   state.values = state.values.filter((item) =>
     !action.payload.values.some((payloadItem) => payloadItem.id === item.id)
@@ -264,7 +264,7 @@ function destroy (
 
 function addNotepadPages (
   state: NotepadsSliceState, 
-  action: PayloadAction<{ values: Notepad[] }>
+  action: PayloadAction<{ values: NotepadType[] }>
 ) {
   state.values = state.values.map((item) => {
     const payloadItem = action.payload.values.find((payloadItem) => payloadItem.id === item.id)
@@ -277,7 +277,7 @@ function addNotepadPages (
 
 function addPages (
   state: NotepadsSliceState, 
-  action: PayloadAction<{ values: Page[] }>
+  action: PayloadAction<{ values: PageType[] }>
 ) {
   state.values = state.values.map((item) => {
     const payloadItem = action.payload.values.find((payloadItem) => payloadItem.notepadID === item.id)
@@ -290,7 +290,7 @@ function addPages (
 
 function updatePages (
   state: NotepadsSliceState, 
-  action: PayloadAction<{ values: Page[] }>
+  action: PayloadAction<{ values: PageType[] }>
 ) {
   state.values = state.values.map((notepad) => {
     const page = action.payload.values.find((page) => page.notepadID === notepad.id)
@@ -303,7 +303,7 @@ function updatePages (
 
 function destroyPages (
   state: NotepadsSliceState, 
-  action: PayloadAction<{ values: Page[] }>
+  action: PayloadAction<{ values: PageType[] }>
 ) {
   state.values = state.values.map((notepad) => {
     const page = action.payload.values.find((page) => page.notepadID === notepad.id)

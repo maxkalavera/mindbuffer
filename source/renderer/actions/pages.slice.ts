@@ -1,18 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-import type { Notepad } from '@commons/ts/models/Notepads.types'
-import type { Page, PageID } from '@commons/ts/models/Pages.types'
+import type { NotepadType } from '@ts/models/Notepads.types'
+import type { PageType, PageIDType } from '@ts/models/Pages.types'
 
 export interface PagesSliceState {
-  selectedPageID: PageID,
-  selectedPage: Page & { notepad: Notepad},
+  selectedPageID: PageIDType,
+  selectedPage: PageType & { notepad: NotepadType},
   loadingSelectedPage: boolean,
 }
 
 export const fetchSelectedPageThunk = createAsyncThunk(
   'pages/fetchSelectedPage',
-  async (payload: { pageID: PageID }, thunkAPI) => {
+  async (payload: { pageID: PageIDType }, thunkAPI) => {
     const response = await window.electronAPI.pages.get({
       pageID: payload.pageID
     })
@@ -31,7 +31,7 @@ export const fetchSelectedPageThunk = createAsyncThunk(
 
 export const setSelectedPageIDThunk = createAsyncThunk(
   'pages/setSelectedPageID',
-  async (payload: { value: PageID }, thunkAPI) => {
+  async (payload: { value: PageIDType }, thunkAPI) => {
     await window.electronAPI.settings.selectedPageID.set({ 
       selectedPageID: payload.value })
     return payload

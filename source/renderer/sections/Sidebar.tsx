@@ -7,6 +7,7 @@ import { fetchNotepadsThunk, fetchPagesThunk } from '@renderer/actions/notepads.
 import InifiniteScroll from '@renderer/wrappers/InifiniteScroll'
 import SidebarHeader from '@renderer/components/SidebarHeader'
 import Notepad from '@renderer/components/Notepad'
+import SelectedPage from '@renderer/components/SelectedPage'
 
 import type { BoxProps } from '@radix-ui/themes'
 
@@ -36,7 +37,6 @@ function Sidebar(props: BoxProps) {
       }
     }
   })
-  //const { showModal } = useModal()
 
   useEffect(() => {
     store.monitor(
@@ -105,6 +105,7 @@ function Sidebar(props: BoxProps) {
       style={{
         backgroundColor: 'var(--accent-a3)'
       }}
+      { ...props }
     >
       <Flex
         direction='column'
@@ -116,6 +117,7 @@ function Sidebar(props: BoxProps) {
         overflowX='hidden'
       >
         <SidebarHeader />
+        <SelectedPage />
         <Box>
           <InifiniteScroll
             hasMore={context.notepads.hasNextPage}

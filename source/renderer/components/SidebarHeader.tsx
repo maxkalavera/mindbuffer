@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react'
-import _ from 'lodash'
-import { Box, Card, Dialog, Flex, Heading, IconButton } from '@radix-ui/themes'
+import React from 'react'
+import { Box, Flex, Heading, IconButton } from '@radix-ui/themes'
 import { LayersIcon, PlusIcon } from '@radix-ui/react-icons'
 
 import store from '@renderer/utils/store'
 import commonsSlice from '@renderer/actions/commons.slice'
-import CreateNotepad from '@renderer/components/CreateNotepad'
+import CreateNotepad from '@renderer/dialogs/CreateNotepad'
 
-import type { BoxProps } from '@radix-ui/themes'
+import type { FlexProps } from '@radix-ui/themes'
 
-function SidebarHeader(props: BoxProps) {
+function SidebarHeader(props: FlexProps) {
 
   const toggleIsSidebarOpen = () => {
     const { mutateSidebarToggleHash } = commonsSlice.actions
@@ -24,6 +23,7 @@ function SidebarHeader(props: BoxProps) {
       gap='4'
       justify='start'
       align='center'
+      {...props}
     >
       <IconButton
         style={{
@@ -53,7 +53,25 @@ function SidebarHeader(props: BoxProps) {
           Notepads / Pages
         </Heading>
       </Box>
-      <CreateNotepad />
+      <CreateNotepad.Root>
+        <CreateNotepad.Trigger>
+          <IconButton
+            style={{
+              cursor: 'pointer',
+              color:'var(--gray-12)'
+            }}
+            variant='ghost'
+          >
+            <PlusIcon 
+              width={20}
+              height={20}
+            />
+          </IconButton>
+        </CreateNotepad.Trigger>
+        <CreateNotepad.Content
+          maxWidth='520px'
+        />
+      </CreateNotepad.Root>
     </Flex>
   )
 }

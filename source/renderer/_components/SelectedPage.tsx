@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import ContentLoader from 'react-content-loader'
+import { Box, Flex, Text } from '@radix-ui/themes'
 
 import store from '@renderer/utils/store'
-import styles from "@renderer/styles/selected-page.module.css"
 
-export default function SelectedPage ({
-  className='',
-}: {
-  className?: string,
-}) {
+import type { BoxProps } from '@radix-ui/themes'
+
+export default function SelectedPage (props: BoxProps) {
   const [context, setContext] = useState({
     pages: {
       selectedPage: undefined,
@@ -34,6 +31,23 @@ export default function SelectedPage ({
   }, [])
 
   const selectedPage = context.pages.selectedPage
+  return (
+    <Box
+      {...props}
+    >
+      <Flex
+        direction='column'
+        gap='1'
+        justify='center'
+        align='stretch'
+      >
+
+      </Flex>
+      <Text>{selectedPage ? selectedPage.notepad.name : ''}</Text>
+      <Text>{selectedPage ? selectedPage.name : ''}</Text>
+    </Box>
+  )
+  /*
   return (
     <div 
       className={[
@@ -78,4 +92,5 @@ export default function SelectedPage ({
       }
     </div>
   )
+  */
 }
