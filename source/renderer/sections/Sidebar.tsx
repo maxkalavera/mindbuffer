@@ -102,27 +102,33 @@ function Sidebar(props: BoxProps) {
 
   return (
     <Box
+      height='100%'
       style={{
         backgroundColor: 'var(--accent-a3)'
       }}
       { ...props }
     >
       <Flex
+        height='100%'
         direction='column'
         gap='6'
         px='4'
         py='4'
         justify='start'
         align='stretch'
-        overflowX='hidden'
       >
         <SidebarHeader />
         <SelectedPage />
         <Flex
+          minHeight='0'
+          pr='2'
+          height='100%'
           direction='column'
           gap='4'
           justify='start'
           align='stretch'
+          overflowY='auto'
+          overflowX='hidden'
           asChild={true}
         >
           <InifiniteScroll

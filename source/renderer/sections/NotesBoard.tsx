@@ -82,8 +82,10 @@ function NotesBoard (props: BoxProps) {
       <Flex
         direction='column'
         gap='2'
-        justify='end'
+        justify='start'
         align='end'
+        overflowY='auto'
+        overflowX='hidden'
         asChild={true}
       >
         <InifiniteScroll

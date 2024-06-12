@@ -144,53 +144,70 @@ export default function Home() {
         size='4'
       />
       <Flex
+        minHeight='0'
         display='flex'
         direction='row'
         gap='0'
         justify='start'
         align='stretch'
         flexGrow='1'
+        flexShrink='1'
       >
-        <ResizableSide
-          open={globals.ENVIRONMENT === 'testing' ? true : undefined}
-          minWidth='48px'
-          maxWidth='520px'
-          sidebarToggleHash={context.commons.sidebarToggleHash}
-          separator={
-            <div 
-              style={{
-                width: '6px',
-                height: '100%',
-                cursor: 'col-resize'
-              }}
-            />
-          }
-          initialApeture={state.sidebarInitialAperture}
-          onApertureChange={(aperture) => {
-            (async () => {
-              await window.electronAPI.settings.sidebarAperture
-              .set({ sidebarAperture: aperture })
-            })()
-          }}
+        <Box
+          minHeight='0'
+          height='100%'
+          overflow='hidden'
+          asChild={true}
         >
-          <Sidebar />
-        </ResizableSide>
-        <Flex
-            display='flex'
-            direction='column'
-            gap='0'
-            justify='end'
-            align='stretch'
-            flexGrow='1'
+          <ResizableSide
+            open={globals.ENVIRONMENT === 'testing' ? true : undefined}          
+            minWidth='48px'
+            maxWidth='520px'
+            sidebarToggleHash={context.commons.sidebarToggleHash}
+            separator={
+              <div 
+                style={{
+                  width: '6px',
+                  height: '100%',
+                  cursor: 'col-resize'
+                }}
+              />
+            }
+            initialApeture={state.sidebarInitialAperture}
+            onApertureChange={(aperture) => {
+              (async () => {
+                await window.electronAPI.settings.sidebarAperture
+                .set({ sidebarAperture: aperture })
+              })()
+            }}
           >
-            <NotesBoard 
-              flexGrow='1'
-              p='4'
-            />
-            <AddNote 
-              p='4' 
-            />
-          </Flex>
+            <Box
+              minHeight='0'
+              height='100%'
+            >
+              <Sidebar />
+            </Box>
+          </ResizableSide>
+        </Box>
+
+        <Flex
+          minHeight='0'
+          display='flex'
+          direction='column'
+          gap='0'
+          justify='end'
+          align='stretch'
+          flexGrow='1'
+        >
+          <NotesBoard 
+            minHeight='0'
+            flexGrow='1'
+            p='4'
+          />
+          <AddNote 
+            p='4' 
+          />
+        </Flex>
       </Flex>
     </Flex>
   );

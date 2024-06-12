@@ -167,6 +167,13 @@ export default function VerticalDragableLine ({
   return (
     <div
       ref={verticalLineRef}
+      style={{
+        position: 'relative',
+        right: '-100%',
+        top: '-100%',
+        width: '5px',
+        height: '100%'
+      }}
     >
       {separator}
     </div>

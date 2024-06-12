@@ -1,18 +1,8 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useImperativeHandle } from "react"
 
 import VerticalDragableLine from './VerticalDragableLine'
 
-export default function ResizableSide ({
-  children=undefined,
-  minWidth='64px',
-  maxWidth='768px',
-  initialApeture=undefined,
-  sidebarToggleHash=undefined,
-  open=undefined,
-  aperture=undefined,
-  onApertureChange=undefined,
-  separator=undefined,
-}: {
+interface ResizableSidePropsType {
   children?: React.ReactNode,
   minWidth?: string,
   maxWidth?: string,
@@ -22,9 +12,28 @@ export default function ResizableSide ({
   aperture?: number,
   onApertureChange?: (aperture: number) => void,
   separator?: React.ReactNode,
-}) {
+}
+
+export default React.forwardRef(function ResizableSide (
+  {
+    children=undefined,
+    minWidth='64px',
+    maxWidth='768px',
+    initialApeture=undefined,
+    sidebarToggleHash=undefined,
+    open=undefined,
+    aperture=undefined,
+    onApertureChange=undefined,
+    separator=undefined,
+    ...aditionalProps
+  }: ResizableSidePropsType & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+  forwardedRef
+) {
   const containerRef = useRef<HTMLDivElement>()
   const resizableRef = useRef<any>()
+
+  // Proxy containerRef to parent
+  useImperativeHandle(forwardedRef, () => containerRef.current, []);
 
   useEffect(() => {
     if (!containerRef.current)
@@ -34,7 +43,9 @@ export default function ResizableSide ({
 
   return (
     <div
+      data-testid='resizable-side'
       ref={containerRef}
+      /*
       style={{
         display: 'flex',
         flexDirection: 'row',
@@ -42,9 +53,12 @@ export default function ResizableSide ({
         alignItems: 'stretch',
         flexWrap: 'nowrap',
       }}
+      */
+      {...aditionalProps}
     >
       { children }
       <VerticalDragableLine
+        data-testid='vertical-dragable-line'
         resizableRef={resizableRef}
         minWidth={parseInt(minWidth)}
         maxWidth={parseInt(maxWidth)}
@@ -57,4 +71,4 @@ export default function ResizableSide ({
       />
     </div>
   )
-}
+})

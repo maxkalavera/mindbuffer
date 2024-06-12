@@ -8,7 +8,7 @@ import React, {
 
 type ScrolledOverHash = string | number
 
-interface InifiniteScrollProps {
+interface InifiniteScrollPropsType {
   hasMore?: boolean,
   loading?: boolean,
   loadingElement?: React.ReactNode,
@@ -42,9 +42,9 @@ export default React.forwardRef(function InifiniteScroll (
     scrolledOver=null,
     ...aditionalProps
   }: { children?: React.ReactNode[] } & 
-    InifiniteScrollProps & 
+    InifiniteScrollPropsType & 
     React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-    forwardedRef
+  forwardedRef
 ) {
   /*
   * Notes:
