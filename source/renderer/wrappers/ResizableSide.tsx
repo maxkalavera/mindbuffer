@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef } from "react"
 
 import VerticalDragableLine from './VerticalDragableLine'
-//import styles from "@renderer/styles/resizable-side.module.css" 
 
 export default function ResizableSide ({
   children=undefined,
@@ -35,7 +34,6 @@ export default function ResizableSide ({
 
   return (
     <div
-      //className={`${className} ${styles.container}`} 
       ref={containerRef}
       style={{
         display: 'flex',

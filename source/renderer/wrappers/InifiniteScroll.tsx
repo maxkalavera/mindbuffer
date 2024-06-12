@@ -4,17 +4,14 @@ import React, {
   ReactNode 
 } from "react"
 
-//import BubbleSpinner from "@renderer/components/spinners/BubbleSpinner"
 //import styles from '@renderer/styles/infinite-scroll.module.css'
 
 type ScrolledOverHash = string | number
 
 interface InifiniteScrollProps {
-  id?: string,
-  className?: string,
-  items: ReactNode[],
   hasMore?: boolean,
   loading?: boolean,
+  loadingElement?: React.ReactNode,
   inverse?: boolean,
   scrollThreshold?: number,
   adjustScrollHash?: string,
@@ -27,27 +24,32 @@ interface InifiniteScrollProps {
   scrolledOver?: (scrolledOver: (string | number)[], ...args: any[]) => any,
 }
 
-export default function InifiniteScroll ({
-  id='',
-  className='',
-  items=[],
-  hasMore=false,
-  loading=false,
-  inverse=false,
-  scrollThreshold=10,
-  adjustScrollHash=undefined,
-  scrollBeginingHash=undefined,
-  scrollEndHash=undefined,
-  scrolledOverHashMap={},
-  getItemIdentifier=(item) => item.key === undefined ? item.toString() : item.key,
-  scrolledOverToID=(item) => item.id,
-  next=()=>{},
-  scrolledOver=null,
-}: InifiniteScrollProps) {
+export default function InifiniteScroll (
+  {
+    children=undefined,
+    hasMore=false,
+    loading=false,
+    loadingElement=undefined,
+    inverse=false,
+    scrollThreshold=10,
+    adjustScrollHash=undefined,
+    scrollBeginingHash=undefined,
+    scrollEndHash=undefined,
+    scrolledOverHashMap={},
+    getItemIdentifier=(item) => item.key === undefined ? item.toString() : item.key,
+    scrolledOverToID=(item) => item.id,
+    next=()=>{},
+    scrolledOver=null,
+    ...aditionalProps
+  }: { children?: React.ReactNode[] } & 
+    InifiniteScrollProps & 
+    React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+) {
   /*
   * Notes:
   * This infinite scroll can't be used with flex-direction: column-inverse
   */
+  children = children === undefined ? [] : children
   const containerRef = useRef<HTMLDivElement>()
 
   const adjustScroll = () => {
@@ -105,25 +107,25 @@ export default function InifiniteScroll ({
   }
 
   useEffect(() => {
-    if (items.length > 0) {
+    if (children.length > 0) {
       adjustScroll()
     }
   }, [adjustScrollHash])
 
   useEffect(() => {
-    if (items.length > 0) {
+    if (children.length > 0) {
       scrollBegining()
     }
   }, [scrollBeginingHash])
 
   useEffect(() => {
-    if (items.length > 0) {
+    if (children.length > 0) {
       scrollEnd()
     }
   }, [scrollEndHash])
 
   const lastScrollHeightRef = useRef<number>(0)
-  const itemsHash = JSON.stringify(items.map(getItemIdentifier))  
+  const itemsHash = JSON.stringify(children.map(getItemIdentifier))  
   const ListenToScrollEnd = () => {
     const { scrollTop, clientHeight, scrollHeight } = containerRef.current
 
@@ -203,36 +205,12 @@ export default function InifiniteScroll ({
 
   return (
     <div
-      id={id}
-      //className={`${className} ${styles.container}`}
       ref={containerRef}
+      {...aditionalProps}
     >
-      {
-        loading && inverse ? 
-        (
-          <></>
-          /*
-          <div className={styles['loader-row']}>
-            <BubbleSpinner inverse={true} />
-          </div>
-          */
-        ) : 
-        null
-      }
-      { items }
-      {
-        loading && !inverse ? 
-          (
-            <></>
-            /*
-              <div className={styles['loader-row']}>
-                <BubbleSpinner />
-              </div>
-            */
-          ) : 
-          null
-      }
-
+      { loading && inverse ? loadingElement : null }
+      { children }
+      { loading && !inverse ? loadingElement : null }
     </div>
   )
 }

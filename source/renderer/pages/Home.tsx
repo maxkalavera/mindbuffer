@@ -175,53 +175,23 @@ export default function Home() {
         >
           <Sidebar />
         </ResizableSide>
-        <Box 
-          flexGrow='1'
-        >
-          <Flex
+        <Flex
             display='flex'
             direction='column'
             gap='0'
             justify='end'
             align='stretch'
+            flexGrow='1'
           >
             <NotesBoard 
-              flexGrow='1' 
-              style={{ backgroundColor: 'red' }}
+              flexGrow='1'
+              p='4'
             />
-            <AddNote />
+            <AddNote 
+              p='4' 
+            />
           </Flex>
-        </Box>
       </Flex>
     </Flex>
   );
-  /*
-  return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <SearchBar />
-      </div>
-      <div className={styles['content-container']}>
-        <AlertBox 
-          className={styles.alert} 
-        />
-        <div className={styles.content}>
-          <ResizableSide>
-            <Groups 
-              className={styles.groups}
-            />
-          </ResizableSide>
-          <div className={styles['notes-frame']}>
-            <NotesBoard 
-              className={styles['notes-board']}
-            />
-            <AddNoteInput 
-              className={styles['add-note-input']}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-  */
 }

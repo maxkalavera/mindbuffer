@@ -68,8 +68,6 @@ function AddNote (props: FlexProps) {
 
   return (
     <Flex
-      px='4'
-      py='2'
       direction='row'
       gap='2'
       justify='end'

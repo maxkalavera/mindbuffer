@@ -133,7 +133,8 @@ function Sidebar(props: BoxProps) {
                 (object: any) => object.hash
               )
             }
-            items={
+          >
+            {
               context.notepads.values.map((item: any, key: number) => (
                 <Notepad 
                   key={key}
@@ -142,7 +143,7 @@ function Sidebar(props: BoxProps) {
                 />
               ))
             }
-          />
+          </InifiniteScroll>
         </Box>
       </Flex>
     </Box>

@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from "react"
 
 import commonsSlice from "@renderer/actions/commons.slice"
 import store from "@renderer/utils/store"
-//import styles from '@renderer/styles/vertical-dragable-line.module.css'
 
 const APERTURE_BIAS = 0.025
 
