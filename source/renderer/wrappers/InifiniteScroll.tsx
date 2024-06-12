@@ -1,7 +1,7 @@
 import React, { 
   useRef, 
-  useEffect, 
-  ReactNode 
+  useEffect,
+  useImperativeHandle
 } from "react"
 
 //import styles from '@renderer/styles/infinite-scroll.module.css'
@@ -24,7 +24,7 @@ interface InifiniteScrollProps {
   scrolledOver?: (scrolledOver: (string | number)[], ...args: any[]) => any,
 }
 
-export default function InifiniteScroll (
+export default React.forwardRef(function InifiniteScroll (
   {
     children=undefined,
     hasMore=false,
@@ -44,6 +44,7 @@ export default function InifiniteScroll (
   }: { children?: React.ReactNode[] } & 
     InifiniteScrollProps & 
     React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+    forwardedRef
 ) {
   /*
   * Notes:
@@ -51,6 +52,9 @@ export default function InifiniteScroll (
   */
   children = children === undefined ? [] : children
   const containerRef = useRef<HTMLDivElement>()
+
+  // Proxy containerRef to parent
+  useImperativeHandle(forwardedRef, () => containerRef.current, []);
 
   const adjustScroll = () => {
     // Position the scroll in the starting side
@@ -213,4 +217,4 @@ export default function InifiniteScroll (
       { loading && !inverse ? loadingElement : null }
     </div>
   )
-}
+})

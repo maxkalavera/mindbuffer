@@ -118,7 +118,13 @@ function Sidebar(props: BoxProps) {
       >
         <SidebarHeader />
         <SelectedPage />
-        <Box>
+        <Flex
+          direction='column'
+          gap='4'
+          justify='start'
+          align='stretch'
+          asChild={true}
+        >
           <InifiniteScroll
             hasMore={context.notepads.hasNextPage}
             next={onScrollNext}
@@ -144,7 +150,7 @@ function Sidebar(props: BoxProps) {
               ))
             }
           </InifiniteScroll>
-        </Box>
+        </Flex>
       </Flex>
     </Box>
   )
