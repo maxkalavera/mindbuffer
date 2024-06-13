@@ -15,18 +15,23 @@ function Note (
 ) {
   return (
     <Box
+      maxWidth='100%'
       {...containerProps}
     >
       <Card
         data-radius='small'
       >
         <Flex
+          maxWidth='100%'
           direction='row'
           gap='4'
           justify='end'
           align='start'
         >
           <Flex
+            minWidth='0'
+            pt='4'
+            flexGrow='1'
             direction='column'
             gap='4'
             justify='start'

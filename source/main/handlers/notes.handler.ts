@@ -4,15 +4,15 @@ import { ThrowError } from '@main/utils/errors'
 import database from '@main/utils/database'
 
 import type { 
-  ModelQueryHandler,
-  ModelCreateHandler,
-  ModelUpdateHandler,
-  ModelDestroyHandler,
-} from 'ts/handlers.types'
+  ModelQueryHandlerType,
+  ModelCreateHandlerType,
+  ModelUpdateHandlerType,
+  ModelDestroyHandlerType,
+} from '@ts/handlers.types'
 import type {
-  NotePayload, 
-  NotesFiltersPayload, 
-  Note 
+  NotePayloadType,
+  NotesFiltersPayloadType, 
+  NoteType 
 } from '@ts/models/Notes.types'
 
 app.on('ready', () => {
@@ -24,14 +24,29 @@ app.on('ready', () => {
         -- pageID or 0
         -- search or ''
 
-        SELECT *
-        FROM `notes`
-        WHERE IIF(?=0, 1, pageID=?)
-          AND IIF(?='', 1, id in
-                    (SELECT noteID
-                    FROM searches
-                    WHERE noteContent MATCH ?
-                    ORDER BY rank DESC, noteID DESC))
+      SELECT *
+      FROM `notes`
+      WHERE IIF(?=0, 1, pageID=?)
+        AND IIF(?='', 1, id in
+                  (SELECT noteID
+                  FROM searches
+                  WHERE noteContent MATCH ?
+                  ORDER BY rank DESC, noteID DESC))
+      LIMIT ?
+
+      SELECT *
+      FROM
+        (SELECT noteID,
+                rank
+        FROM searches
+        WHERE noteContent MATCH '"1"') AS "SearchQuery"
+      FULL JOIN
+        (SELECT *
+        FROM notes) AS "NotesQuery" ON "SearchQuery"."noteID" = "NotesQuery"."id"
+      WHERE IIF('"1"'='""', 1, rank NOT NULL)
+        AND IIF(1=0, 1, pageID=1)
+      ORDER BY "SearchQuery"."rank" DESC,
+              "NotesQuery"."id" DESC
       */
       const options = Object.assign({
         search: null,
@@ -43,29 +58,33 @@ app.on('ready', () => {
 
       try {
         const knex = await database.getManager();
-        const data = await knex('notes')
-          .select('*')
-          .where(knex.raw(
-            `IIF(?=0, 1, pageID=?)`,
-            [
-              options.pageID || 0,
-              options.pageID || 0
-            ]
-          ))
-          .andWhere(knex.raw(
-            `IIF(?='', 1, id in
-                (SELECT noteID
-                FROM searches
-                WHERE noteContent MATCH ?
-                ORDER BY rank DESC, noteID DESC))
-            `, 
-            [
-              options.search || '', 
-              `"${options.search}"` || '""'
-            ]
-          ))
-          .limit(options.paginationOffset)
-          .offset(options.paginationOffset * (options.page - 1))
+        const data = await knex.raw(
+          `
+            SELECT * 
+            FROM 
+              (SELECT noteID, 
+                      rank 
+              FROM searches 
+              WHERE noteContent MATCH ?) AS "SearchQuery" 
+            FULL JOIN 
+              (SELECT * 
+              FROM notes) AS "NotesQuery" ON "SearchQuery"."noteID" = "NotesQuery"."id" 
+            WHERE IIF(?=\'""\', 1, rank NOT NULL) 
+              AND IIF(?=0, 1, pageID=?) 
+            ORDER BY "SearchQuery"."rank" DESC, 
+                    "NotesQuery"."updated_at" DESC
+            LIMIT ?
+            OFFSET ?
+          `.replace(/\s+/g,' '),
+          [
+            `"${options.search}"`,
+            `"${options.search}"`,
+            options.pageID || 0,
+            options.pageID || 0,
+            options.paginationOffset,
+            options.paginationOffset * (options.page - 1)
+          ]
+        )
         return {
           values: data
         } 
@@ -75,7 +94,7 @@ app.on('ready', () => {
           error: error,
         })
       } 
-    }  as ModelQueryHandler<NotesFiltersPayload, Note>
+    }  as ModelQueryHandlerType<NotesFiltersPayloadType, NoteType>
   )
 })
 
@@ -97,7 +116,7 @@ app.on('ready', () => {
           error: error,
         })
       }
-    } as ModelCreateHandler<NotePayload, Note>
+    } as ModelCreateHandlerType<NotePayloadType, NoteType>
   )
 })
 
@@ -121,7 +140,7 @@ app.on('ready', () => {
           error: error,
         })
       }
-    } as ModelUpdateHandler<Note>
+    } as ModelUpdateHandlerType<NoteType>
   )
 })
 
@@ -150,6 +169,6 @@ app.on('ready', () => {
           error: error,
         })
       }
-    } as ModelDestroyHandler<Note>
+    } as ModelDestroyHandlerType<NoteType>
   )
 })

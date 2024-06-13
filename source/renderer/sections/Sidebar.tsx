@@ -102,7 +102,6 @@ function Sidebar(props: BoxProps) {
 
   return (
     <Box
-      height='100%'
       style={{
         backgroundColor: 'var(--accent-a3)'
       }}
@@ -117,7 +116,9 @@ function Sidebar(props: BoxProps) {
         justify='start'
         align='stretch'
       >
-        <SidebarHeader />
+        <SidebarHeader 
+          maxWidth='100%'
+        />
         <SelectedPage />
         <Flex
           minHeight='0'

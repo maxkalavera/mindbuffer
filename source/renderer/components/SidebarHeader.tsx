@@ -17,33 +17,33 @@ function SidebarHeader(props: FlexProps) {
 
   return (
     <Flex
+      p='2'
       data-testid='sidebar-header'
-      width='100%'
       direction='row'
       gap='4'
       justify='start'
       align='center'
+      overflow='clip'
       {...props}
     >
-      <IconButton
-        style={{
-          cursor: 'pointer',
-          color:'var(--gray-12)'
-        }}
-        variant='ghost'
-        onClick={toggleIsSidebarOpen}
-      >
-        <LayersIcon 
-          width={20}
-          height={20}
-        />
-      </IconButton>
       <Box
-        minWidth='0px'
-        flexBasis='0px'
+        asChild={true}
+      >
+        <IconButton
+          size='1'
+          variant='ghost'
+          onClick={toggleIsSidebarOpen}
+        >
+          <LayersIcon 
+            width={20}
+            height={20}
+          />
+        </IconButton>
+      </Box>
+      <Box
+        minWidth='0'
         flexGrow='1'
         flexShrink='1'
-        overflowX='clip'
       >
         <Heading
           size='2'
@@ -55,18 +55,19 @@ function SidebarHeader(props: FlexProps) {
       </Box>
       <CreateNotepad.Root>
         <CreateNotepad.Trigger>
-          <IconButton
-            style={{
-              cursor: 'pointer',
-              color:'var(--gray-12)'
-            }}
-            variant='ghost'
+          <Box
+            asChild={true}
           >
-            <PlusIcon 
-              width={20}
-              height={20}
-            />
-          </IconButton>
+            <IconButton
+              size='1'
+              variant='ghost'
+            >
+              <PlusIcon 
+                width={20}
+                height={20}
+              />
+            </IconButton>
+          </Box>
         </CreateNotepad.Trigger>
         <CreateNotepad.Content
           maxWidth='520px'

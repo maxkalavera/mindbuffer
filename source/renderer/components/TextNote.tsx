@@ -12,7 +12,11 @@ function TextNote (
 ) {
   return (
     <Reset>
-      <div>
+      <div
+        style={{
+          width: '100%'
+        }}
+      >
         { data.content }
       </div>
   </Reset>

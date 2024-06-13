@@ -80,6 +80,9 @@ function NotesBoard (props: BoxProps) {
       {...props}
     >
       <Flex
+        width='100%'
+        height='100%'
+        pr='2'
         direction='column'
         gap='2'
         justify='start'

@@ -156,12 +156,11 @@ export default function Home() {
         <Box
           minHeight='0'
           height='100%'
-          overflow='hidden'
           asChild={true}
         >
           <ResizableSide
             open={globals.ENVIRONMENT === 'testing' ? true : undefined}          
-            minWidth='48px'
+            minWidth='72px'
             maxWidth='520px'
             sidebarToggleHash={context.commons.sidebarToggleHash}
             separator={
@@ -182,8 +181,12 @@ export default function Home() {
             }}
           >
             <Box
-              minHeight='0'
+              width='max-content'
               height='100%'
+              asChild={true}
+              style={{
+                backgroundColor: 'var(--accent-a3)'
+              }}
             >
               <Sidebar />
             </Box>
@@ -191,7 +194,9 @@ export default function Home() {
         </Box>
 
         <Flex
+          minWidth='0'
           minHeight='0'
+          width='100%'
           display='flex'
           direction='column'
           gap='0'
@@ -200,6 +205,7 @@ export default function Home() {
           flexGrow='1'
         >
           <NotesBoard 
+            width='100%'
             minHeight='0'
             flexGrow='1'
             p='4'
