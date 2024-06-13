@@ -2,7 +2,7 @@ import settings from '@main/utils/settings'
 import { app, ipcMain } from 'electron'
 
 import { ThrowError } from '@main/utils/errors'
-import { PageID } from '@ts/models/Pages.types'
+import { PageIDType } from '@ts/models/Pages.types'
 
 app.on('ready', () => {
   ipcMain.handle(
@@ -48,11 +48,11 @@ app.on('ready', () => {
     'settings.selectedPageID:get',
     async function (
       event: Electron.IpcMainInvokeEvent
-    ): Promise<PageID> {
+    ): Promise<PageIDType> {
       try {
         const result = settings.get('selectedPageID')
         return result ? 
-          JSON.parse(result as string) as PageID :
+          JSON.parse(result as string) as PageIDType :
           undefined
       } catch (error) {
         ThrowError({ 
@@ -69,7 +69,7 @@ app.on('ready', () => {
     'settings.selectedPageID:set',
     async function (
       event: Electron.IpcMainInvokeEvent,
-      payload: { selectedPageID: PageID }
+      payload: { selectedPageID: PageIDType }
     ): Promise<any> {
       try {
         if (payload.selectedPageID === undefined) {

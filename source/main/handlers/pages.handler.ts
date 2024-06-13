@@ -6,20 +6,20 @@ import { ThrowError } from '@main/utils/errors'
 import database from '@main/utils/database'
 
 import type { 
-  QueryHandler,
-  ModelQueryHandler,
-  ModelCreateHandler,
-  ModelUpdateHandler,
-  ModelDestroyHandler,
+  QueryHandlerType,
+  ModelQueryHandlerType,
+  ModelCreateHandlerType,
+  ModelUpdateHandlerType,
+  ModelDestroyHandlerType,
 } from '@ts/handlers.types'
 import type { 
-  PagePayload, 
-  Page, 
-  PageID,
-  PagesFiltersPayload 
+  PagePayloadType, 
+  PageType, 
+  PageIDType,
+  PagesFiltersPayloadType 
 } from '@ts/models/Pages.types'
 import { 
-  Notepad 
+  NotepadType 
 } from '@ts/models/Notepads.types'
 
 app.on('ready', () => {
@@ -40,7 +40,7 @@ app.on('ready', () => {
       return {
         values: data
       }
-    } as ModelQueryHandler<PagesFiltersPayload, Page>
+    } as ModelQueryHandlerType<PagesFiltersPayloadType, PageType>
   )
 })
 
@@ -64,7 +64,7 @@ app.on('ready', () => {
         throw('Row could not been got from database')
       }
       return {value: unflatten(data[0])}
-    }  as QueryHandler<{ pageID: PageID}, { value: Page & { notepad: Notepad } }>
+    }  as QueryHandlerType<{ pageID: PageIDType}, { value: PageType & { notepad: NotepadType } }>
   )
 })
 
@@ -86,7 +86,7 @@ app.on('ready', () => {
           error: error,
         })
       }
-    } as ModelCreateHandler<PagePayload, Page>
+    } as ModelCreateHandlerType<PagePayloadType, PageType>
   )
 })
 
@@ -110,7 +110,7 @@ app.on('ready', () => {
           error: error,
         })
       }
-    } as ModelUpdateHandler<Page>
+    } as ModelUpdateHandlerType<PageType>
   )
 })
 
@@ -139,6 +139,6 @@ app.on('ready', () => {
           error: error,
         })
       }
-    } as ModelDestroyHandler<Page>
+    } as ModelDestroyHandlerType<PageType>
   )
 })

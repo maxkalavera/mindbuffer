@@ -7,16 +7,16 @@ import { ThrowError } from '@main/utils/errors'
 import database from '@main/utils/database'
 
 import type { 
-  ModelQueryHandler,
-  ModelCreateHandler,
-  ModelUpdateHandler,
-  ModelDestroyHandler,
+  ModelQueryHandlerType,
+  ModelCreateHandlerType,
+  ModelUpdateHandlerType,
+  ModelDestroyHandlerType,
 } from '@ts/handlers.types'
 import type { 
-  NotepadPayload, 
-  Notepad, 
-  NotepadsFiltersPayload ,
-  NotepadsPagesFiltersPayload
+  NotepadPayloadType, 
+  NotepadType, 
+  NotepadsFiltersPayloadType,
+  NotepadsPagesFiltersPayloadType
 } from '@ts/models/Notepads.types'
 
 app.on('ready', () => {
@@ -54,10 +54,11 @@ app.on('ready', () => {
         LEFT OUTER JOIN "pages" ON "notepads"."id"="pages"."notepadID"
         WHERE
             IIF(
-                ?='',
+                ?='""',
                 "notepads"."id" IN (
                     SELECT id
                     FROM "notepads"
+                    ORDER BY updated_at DESC
                     LIMIT ?
                     OFFSET ?
                 ),
@@ -68,14 +69,15 @@ app.on('ready', () => {
                         SELECT noteID
                         FROM searches
                         WHERE noteContent MATCH ?
-                        ORDER BY rank DESC, noteID ASC) 
+                    )
+                    ORDER BY updated_at DESC
                 )
             ))`,
             [
-              options.search || '',
+              `"${options.search}"`,
               options.paginationOffset,
               options.paginationOffset * (options.page - 1),
-              `"${options.search}"` || '""',
+              `"${options.search}"`,
             ]
         ))
         .where(knex.raw(
@@ -85,13 +87,13 @@ app.on('ready', () => {
             options.associatedPaginationOffset * (options.associatedPage)
           ]
         ))
-        .orderBy([{column: 'created_at', order: 'desc'}])
+        .orderBy([{column: 'updated_at', order: 'desc'}])
 
       const unflattened = (unflatten({ref: data}) as any).ref
       return {
         values: groupByAssociation(unflattened, ['pages']),
       }
-    } as ModelQueryHandler<NotepadsFiltersPayload, Notepad>
+    } as ModelQueryHandlerType<NotepadsFiltersPayloadType, NotepadType>
   )
 })
 
@@ -146,7 +148,7 @@ app.on('ready', () => {
       return {
         values: groupByAssociation(unflattened, ['pages'])
       }
-    } as ModelQueryHandler<NotepadsPagesFiltersPayload, Notepad>
+    } as ModelQueryHandlerType<NotepadsPagesFiltersPayloadType, NotepadType>
   )
 })
 
@@ -158,7 +160,7 @@ app.on('ready', () => {
         const knex = await database.getManager();
         const data = await knex('notepads')
           .returning('*')
-          .insert(payload.data) as Notepad[]
+          .insert(payload.data) as NotepadType[]
         return {
           values: data.map((item) => ({...item, pages: []})) as any[]
         }
@@ -168,7 +170,7 @@ app.on('ready', () => {
           error: error,
         })
       }
-    } as ModelCreateHandler<NotepadPayload, Notepad>
+    } as ModelCreateHandlerType<NotepadPayloadType, NotepadType>
   )
 })
 
@@ -192,7 +194,7 @@ app.on('ready', () => {
           error: error,
         })
       }
-    } as ModelUpdateHandler<Notepad>
+    } as ModelUpdateHandlerType<NotepadType>
   )
 })
 
@@ -221,6 +223,6 @@ app.on('ready', () => {
           error: error,
         })
       }
-    } as ModelDestroyHandler<Notepad>
+    } as ModelDestroyHandlerType<NotepadType>
   )
 })
