@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { Box, DropdownMenu, Flex, IconButton, Text } from '@radix-ui/themes'
-import { DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { Box, Flex, IconButton, Text } from '@radix-ui/themes'
+import { DotsHorizontalIcon, PlusIcon, Pencil2Icon, TrashIcon } from '@radix-ui/react-icons'
 
+import DropdownMenu from '@renderer/primitives/DropdownMenu'
 import Page from '@renderer/components/Page'
 import CreatePage from '@renderer/dialogs/CreatePage'
 import UpdateNotepad from '@renderer/dialogs/UpdateNotepad'
@@ -85,18 +86,21 @@ function Notepad ({
                 onClick={() => setState((prev) => ({...prev, isCreatePageOpen: true}))}
               >
                 Add page
+                <PlusIcon width='16' height='16' />
               </DropdownMenu.Item>
               <DropdownMenu.Separator />
               <DropdownMenu.Item
                 onClick={() => setState((prev) => ({...prev, isUpdateNotepadOpen: true}))}
               >
                 Rename
+                <Pencil2Icon width='16' height='16' />
               </DropdownMenu.Item>
               <DropdownMenu.Item 
                 color="red"
                 onClick={() => setState((prev) => ({...prev, isDeleteNotepadOpen: true}))}
               >
                 Delete
+                <TrashIcon width='16' height='16' />
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>

@@ -1,8 +1,9 @@
 import React, { useState, useLayoutEffect } from 'react'
-import { Flex, Separator, Text, DropdownMenu, IconButton, Button, Box } from '@radix-ui/themes'
-import { DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { Flex, Separator, Text, IconButton, Button, Box } from '@radix-ui/themes'
+import { DotsHorizontalIcon, Pencil2Icon, TrashIcon } from '@radix-ui/react-icons'
 
 import store from '@renderer/utils/store'
+import DropdownMenu from '@renderer/primitives/DropdownMenu'
 import UpdatePage from '@renderer/dialogs/UpdatePage'
 import DeletePage from '@renderer/dialogs/DeletePage'
 import { setSelectedPageIDThunk } from '@renderer/actions/pages.slice'
@@ -106,12 +107,14 @@ function Page ({
                 onClick={() => setState((prev) => ({...prev, isUpdatePageOpen: true}))}
               >
                 Rename
+                <Pencil2Icon width='16' height='16' />
               </DropdownMenu.Item>
               <DropdownMenu.Item 
                 color="red"
                 onClick={() => setState((prev) => ({...prev, isDeletePageOpen: true}))}
               >
                 Delete
+                <TrashIcon width='16' height='16' />
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>

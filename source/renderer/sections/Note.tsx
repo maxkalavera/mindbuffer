@@ -1,7 +1,8 @@
 import React, { useState } from "react"
-import { Box, Card, DropdownMenu, Flex, IconButton, Reset } from "@radix-ui/themes"
-import { DotsVerticalIcon } from '@radix-ui/react-icons'
+import { Box, Card, Flex, IconButton, Reset } from "@radix-ui/themes"
+import { DotsVerticalIcon, TrashIcon, ClipboardCopyIcon } from '@radix-ui/react-icons'
 
+import DropdownMenu from "@renderer/primitives/DropdownMenu"
 import TextNote from "@renderer/components/TextNote"
 import DeleteNote from "@renderer/dialogs/DeleteNote"
 
@@ -74,12 +75,13 @@ function Note (
                   >
                     <DotsVerticalIcon width='14' height='14' />
                   </IconButton>
-                </DropdownMenu.Trigger>        
+                </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
                   <DropdownMenu.Item
                     onClick={copyClipboard}
                   >
                     Copy
+                    <ClipboardCopyIcon width='16' height='16' />
                   </DropdownMenu.Item>
                   <DropdownMenu.Separator />
                   <DropdownMenu.Item 
@@ -87,6 +89,7 @@ function Note (
                     onClick={() => setState((prev) => ({...prev, isDeleteNoteOpen: true}))}
                   >
                     Delete
+                    <TrashIcon width='16' height='16' />
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>        
               </DropdownMenu.Root>
