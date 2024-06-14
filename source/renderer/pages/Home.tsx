@@ -79,13 +79,13 @@ export default function Home() {
   useEffect(() => {
     // Fetch notepads
     const promise = store.dispatch(fetchNotepadsThunk({ 
-      page: 1, 
-      search: context.pages.selectedPageID === undefined ? context.commons.search  : ''
+      page: 1,
+      search: context.commons.search,
     }))
     return () => {
       promise.abort()
     }
-  }, [context.commons.search, context.pages.selectedPageID])
+  }, [context.commons.search])
 
   useEffect(() => {
     (async () => {
