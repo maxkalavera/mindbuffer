@@ -5,7 +5,7 @@ import _ from 'lodash'
 import store from '@renderer/utils/store'
 import { fetchNotepadsThunk, fetchPagesThunk } from '@renderer/actions/notepads.slice'
 import InifiniteScroll from '@renderer/wrappers/InifiniteScroll'
-import SidebarHeader from '@renderer/components/SidebarHeader'
+import SidebarHeader from '@renderer/sections/SidebarHeader'
 import Notepad from '@renderer/components/Notepad'
 import SelectedPage from '@renderer/components/SelectedPage'
 
@@ -119,10 +119,17 @@ function Sidebar(props: BoxProps) {
       >
         <SidebarHeader 
           maxWidth='100%'
+          isSidebarOpen={context.commons.isSidebarOpen}
         />
-        <SelectedPage />
+        <SelectedPage 
+          className={`${
+            context.commons.isSidebarOpen ? '' : 'sidebar__hideable-content'
+          }`}
+        />
         <Flex
-          className='infinite-scroll'
+          className={`infinite-scroll ${
+            context.commons.isSidebarOpen ? '' : 'sidebar__hideable-content'
+          }`}
           minHeight='0'
           pr='3'
           height='100%'

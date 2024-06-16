@@ -8,13 +8,14 @@ import CreateNotepad from '@renderer/dialogs/CreateNotepad'
 
 import type { FlexProps } from '@radix-ui/themes'
 
-function SidebarHeader(props: FlexProps) {
+function SidebarHeader(props: FlexProps & { isSidebarOpen: boolean }) {
 
   const toggleIsSidebarOpen = () => {
     const { mutateSidebarToggleHash } = commonsSlice.actions
     store.dispatch(mutateSidebarToggleHash())
   }
 
+  const {isSidebarOpen, ...flexProps} = props;
   return (
     <Flex
       p='2'
@@ -24,7 +25,7 @@ function SidebarHeader(props: FlexProps) {
       justify='start'
       align='center'
       overflow='clip'
-      {...props}
+      {...flexProps}
     >
       <Box
         asChild={true}
@@ -41,6 +42,7 @@ function SidebarHeader(props: FlexProps) {
         </IconButton>
       </Box>
       <Box
+        className={isSidebarOpen ? '' : 'sidebar__hideable-content'}
         minWidth='0'
         flexGrow='1'
         flexShrink='1'
@@ -49,6 +51,9 @@ function SidebarHeader(props: FlexProps) {
           size='2'
           weight='bold'
           wrap='nowrap'
+          style={{
+            overflowX: 'clip'
+          }}
         >
           Notepads / Pages
         </Heading>
@@ -56,6 +61,7 @@ function SidebarHeader(props: FlexProps) {
       <CreateNotepad.Root>
         <CreateNotepad.Trigger>
           <Box
+            className={isSidebarOpen ? '' : 'sidebar__hideable-content'}
             asChild={true}
           >
             <IconButton

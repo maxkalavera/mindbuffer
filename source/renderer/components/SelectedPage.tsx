@@ -31,12 +31,14 @@ export default function SelectedPage (props: BoxProps) {
   }, [])
 
   const selectedPage = context.pages.selectedPage
-  const hasSelectedPage = selectedPage === undefined
+  const hasSelectedPage = selectedPage !== undefined
+  const {className, ...boxProps} = props
   return (
     <Box
-      className={`selected-page ${hasSelectedPage ? 'selected-page--hidden' : ''}`}
+      data-testid='selected-page'
       py='6'
-      {...props}
+      {...boxProps}
+      className={`selected-page ${hasSelectedPage ? '' : 'selected-page--hidden'} ${className}`}
     >
       <Card
         data-radius='none'
