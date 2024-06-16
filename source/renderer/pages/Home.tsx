@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Flex, Section, Box, Separator } from '@radix-ui/themes';
 
 import store from '@renderer/utils/store'
+import commonsSlice from '@renderer/actions/commons.slice'
 import pagesSlice, { fetchSelectedPageThunk } from '@renderer/actions/pages.slice'
 import { fetchNotesThunk } from '@renderer/actions/notes.slice'
 import { fetchNotepadsThunk } from '@renderer/actions/notepads.slice'
@@ -108,6 +109,16 @@ export default function Home() {
     })
   }, [])
 
+  const onSidebarOpen = () => {
+    const { setIsSidebarOpen } = commonsSlice.actions
+    store.dispatch(setIsSidebarOpen({ value: true }))
+  }
+
+  const onSidebarClose = () => {
+    const { setIsSidebarOpen } = commonsSlice.actions
+    store.dispatch(setIsSidebarOpen({ value: false }))
+  }
+
   return (
     <Flex
       width='100%'
@@ -159,16 +170,18 @@ export default function Home() {
           asChild={true}
         >
           <ResizableSide
+            direction='bottom'
             open={globals.ENVIRONMENT === 'testing' ? true : undefined}          
-            minWidth='72px'
-            maxWidth='520px'
+            minSize='72px'
+            maxSize='520px'
             sidebarToggleHash={context.commons.sidebarToggleHash}
+            onOpen={onSidebarOpen}
+            onClose={onSidebarClose}
             separator={
               <div 
                 style={{
                   width: '6px',
                   height: '100%',
-                  cursor: 'col-resize'
                 }}
               />
             }

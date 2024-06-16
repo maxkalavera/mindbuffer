@@ -1,29 +1,35 @@
 import React, { useEffect, useRef, useImperativeHandle } from "react"
 
-import VerticalDragableLine from './VerticalDragableLine'
+import DragableLine from './DragableLine'
 
 interface ResizableSidePropsType {
   children?: React.ReactNode,
-  minWidth?: string,
-  maxWidth?: string,
+  minSize?: string,
+  maxSize?: string,
   initialApeture?: number,
   sidebarToggleHash?: string | number,
   open?: boolean,
   aperture?: number,
+  direction?: 'right' | 'left' | 'top' | 'bottom',
   onApertureChange?: (aperture: number) => void,
+  onOpen?: () => void,
+  onClose?: () => void,
   separator?: React.ReactNode,
 }
 
 export default React.forwardRef(function ResizableSide (
   {
     children=undefined,
-    minWidth='64px',
-    maxWidth='768px',
+    minSize='64px',
+    maxSize='768px',
     initialApeture=undefined,
     sidebarToggleHash=undefined,
     open=undefined,
     aperture=undefined,
+    direction='right',
     onApertureChange=undefined,
+    onOpen=undefined,
+    onClose=undefined,
     separator=undefined,
     ...aditionalProps
   }: ResizableSidePropsType & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
@@ -45,28 +51,59 @@ export default React.forwardRef(function ResizableSide (
     <div
       data-testid='resizable-side'
       ref={containerRef}
-      /*
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'stretch',
-        flexWrap: 'nowrap',
-      }}
-      */
       {...aditionalProps}
+      style={{
+        position: 'relative'
+      }}
     >
       { children }
-      <VerticalDragableLine
+      <DragableLine
+        style={{
+          'right': {
+            position: 'absolute',
+            cursor: 'ew-resize',
+            top: '0',
+            left: '100%',
+            width: '5px',
+            height: '100%'
+          },
+          'left': {
+            position: 'absolute',
+            cursor: 'ew-resize',
+            top: '0',
+            left: '0',
+            width: '5px',
+            height: '100%'
+          },
+          'top': {
+            position: 'absolute',
+            cursor: 'ns-resize',
+            top: '0',
+            left: '0',
+            width: '100%',
+            height: '5px'
+          },
+          'bottom': {
+            position: 'absolute',
+            cursor: 'ns-resize',
+            top: '100%',
+            left: '0',
+            width: '100%',
+            height: '5px'
+          }
+        }[direction] as React.CSSProperties}
         data-testid='vertical-dragable-line'
         resizableRef={resizableRef}
-        minWidth={parseInt(minWidth)}
-        maxWidth={parseInt(maxWidth)}
+        minSize={parseInt(minSize)}
+        maxSize={parseInt(maxSize)}
         initialApeture={initialApeture}
         sidebarToggleHash={sidebarToggleHash}
         open={open}
         aperture={aperture}
+        direction={direction}
         onApertureChange={onApertureChange}
+        onOpen={onOpen}
+        onClose={onClose}
         separator={separator}
       />
     </div>
