@@ -53,7 +53,8 @@ export default React.forwardRef(function ResizableSide (
       ref={containerRef}
       {...aditionalProps}
       style={{
-        position: 'relative'
+        position: 'relative',
+        ...aditionalProps.style || {}
       }}
     >
       { children }

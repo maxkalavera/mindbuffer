@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Flex, } from '@radix-ui/themes'
+import { Box, Flex, ScrollArea, } from '@radix-ui/themes'
 import _ from 'lodash'
 
 import store from '@renderer/utils/store'
@@ -106,11 +106,12 @@ function Sidebar(props: BoxProps) {
         backgroundColor: 'var(--accent-a3)'
       }}
       { ...props }
+      className={`sidebar ${props.className || ''}`}
     >
       <Flex
         height='100%'
         direction='column'
-        gap='6'
+        gap='0'
         px='4'
         py='4'
         justify='start'
@@ -121,8 +122,9 @@ function Sidebar(props: BoxProps) {
         />
         <SelectedPage />
         <Flex
+          className='infinite-scroll'
           minHeight='0'
-          pr='2'
+          pr='3'
           height='100%'
           direction='column'
           gap='4'

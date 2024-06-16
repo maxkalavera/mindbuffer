@@ -72,10 +72,6 @@ const Searchbar = () => {
         {
           sendSearchFlag ?
             <IconButton
-              style={{
-                cursor: 'pointer',
-                color:'var(--gray-12)'
-              }}
               variant="ghost"
               onClick={() => sendSearch(state.search)}
             >

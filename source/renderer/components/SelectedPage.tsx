@@ -31,8 +31,11 @@ export default function SelectedPage (props: BoxProps) {
   }, [])
 
   const selectedPage = context.pages.selectedPage
+  const hasSelectedPage = selectedPage === undefined
   return (
     <Box
+      className={`selected-page ${hasSelectedPage ? 'selected-page--hidden' : ''}`}
+      py='6'
       {...props}
     >
       <Card

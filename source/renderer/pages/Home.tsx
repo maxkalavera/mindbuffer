@@ -166,11 +166,10 @@ export default function Home() {
       >
         <Box
           minHeight='0'
-          height='100%'
           asChild={true}
         >
           <ResizableSide
-            direction='bottom'
+            direction='right'
             open={globals.ENVIRONMENT === 'testing' ? true : undefined}          
             minSize='72px'
             maxSize='520px'

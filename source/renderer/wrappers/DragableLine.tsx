@@ -1,5 +1,10 @@
 import React, { useRef, useEffect, useState } from "react"
 
+interface StateType { 
+  aperture: number,
+  afterSidebarToggleHash: number,
+}
+
 const APERTURE_BIAS = 0.025
 
 const normalize = (value) => {
@@ -28,7 +33,7 @@ export default function DragableLine ({
   separator,
 }: {
   style?: React.CSSProperties,
-  resizableRef: React.MutableRefObject<any>,
+  resizableRef: React.MutableRefObject<HTMLElement>,
   minSize: number,
   maxSize: number,
   initialApeture: number,
@@ -41,17 +46,15 @@ export default function DragableLine ({
   onClose: () => void,
   separator: React.ReactNode,
 }) {
-  const [state, _setState] = useState<{ aperture: number }>({ 
-    aperture: initialApeture 
+  const [state, _setState] = useState<StateType>({ 
+    aperture: initialApeture,
+    afterSidebarToggleHash: 0,
   })
-  const setState: React.Dispatch<React.SetStateAction<{
-    aperture: number;
-  }>> = (state) => {
+  const setState: React.Dispatch<React.SetStateAction<StateType>> = (state) => {
     if (typeof state === 'object') {
-      const { aperture } = state; 
       _setState({
         ...state,
-        aperture: normalize(aperture)
+        aperture: normalize(state.aperture)
       })
     }
     return _setState(state)
@@ -61,9 +64,15 @@ export default function DragableLine ({
   useEffect(() => {
     // Set aperture from open and initial apertre variables
     if (open !== undefined) {
-      setState({ aperture: open ? 1.0 : 0.0 })
+      setState((prev) => ({ 
+        ...prev,
+        aperture: open ? 1.0 : 0.0,
+      }))
     } else if (initialApeture !== undefined) {
-      setState({ aperture: initialApeture })
+      setState((prev) => ({ 
+        ...prev, 
+        aperture: initialApeture 
+      }))
     }
   }, [
     open,
@@ -84,14 +93,20 @@ export default function DragableLine ({
 
     setState((prev) => ({
       ...prev,
-      aperture: normalize(
-        prev.aperture < APERTURE_BIAS ? apertureBufferRef.current : 0.0
-      )
+      aperture: normalize(prev.aperture < APERTURE_BIAS ? apertureBufferRef.current : 0.0),
+      afterSidebarToggleHash: prev.afterSidebarToggleHash += 1
     }))
     if (state.aperture > APERTURE_BIAS)
       apertureBufferRef.current = state.aperture
   }, [sidebarToggleHash])
 
+  useEffect(() => {
+    resizableRef.current?.classList.add('resizable-side__transition')
+    setTimeout(() => {
+      resizableRef.current?.classList.remove('resizable-side__transition')
+    }, 0.5 * 1000)
+  }, [state.afterSidebarToggleHash])
+  
   useEffect(() => {
     // Resize based on aperture value
     if (resizableRef.current === undefined || state.aperture === undefined)
@@ -107,8 +122,6 @@ export default function DragableLine ({
     } else {
       resizableRef.current.style.height = `${amplitude}px`
     }
-
-
   }, [resizableRef.current, state.aperture])
 
 
@@ -124,6 +137,8 @@ export default function DragableLine ({
     ) {
       return
     }
+
+    resizableRef.current?.classList.remove('resizable-side__transition')
     const origin = { from: 0 }
     const onMouseMove = (event: MouseEvent) => {
       event.preventDefault()
@@ -132,28 +147,32 @@ export default function DragableLine ({
 
       if (direction === 'right') {
         const { left } = resizableRef.current.getBoundingClientRect()
-        setState({
+        setState((prev) => ({
+          ...prev,
           aperture: normalize(
             (event.clientX - minSize - left) / (maxSize - minSize))
-        })
+        }))
       } else if (direction === 'left') {
         const { right } = resizableRef.current.getBoundingClientRect()
-        setState({
+        setState((prev) => ({
+          ...prev,
           aperture: normalize(
             (right - event.clientX - minSize) / (maxSize - minSize))
-        })
+        }))
       } else if (direction === 'bottom') {
         const { top } = resizableRef.current.getBoundingClientRect()
-        setState({
+        setState((prev) => ({
+          ...prev,
           aperture: normalize(
             (event.clientY - minSize - top) / (maxSize - minSize))
-        })
+        }))
       } else if (direction === 'top') {
         const { bottom } = resizableRef.current.getBoundingClientRect()
-        setState({
+        setState((prev) => ({
+          ...prev,
           aperture: normalize(
             (bottom - event.clientX - minSize) / (maxSize - minSize))
-        })
+        }))
       }
     }
     const onMouseDown = () => {
