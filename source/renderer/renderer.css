@@ -17,8 +17,16 @@
 }
 
 /* Ghost Icon buttons  */
-.rt-BaseButton.rt-variant-ghost {
+.radix-themes .rt-BaseButton.rt-variant-ghost {
   color: inherit;
+}
+
+/******************************************************************************
+* Commons
+******************************************************************************/
+
+.hidden {
+  display: none;
 }
 
 /******************************************************************************
@@ -66,17 +74,21 @@
 }
 
 /* Resizable side */
-.resizable-side__transition {
+.radix-themes .resizable-side__transition {
   transition: width 0.5s, height 0.5s;
+}
+
+.radix-themes .resizable-side__vertical-divider {
+  height: 100%;
+}
+
+.radix-themes .resizable-side__vertical-divider:hover {
+  border-left: 3px solid var(--accent-a3);
 }
 
 /* Sidebar */
 .radix-themes .sidebar {
-  background-color: var(var(--accent-a3));
-}
-
-.radix-themes .sidebar__hideable-content {
-  display: none;
+  background-color: var(--accent-a2);
 }
 
 /******************************************************************************

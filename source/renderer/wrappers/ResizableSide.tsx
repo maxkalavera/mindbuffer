@@ -62,7 +62,7 @@ export default React.forwardRef(function ResizableSide (
         style={{
           'right': {
             position: 'absolute',
-            cursor: 'ew-resize',
+            cursor: 'col-resize',
             top: '0',
             left: '100%',
             width: '5px',
@@ -70,7 +70,7 @@ export default React.forwardRef(function ResizableSide (
           },
           'left': {
             position: 'absolute',
-            cursor: 'ew-resize',
+            cursor: 'col-resize',
             top: '0',
             left: '0',
             width: '5px',
@@ -78,7 +78,7 @@ export default React.forwardRef(function ResizableSide (
           },
           'top': {
             position: 'absolute',
-            cursor: 'ns-resize',
+            cursor: 'row-resize',
             top: '0',
             left: '0',
             width: '100%',
@@ -86,7 +86,7 @@ export default React.forwardRef(function ResizableSide (
           },
           'bottom': {
             position: 'absolute',
-            cursor: 'ns-resize',
+            cursor: 'row-resize',
             top: '100%',
             left: '0',
             width: '100%',

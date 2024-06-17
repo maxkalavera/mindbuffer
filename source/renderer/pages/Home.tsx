@@ -178,10 +178,7 @@ export default function Home() {
             onClose={onSidebarClose}
             separator={
               <div 
-                style={{
-                  width: '6px',
-                  height: '100%',
-                }}
+                className='resizable-side__vertical-divider'
               />
             }
             initialApeture={state.sidebarInitialAperture}
@@ -196,9 +193,6 @@ export default function Home() {
               width='max-content'
               height='100%'
               asChild={true}
-              style={{
-                backgroundColor: 'var(--accent-a3)'
-              }}
             >
               <Sidebar />
             </Box>
@@ -222,9 +216,13 @@ export default function Home() {
             flexGrow='1'
             p='4'
           />
-          <AddNote 
-            p='4' 
-          />
+          <ResizableSide
+            direction='top'
+          >
+            <AddNote 
+              p='4' 
+            />
+          </ResizableSide>
         </Flex>
       </Flex>
     </Flex>

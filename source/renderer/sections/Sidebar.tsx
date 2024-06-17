@@ -102,9 +102,6 @@ function Sidebar(props: BoxProps) {
 
   return (
     <Box
-      style={{
-        backgroundColor: 'var(--accent-a3)'
-      }}
       { ...props }
       className={`sidebar ${props.className || ''}`}
     >
@@ -122,13 +119,11 @@ function Sidebar(props: BoxProps) {
           isSidebarOpen={context.commons.isSidebarOpen}
         />
         <SelectedPage 
-          className={`${
-            context.commons.isSidebarOpen ? '' : 'sidebar__hideable-content'
-          }`}
+          isSidebarOpen={context.commons.isSidebarOpen}
         />
         <Flex
           className={`infinite-scroll ${
-            context.commons.isSidebarOpen ? '' : 'sidebar__hideable-content'
+            context.commons.isSidebarOpen ? '' : 'hidden'
           }`}
           minHeight='0'
           pr='3'

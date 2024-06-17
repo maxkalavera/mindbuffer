@@ -222,10 +222,10 @@ export default function DragableLine ({
       return
 
     if (isSidebarOpenRef.current !== true && state.aperture >= APERTURE_BIAS) {
-      onOpen()
+      onOpen && onOpen()
       isSidebarOpenRef.current = true
     } else if (isSidebarOpenRef.current !== false && state.aperture < APERTURE_BIAS) {
-      onClose()
+      onClose && onClose()
       isSidebarOpenRef.current = false
     }
   }, [

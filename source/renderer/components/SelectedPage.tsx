@@ -5,7 +5,13 @@ import store from '@renderer/utils/store'
 
 import type { BoxProps } from '@radix-ui/themes'
 
-export default function SelectedPage (props: BoxProps) {
+export default function SelectedPage ({
+  className='',
+  isSidebarOpen=true,
+  ...boxProps
+}: BoxProps & { 
+  isSidebarOpen?: boolean 
+}) {
   const [context, setContext] = useState({
     pages: {
       selectedPage: undefined,
@@ -32,13 +38,14 @@ export default function SelectedPage (props: BoxProps) {
 
   const selectedPage = context.pages.selectedPage
   const hasSelectedPage = selectedPage !== undefined
-  const {className, ...boxProps} = props
   return (
     <Box
       data-testid='selected-page'
       py='6'
       {...boxProps}
-      className={`selected-page ${hasSelectedPage ? '' : 'selected-page--hidden'} ${className}`}
+      className={`selected-page ${className} ${
+        !hasSelectedPage || !isSidebarOpen ? 'selected-page--hidden' : ''
+      }`}
     >
       <Card
         data-radius='none'
