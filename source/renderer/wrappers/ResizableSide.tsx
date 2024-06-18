@@ -4,13 +4,17 @@ import DragableLine from './DragableLine'
 
 interface ResizableSidePropsType {
   children?: React.ReactNode,
-  minSize?: string,
-  maxSize?: string,
   initialApeture?: number,
   sidebarToggleHash?: string | number,
   open?: boolean,
   aperture?: number,
   direction?: 'right' | 'left' | 'top' | 'bottom',
+  //minSize?: string,
+  //maxSize?: string,
+  minWidth?: string | number,
+  maxWidth?: string | number,
+  minHeight?: string | number,
+  maxHeight?:  string | number,
   onApertureChange?: (aperture: number) => void,
   onOpen?: () => void,
   onClose?: () => void,
@@ -20,13 +24,17 @@ interface ResizableSidePropsType {
 export default React.forwardRef(function ResizableSide (
   {
     children=undefined,
-    minSize='64px',
-    maxSize='768px',
     initialApeture=undefined,
     sidebarToggleHash=undefined,
     open=undefined,
     aperture=undefined,
     direction='right',
+    //minSize='64px',
+    //maxSize='768px',
+    minWidth=undefined,
+    maxWidth=undefined,
+    minHeight=undefined,
+    maxHeight=undefined,
     onApertureChange=undefined,
     onOpen=undefined,
     onClose=undefined,
@@ -94,14 +102,19 @@ export default React.forwardRef(function ResizableSide (
           }
         }[direction] as React.CSSProperties}
         data-testid='vertical-dragable-line'
+        containerRef={containerRef}
         resizableRef={resizableRef}
-        minSize={parseInt(minSize)}
-        maxSize={parseInt(maxSize)}
         initialApeture={initialApeture}
         sidebarToggleHash={sidebarToggleHash}
         open={open}
         aperture={aperture}
         direction={direction}
+        //minSize={parseInt(minSize)}
+        //maxSize={parseInt(maxSize)}
+        minWidth={minWidth}
+        maxWidth={maxWidth}
+        minHeight={minHeight}
+        maxHeight={maxHeight}
         onApertureChange={onApertureChange}
         onOpen={onOpen}
         onClose={onClose}

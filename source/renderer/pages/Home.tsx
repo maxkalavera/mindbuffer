@@ -166,13 +166,14 @@ export default function Home() {
       >
         <Box
           minHeight='0'
+          maxWidth='520px'
           asChild={true}
         >
           <ResizableSide
             direction='right'
-            open={globals.ENVIRONMENT === 'testing' ? true : undefined}          
-            minSize='72px'
-            maxSize='520px'
+            open={globals.ENVIRONMENT === 'testing' ? true : undefined}
+            minWidth='72px'
+            maxWidth='520px'
             sidebarToggleHash={context.commons.sidebarToggleHash}
             onOpen={onSidebarOpen}
             onClose={onSidebarClose}
@@ -218,6 +219,9 @@ export default function Home() {
           />
           <ResizableSide
             direction='top'
+            separator={
+              <div className='resizable-side__horizontal-divider'/>
+            }
           >
             <AddNote 
               p='4' 

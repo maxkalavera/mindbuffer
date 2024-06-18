@@ -1,4 +1,25 @@
-import React, { useRef, useEffect, useState } from "react"
+import React, { useRef, useEffect, useState, useCallback } from "react"
+
+interface DragableLinePropsType {
+  style?: React.CSSProperties,
+  containerRef: React.MutableRefObject<HTMLDivElement>,
+  resizableRef: React.MutableRefObject<HTMLElement>,
+  initialApeture: number,
+  sidebarToggleHash: string | number,
+  open: boolean,
+  aperture: number,
+  direction: 'right' | 'left' | 'top' | 'bottom'
+  //minSize: number,
+  //maxSize: number,
+  minWidth: string | number,
+  maxWidth: string | number,
+  minHeight: string | number,
+  maxHeight:  string | number,
+  onApertureChange: (aperture: number) => void,
+  onOpen: () => void,
+  onClose: () => void,
+  separator: React.ReactNode,
+}
 
 interface StateType { 
   aperture: number,
@@ -19,47 +40,75 @@ const normalize = (value) => {
 
 export default function DragableLine ({
   style={},
+  containerRef,
   resizableRef,
-  minSize,
-  maxSize,
   initialApeture,
   sidebarToggleHash,
   open,
   aperture,
   direction,
+  //minSize,
+  //maxSize,
+  minWidth,
+  maxWidth,
+  minHeight,
+  maxHeight,
   onApertureChange,
   onOpen,
   onClose,
   separator,
-}: {
-  style?: React.CSSProperties,
-  resizableRef: React.MutableRefObject<HTMLElement>,
-  minSize: number,
-  maxSize: number,
-  initialApeture: number,
-  sidebarToggleHash: string | number,
-  open: boolean,
-  aperture: number,
-  direction: 'right' | 'left' | 'top' | 'bottom'
-  onApertureChange: (aperture: number) => void,
-  onOpen: () => void,
-  onClose: () => void,
-  separator: React.ReactNode,
-}) {
+}: DragableLinePropsType) {
   const [state, _setState] = useState<StateType>({ 
-    aperture: initialApeture,
+    aperture: initialApeture || 0.0,
     afterSidebarToggleHash: 0,
   })
   const setState: React.Dispatch<React.SetStateAction<StateType>> = (state) => {
-    if (typeof state === 'object') {
-      _setState({
-        ...state,
-        aperture: normalize(state.aperture)
-      })
-    }
-    return _setState(state)
+    _setState((prev) => {
+      const resState = typeof state === 'function' ? state(prev) : state
+      return {
+        ...resState,
+        aperture: normalize(resState.aperture)
+      }
+    })
   }
   const dragableLineRef = useRef<HTMLDivElement>(null)
+
+  const getBoundaries = useCallback(() => {
+    if (resizableRef.current === undefined) {
+      return {
+        minWidth: 0,
+        maxWidth: 0,
+        minHeight: 0,
+        maxHeight: 0,
+        deltaX: 0,
+        deltaY: 0,
+      }
+    }
+
+    const parse = (value: string | number) => {
+      return typeof value === 'string' ? parseInt(value) : value
+    }
+
+    const parent = resizableRef.current.parentElement.parentElement
+    const { width, height } = parent.getBoundingClientRect()
+    const boundaries = {
+      minWidth: parse(minWidth) || 0,
+      maxWidth: Math.min(parse(maxWidth) || Infinity, width),
+      minHeight: parse(minHeight) || 0,
+      maxHeight: Math.min(parse(maxHeight) || Infinity, height),
+      deltaX: 0,
+      deltaY: 0,
+    }
+    boundaries.deltaX = Math.abs(boundaries.maxWidth - boundaries.minWidth)
+    boundaries.deltaY = Math.abs(boundaries.maxHeight - boundaries.minHeight)
+    return boundaries
+  }, [
+    resizableRef.current,
+    minWidth,
+    maxWidth,
+    minHeight,
+    maxHeight
+  ])
 
   useEffect(() => {
     // Set aperture from open and initial apertre variables
@@ -116,10 +165,12 @@ export default function DragableLine ({
     if (aperture < 0.0) aperture = 0.0
     if (aperture > 1.0) aperture = 1.0
 
-    const amplitude = minSize + (aperture * (maxSize - minSize))
+    const boundaries = getBoundaries()
     if (direction === 'left' || direction === 'right') {
+      const amplitude = boundaries.minWidth + (aperture * boundaries.deltaX)
       resizableRef.current.style.width = `${amplitude}px`
     } else {
+      const amplitude = boundaries.minHeight + (aperture * boundaries.deltaY)
       resizableRef.current.style.height = `${amplitude}px`
     }
   }, [resizableRef.current, state.aperture])
@@ -139,44 +190,26 @@ export default function DragableLine ({
     }
 
     resizableRef.current?.classList.remove('resizable-side__transition')
-    const origin = { from: 0 }
+    const origin: { current: { x: number, y: number} } = { current: undefined}
     const onMouseMove = (event: MouseEvent) => {
       event.preventDefault()
       if (!dragableLineRef.current) 
         return
 
-      if (direction === 'right') {
-        const { left } = resizableRef.current.getBoundingClientRect()
-        setState((prev) => ({
-          ...prev,
-          aperture: normalize(
-            (event.clientX - minSize - left) / (maxSize - minSize))
-        }))
-      } else if (direction === 'left') {
-        const { right } = resizableRef.current.getBoundingClientRect()
-        setState((prev) => ({
-          ...prev,
-          aperture: normalize(
-            (right - event.clientX - minSize) / (maxSize - minSize))
-        }))
-      } else if (direction === 'bottom') {
-        const { top } = resizableRef.current.getBoundingClientRect()
-        setState((prev) => ({
-          ...prev,
-          aperture: normalize(
-            (event.clientY - minSize - top) / (maxSize - minSize))
-        }))
-      } else if (direction === 'top') {
-        const { bottom } = resizableRef.current.getBoundingClientRect()
-        setState((prev) => ({
-          ...prev,
-          aperture: normalize(
-            (bottom - event.clientX - minSize) / (maxSize - minSize))
-        }))
-      }
+      const boundaries = getBoundaries()
+      const isHorizontal = direction === 'right' || direction === 'left'
+      const delta = { x: event.clientX - origin.current.x, y: event.clientY - origin.current.y}
+      let step = delta[isHorizontal ? 'x' : 'y'] / (isHorizontal ? boundaries.deltaX : boundaries.deltaY)
+
+      step = direction === 'right' || direction === 'bottom' ? step : -step
+      setState((prev) => ({
+        ...prev,
+        aperture: prev.aperture + step,
+      }))
+      origin.current = { x: event.clientX, y: event.clientY }
     }
-    const onMouseDown = () => {
-      origin.from = dragableLineRef.current.getBoundingClientRect().left
+    const onMouseDown = (event) => {
+      origin.current = { x: event.clientX, y: event.clientY }
       document.addEventListener('mousemove', onMouseMove)
       document.addEventListener('mouseup', onMouseUp)
     }
@@ -195,8 +228,6 @@ export default function DragableLine ({
   }, [
     dragableLineRef.current, 
     resizableRef.current, 
-    minSize,
-    maxSize,
   ])
 
   /**************************************************************************
