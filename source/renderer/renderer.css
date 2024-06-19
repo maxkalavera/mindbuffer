@@ -80,6 +80,7 @@
 
 .radix-themes .resizable-side__vertical-divider {
   height: 100%;
+  border-left: 1px solid var(--accent-a3);
 }
 
 .radix-themes .resizable-side__vertical-divider:hover {
@@ -96,7 +97,7 @@
 }
 
 /* Sidebar */
-.radix-themes .sidebar {
+.radix-themes .sidebar__container {
   background-color: var(--accent-a2);
 }
 

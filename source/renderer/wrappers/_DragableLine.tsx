@@ -11,10 +11,10 @@ interface DragableLinePropsType {
   direction: 'right' | 'left' | 'top' | 'bottom'
   //minSize: number,
   //maxSize: number,
-  minWidth: string | number,
-  maxWidth: string | number,
-  minHeight: string | number,
-  maxHeight:  string | number,
+  //minWidth: string | number,
+  //maxWidth: string | number,
+  //minHeight: string | number,
+  //maxHeight:  string | number,
   onApertureChange: (aperture: number) => void,
   onOpen: () => void,
   onClose: () => void,
@@ -49,10 +49,10 @@ export default function DragableLine ({
   direction,
   //minSize,
   //maxSize,
-  minWidth,
-  maxWidth,
-  minHeight,
-  maxHeight,
+  //minWidth,
+  //maxWidth,
+  //minHeight,
+  //maxHeight,
   onApertureChange,
   onOpen,
   onClose,
@@ -73,8 +73,9 @@ export default function DragableLine ({
   }
   const dragableLineRef = useRef<HTMLDivElement>(null)
 
-  const getBoundaries = useCallback(() => {
-    if (resizableRef.current === undefined) {
+  /*
+  const getScaleRange = useCallback(() => {
+    if (containerRef.current === undefined) {
       return {
         minWidth: 0,
         maxWidth: 0,
@@ -89,9 +90,9 @@ export default function DragableLine ({
       return typeof value === 'string' ? parseInt(value) : value
     }
 
-    const parent = resizableRef.current.parentElement.parentElement
+    const parent = containerRef.current.parentElement
     const { width, height } = parent.getBoundingClientRect()
-    const boundaries = {
+    const range = {
       minWidth: parse(minWidth) || 0,
       maxWidth: Math.min(parse(maxWidth) || Infinity, width),
       minHeight: parse(minHeight) || 0,
@@ -99,16 +100,17 @@ export default function DragableLine ({
       deltaX: 0,
       deltaY: 0,
     }
-    boundaries.deltaX = Math.abs(boundaries.maxWidth - boundaries.minWidth)
-    boundaries.deltaY = Math.abs(boundaries.maxHeight - boundaries.minHeight)
-    return boundaries
+    range.deltaX = Math.abs(range.maxWidth - range.minWidth)
+    range.deltaY = Math.abs(range.maxHeight - range.minHeight)
+    return range
   }, [
-    resizableRef.current,
+    containerRef.current,
     minWidth,
     maxWidth,
     minHeight,
     maxHeight
   ])
+  */
 
   useEffect(() => {
     // Set aperture from open and initial apertre variables
@@ -150,66 +152,76 @@ export default function DragableLine ({
   }, [sidebarToggleHash])
 
   useEffect(() => {
-    resizableRef.current?.classList.add('resizable-side__transition')
+    containerRef.current?.classList.add('resizable-side__transition')
     setTimeout(() => {
-      resizableRef.current?.classList.remove('resizable-side__transition')
+      containerRef.current?.classList.remove('resizable-side__transition')
     }, 0.5 * 1000)
   }, [state.afterSidebarToggleHash])
   
   useEffect(() => {
     // Resize based on aperture value
-    if (resizableRef.current === undefined || state.aperture === undefined)
+    if (containerRef.current === undefined || state.aperture === undefined)
       return
 
     let { aperture } = state
     if (aperture < 0.0) aperture = 0.0
     if (aperture > 1.0) aperture = 1.0
 
-    const boundaries = getBoundaries()
-    if (direction === 'left' || direction === 'right') {
-      const amplitude = boundaries.minWidth + (aperture * boundaries.deltaX)
-      resizableRef.current.style.width = `${amplitude}px`
-    } else {
-      const amplitude = boundaries.minHeight + (aperture * boundaries.deltaY)
-      resizableRef.current.style.height = `${amplitude}px`
+    if (direction === 'right') {
+      
     }
-  }, [resizableRef.current, state.aperture])
+    /*
+    const range = getScaleRange()
+    if (direction === 'left' || direction === 'right') {
+      const amplitude = range.minWidth + (aperture * range.deltaX)
+      containerRef.current.style.width = `${amplitude}px`
+    } else {
+      const amplitude = range.minHeight + (aperture * range.deltaY)
+      containerRef.current.style.height = `${amplitude}px`
+    }
+    */
+  }, [containerRef.current, state.aperture])
 
 
   /**************************************************************************
   * Set listeners
   **************************************************************************/
   useEffect(() => {
+    containerRef.current?.classList.remove('resizable-side__transition')
     if (
       dragableLineRef.current === undefined ||
-      resizableRef.current === undefined ||
+      containerRef.current === undefined ||
       open !== undefined ||
       aperture !== undefined
     ) {
       return
     }
 
-    resizableRef.current?.classList.remove('resizable-side__transition')
-    const origin: { current: { x: number, y: number} } = { current: undefined}
     const onMouseMove = (event: MouseEvent) => {
       event.preventDefault()
       if (!dragableLineRef.current) 
         return
 
-      const boundaries = getBoundaries()
-      const isHorizontal = direction === 'right' || direction === 'left'
-      const delta = { x: event.clientX - origin.current.x, y: event.clientY - origin.current.y}
-      let step = delta[isHorizontal ? 'x' : 'y'] / (isHorizontal ? boundaries.deltaX : boundaries.deltaY)
+      //const range = getScaleRange()
+      //const isHorizontal = direction === 'right' || direction === 'left'
+      const cursor = { x: event.clientX, y: event.clientY}
+      const containerBoundaries = containerRef.current.getBoundingClientRect()
+      const parentBoundaries = containerRef.current.parentElement.getBoundingClientRect()
+      //const delta = { x: event.clientX - origin.current.x, y: event.clientY - origin.current.y}
+      //let step = delta[isHorizontal ? 'x' : 'y'] / (isHorizontal ? boundaries.deltaX : boundaries.deltaY)
 
-      step = direction === 'right' || direction === 'bottom' ? step : -step
-      setState((prev) => ({
-        ...prev,
-        aperture: prev.aperture + step,
-      }))
-      origin.current = { x: event.clientX, y: event.clientY }
+      //step = direction === 'right' || direction === 'bottom' ? step : -step
+      if (direction === 'right') {
+        setState((prev) => ({
+          ...prev,
+          aperture: (cursor.x - containerBoundaries.left) / parentBoundaries.width,
+        }))
+      }
+
+      //origin.current = { x: event.clientX, y: event.clientY }
     }
     const onMouseDown = (event) => {
-      origin.current = { x: event.clientX, y: event.clientY }
+      //origin.current = { x: event.clientX, y: event.clientY }
       document.addEventListener('mousemove', onMouseMove)
       document.addEventListener('mouseup', onMouseUp)
     }
@@ -227,7 +239,7 @@ export default function DragableLine ({
 
   }, [
     dragableLineRef.current, 
-    resizableRef.current, 
+    containerRef.current, 
   ])
 
   /**************************************************************************
@@ -249,9 +261,6 @@ export default function DragableLine ({
   const isSidebarOpenRef = useRef<boolean>(undefined)
   useEffect(() => {
     // Update value of sidebarOpen on context actions
-    if (!resizableRef.current) 
-      return
-
     if (isSidebarOpenRef.current !== true && state.aperture >= APERTURE_BIAS) {
       onOpen && onOpen()
       isSidebarOpenRef.current = true
@@ -260,7 +269,6 @@ export default function DragableLine ({
       isSidebarOpenRef.current = false
     }
   }, [
-    resizableRef.current,
     state.aperture,
   ])
 

@@ -165,34 +165,35 @@ export default function Home() {
         flexShrink='1'
       >
         <Box
+          className='sidebar__container'
           minHeight='0'
-          maxWidth='520px'
+          //minWidth='520px'
           asChild={true}
         >
           <ResizableSide
             direction='right'
-            open={globals.ENVIRONMENT === 'testing' ? true : undefined}
-            minWidth='72px'
-            maxWidth='520px'
-            sidebarToggleHash={context.commons.sidebarToggleHash}
+            minSize='72px'
+            initialAperture='max-content'
+            toggleIsOpenHash={context.commons.sidebarToggleHash}
             onOpen={onSidebarOpen}
             onClose={onSidebarClose}
+            //open={globals.ENVIRONMENT === 'testing' ? true : undefined}
+            //</Box>onApertureChange={(aperture) => {
+            //  (async () => {
+            //    await window.electronAPI.settings.sidebarAperture
+            //    .set({ sidebarAperture: aperture })
+            //  })()
+            //}}
             separator={
               <div 
                 className='resizable-side__vertical-divider'
               />
             }
-            initialApeture={state.sidebarInitialAperture}
-            onApertureChange={(aperture) => {
-              (async () => {
-                await window.electronAPI.settings.sidebarAperture
-                .set({ sidebarAperture: aperture })
-              })()
-            }}
           >
             <Box
-              width='max-content'
+              width='100%'
               height='100%'
+              overflow='clip'
               asChild={true}
             >
               <Sidebar />
@@ -224,7 +225,7 @@ export default function Home() {
             }
           >
             <AddNote 
-              p='4' 
+              p='4'
             />
           </ResizableSide>
         </Flex>

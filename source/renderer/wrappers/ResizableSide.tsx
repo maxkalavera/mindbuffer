@@ -1,40 +1,32 @@
-import React, { useEffect, useRef, useImperativeHandle } from "react"
+import React, { useEffect, useRef, useImperativeHandle, useCallback, useState } from "react"
 
-import DragableLine from './DragableLine'
+type AperturePropsType = string | 'max-content'
+type ApertureType = number | 'max-content'
 
 interface ResizableSidePropsType {
   children?: React.ReactNode,
-  initialApeture?: number,
-  sidebarToggleHash?: string | number,
-  open?: boolean,
-  aperture?: number,
   direction?: 'right' | 'left' | 'top' | 'bottom',
-  //minSize?: string,
-  //maxSize?: string,
-  minWidth?: string | number,
-  maxWidth?: string | number,
-  minHeight?: string | number,
-  maxHeight?:  string | number,
-  onApertureChange?: (aperture: number) => void,
+  initialAperture?: AperturePropsType,
+  minSize?: string,
+  toggleIsOpenHash?: string | number, // When this value change the isOpen state is toggled
+  onApertureChange?: (aperture: AperturePropsType) => void,
   onOpen?: () => void,
   onClose?: () => void,
   separator?: React.ReactNode,
 }
 
-export default React.forwardRef(function ResizableSide (
+interface StateType {
+  isOpen: boolean,
+  aperture: ApertureType,
+}
+
+const ResizableSide = React.forwardRef(function ResizableSide (
   {
     children=undefined,
-    initialApeture=undefined,
-    sidebarToggleHash=undefined,
-    open=undefined,
-    aperture=undefined,
     direction='right',
-    //minSize='64px',
-    //maxSize='768px',
-    minWidth=undefined,
-    maxWidth=undefined,
-    minHeight=undefined,
-    maxHeight=undefined,
+    initialAperture=undefined,
+    minSize='0',
+    toggleIsOpenHash=0,
     onApertureChange=undefined,
     onOpen=undefined,
     onClose=undefined,
@@ -43,17 +35,157 @@ export default React.forwardRef(function ResizableSide (
   }: ResizableSidePropsType & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
   forwardedRef
 ) {
+  const parsed = {
+    minSize: parseInt(minSize) || 0,
+  }
+  const [state, setState] = useState<StateType>({
+    isOpen: (
+      initialAperture === 'max-content' || 
+      (parseInt(initialAperture) || 0) > parsed.minSize
+    ),
+    aperture: parseInt(initialAperture) || 'max-content',
+  })
   const containerRef = useRef<HTMLDivElement>()
-  const resizableRef = useRef<any>()
+  const dragableLineRef = useRef<HTMLDivElement>(null)
 
   // Proxy containerRef to parent
   useImperativeHandle(forwardedRef, () => containerRef.current, []);
 
+  /**************************************************************************
+  * Utils
+  **************************************************************************/
+  const references = [
+    containerRef.current,
+    dragableLineRef.current,
+  ]
+  const usingReferences = useCallback(function* () {
+    if (
+      containerRef.current === undefined || 
+      dragableLineRef.current === undefined
+    ) {
+      return;
+    }
+    try {
+      yield {
+        container: containerRef.current,
+        dragableLine: dragableLineRef.current
+      }
+    } finally {}
+  }, [containerRef.current === undefined])
+
+  const toggleIsOpen = () => {
+    setState((prev) => ({
+      ...prev,
+      isOpen: !prev.isOpen
+    }))
+  }
+
+  const setAperture = (aperture: ApertureType) => {
+    if (typeof aperture === 'number') {
+      setState((prev) => ({
+        ...prev,
+        aperture: aperture <= 0 ? 0 : aperture,
+        isOpen: (aperture || 0) > (parseInt(minSize) || 0),
+      }))
+    } else {
+      setState((prev) => ({
+        ...prev,
+        aperture: aperture
+      }))
+    }
+  }
+
+  /**************************************************************************
+  * Open/Close container
+  **************************************************************************/
+  /* Change internal isOpen with toggle hash change */
   useEffect(() => {
-    if (!containerRef.current)
-      return
-      resizableRef.current = containerRef.current.firstChild
-  }, [containerRef.current])
+    toggleIsOpen()
+  }, [
+    toggleIsOpenHash
+  ])
+  /**************************************************************************
+  * Change container width/height using aperture as source
+  **************************************************************************/
+
+  /* Change container size using state values */
+  useEffect(() => {
+    for(const { container } of usingReferences()) {
+      if (
+        state.isOpen && typeof state.aperture == 'number' && 
+        state.aperture > parsed.minSize
+      ) {
+        container.style.maxWidth = `${state.aperture}px`
+      } else if (state.isOpen && state.aperture === 'max-content') { 
+        container.style.maxWidth = 'max-content'
+      } else {
+        container.style.maxWidth = `${minSize}px`
+      }
+    }
+  }, [
+    state.aperture,
+    state.isOpen
+  ])
+  /* Set listeners to calculate apeture using mouse position */
+  useEffect(() => {
+    for(const { container,  dragableLine } of usingReferences()) {
+      const onMouseMove = (event: MouseEvent) => {
+        event.preventDefault()
+        if (!dragableLineRef.current) {
+          return;
+        }
+        // Calculate aperture using container boundaries
+        {
+          const containerBoundaries = container.getBoundingClientRect()
+          const aperture = event.clientX - containerBoundaries.left
+          setAperture(aperture)
+        }
+      }
+      const onMouseDown = () => {
+        document.addEventListener('mousemove', onMouseMove)
+        document.addEventListener('mouseup', onMouseUp)
+      }
+      const onMouseUp = () => {
+        document.removeEventListener('mousemove', onMouseMove)
+        document.removeEventListener('mouseup', onMouseUp)
+      }
+      dragableLine.addEventListener('mousedown', onMouseDown)
+      return () => {
+        document.removeEventListener('mousemove', onMouseMove)
+        document.removeEventListener('mouseup', onMouseUp)
+        dragableLine.removeEventListener('mousedown', onMouseDown)
+      }
+    }
+  }, [
+    ...references,
+  ])
+
+  /**************************************************************************
+  * Props callbacks
+  **************************************************************************/
+
+  useEffect(() => {
+    onApertureChange && onApertureChange(
+      state.aperture !== undefined ? `${state.aperture}px` : 'max-content'
+    )
+  }, [
+    onApertureChange,
+    state.aperture,
+  ])
+
+  useEffect(() => {
+    state.isOpen ? 
+      onOpen && onOpen() :
+      onClose && onClose()
+  }, [
+    onOpen,
+    onClose,
+    state.isOpen,
+  ])
+
+  /**************************************************************************
+  * Render component
+  **************************************************************************/
 
   return (
     <div
@@ -66,7 +198,9 @@ export default React.forwardRef(function ResizableSide (
       }}
     >
       { children }
-      <DragableLine
+      <div
+        data-testid='dragable-line'
+        ref={dragableLineRef}
         style={{
           'right': {
             position: 'absolute',
@@ -101,25 +235,11 @@ export default React.forwardRef(function ResizableSide (
             height: '5px'
           }
         }[direction] as React.CSSProperties}
-        data-testid='vertical-dragable-line'
-        containerRef={containerRef}
-        resizableRef={resizableRef}
-        initialApeture={initialApeture}
-        sidebarToggleHash={sidebarToggleHash}
-        open={open}
-        aperture={aperture}
-        direction={direction}
-        //minSize={parseInt(minSize)}
-        //maxSize={parseInt(maxSize)}
-        minWidth={minWidth}
-        maxWidth={maxWidth}
-        minHeight={minHeight}
-        maxHeight={maxHeight}
-        onApertureChange={onApertureChange}
-        onOpen={onOpen}
-        onClose={onClose}
-        separator={separator}
-      />
+      >
+        {separator}
+      </div>
     </div>
   )
 })
+
+export default ResizableSide
