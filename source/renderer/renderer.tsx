@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom/client'
 import { Provider as ReduxProvider } from 'react-redux'
 import { Theme } from '@radix-ui/themes'
 
-import store from '@renderer/utils/store'
+import store from '@renderer/utils/redux-store'
 import { Router } from '@renderer/routes'
 import '@radix-ui/themes/styles.css'
 import './renderer.css'

@@ -1,6 +1,6 @@
 import { dialog, app } from "electron"
 
-import settings from '@main/utils/settings'
+import store from '@main/utils/electron-store'
 
 type ThrowErrorParams = {
   content?: string,
@@ -17,7 +17,7 @@ export function ThrowError ({
     const detail = `Type: Error\n\n` +
       `Stack:\n${error.stack}\n\n` +
       `Globals:\n${JSON.stringify(globals, undefined, 4)}\n\n` +
-      `Settings:\n${JSON.stringify(settings.store, undefined, 4)}\n\n`
+      `Electron store:\n${JSON.stringify(store.store, undefined, 4)}\n\n`
     globals.DEBUG ? console.log(detail) : ''
     dialog.showMessageBox(undefined, {
       message: content,
@@ -40,7 +40,7 @@ export function ThrowFatalError ({
     const detail = `Type: Fatal Error\n\n` +
       `Stack:\n${error.stack}\n\n` +
       `Globals:\n${JSON.stringify(globals, undefined, 4)}\n\n` +
-      `Settings:\n${JSON.stringify(settings.store, undefined, 4)}\n\n`
+      `Electron store:\n${JSON.stringify(store.store, undefined, 4)}\n\n`
     globals.DEBUG ? console.log(detail) : ''
     dialog.showMessageBox(undefined, {
       message: content,

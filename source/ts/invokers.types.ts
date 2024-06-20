@@ -9,7 +9,7 @@ export type QueryInvokerType<
   payload: PayloadFilter,
 ) => Promise<Result>
 
-export type ModelQueryInvoker<
+export type ModelQueryInvokerType<
   PayloadFilter extends BasePayloadFilter, 
   Model extends BaseModelType
 > = (

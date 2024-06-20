@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { TextField, IconButton } from "@radix-ui/themes"
 import { MagnifyingGlassIcon, Cross1Icon } from '@radix-ui/react-icons'
 
-import store from "@renderer/utils/store"
+import store from "@renderer/utils/redux-store"
 import commonsSlice from "@renderer/actions/commons.slice"
 
 const Searchbar = () => {

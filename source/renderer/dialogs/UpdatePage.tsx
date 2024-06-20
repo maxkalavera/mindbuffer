@@ -7,7 +7,7 @@ import {
   Text
 } from '@radix-ui/themes'
 
-import store from "@renderer/utils/store"
+import store from "@renderer/utils/redux-store"
 import { updatePageThunk } from "@renderer/actions/notepads.slice"
 
 import type { PageType } from "@ts/models/Pages.types"

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Flex, Section, Box, Separator } from '@radix-ui/themes';
 
-import store from '@renderer/utils/store'
-import commonsSlice from '@renderer/actions/commons.slice'
+import store from '@renderer/utils/redux-store'
+import commonsSlice, { commonsSliceInitials } from '@renderer/actions/commons.slice'
 import pagesSlice, { fetchSelectedPageThunk } from '@renderer/actions/pages.slice'
 import { fetchNotesThunk } from '@renderer/actions/notes.slice'
 import { fetchNotepadsThunk } from '@renderer/actions/notepads.slice'
@@ -31,7 +31,7 @@ export default function Home() {
       (state: any) => ({
         search: state.commons.search,
         selectedPageID: state.pages.selectedPageID,
-        sidebarToggleHash: state.commons.sidebarToggleHash
+        sidebarToggleHash: state.commons.sidebarToggleHash,
       }), 
       (state: any) => {
         setContext({
@@ -97,16 +97,11 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    const controller = new AbortController();
-    new Promise<number>(async (resolve, reject) => {
-      const result = await window.electronAPI.settings.sidebarAperture.get()
-      if (!controller.signal.aborted) {
-        resolve(result)
-      }
-      reject('Sidebar aperture could not be retrived from storage')
-    }).then((aperture) => {
-      setState({ sidebarInitialAperture: aperture })
-    })
+    window.electronAPI.store
+      .get({ key: 'sidebarAperture' })
+      .then((aperture) => {
+        setState({ sidebarInitialAperture: aperture })
+      })
   }, [])
 
   const onSidebarOpen = () => {
@@ -117,6 +112,11 @@ export default function Home() {
   const onSidebarClose = () => {
     const { setIsSidebarOpen } = commonsSlice.actions
     store.dispatch(setIsSidebarOpen({ value: false }))
+  }
+
+  const onSidebarApertureChange = (aperture: string) => {
+    window.electronAPI.store
+      .set({ key: 'sidebarAperture', value: aperture })
   }
 
   return (
@@ -166,24 +166,21 @@ export default function Home() {
       >
         <Box
           className='sidebar__container'
-          minHeight='0'
-          //minWidth='520px'
+          minHeight='0px'
           asChild={true}
         >
           <ResizableSide
             direction='right'
             minSize='72px'
-            initialAperture='max-content'
+            initialIsOpen={
+              globals.ENVIRONMENT === 'testing' || 
+              commonsSliceInitials.isSidebarOpen
+            }
+            initialAperture={state.sidebarInitialAperture}
             toggleIsOpenHash={context.commons.sidebarToggleHash}
             onOpen={onSidebarOpen}
             onClose={onSidebarClose}
-            //open={globals.ENVIRONMENT === 'testing' ? true : undefined}
-            //</Box>onApertureChange={(aperture) => {
-            //  (async () => {
-            //    await window.electronAPI.settings.sidebarAperture
-            //    .set({ sidebarAperture: aperture })
-            //  })()
-            //}}
+            onApertureChange={onSidebarApertureChange}
             separator={
               <div 
                 className='resizable-side__vertical-divider'
@@ -218,6 +215,14 @@ export default function Home() {
             flexGrow='1'
             p='4'
           />
+        </Flex>
+      </Flex>
+    </Flex>
+  );
+}
+
+
+/*
           <ResizableSide
             direction='top'
             separator={
@@ -228,8 +233,4 @@ export default function Home() {
               p='4'
             />
           </ResizableSide>
-        </Flex>
-      </Flex>
-    </Flex>
-  );
-}
+*/

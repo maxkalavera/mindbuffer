@@ -1,35 +1,42 @@
 import path from 'node:path'
 import fs from 'node:fs'
+import { app } from 'electron'
 import knex from 'knex'
 
-import settings from '@main/utils/settings'
 import { getResourcesDir } from "@main/utils/resources"
 import { ThrowFatalError } from '@main/utils/errors';
 
-// Create folder for db if it doesn't exists
-if (!fs.existsSync(path.dirname(settings.get('dbPath')))){
-  fs.mkdirSync(path.dirname(settings.get('dbPath')))
+/******************************************************************************
+ * Set up database location
+ ******************************************************************************/
+
+const databaseLocations = {
+  'production': path.resolve(app.getPath('userData'), 'amberpad.db'),
+  'development' : path.resolve('.run/amberpad.development.db'), 
+  'testing': path.resolve('.run/amberpad.test.db'),
 }
-/*
-const QueriesManager = knex({
-  client: 'better-sqlite3',
-  debug: globals.DEBUG,
-  connection: {
-    filename: settings.get('dbPath') as string,
-  },
-  useNullAsDefault: true,
-})
-*/
+const databasePath = (
+  process.env.__TESTING_ENVRONMENT_DB_PATH ||  
+  databaseLocations[globals.ENVIRONMENT] || 
+  databaseLocations['production']
+)
+// Create folder for db if it doesn't exists
+if (!fs.existsSync(path.dirname(databasePath))){
+  fs.mkdirSync(path.dirname(databasePath))
+}
+
+/******************************************************************************
+ * Export database object
+ ******************************************************************************/
 
 export default {
-  //knex: QueriesManager,
   queriesManager: undefined,
   connectDatabase: async function () {
     this.queriesManager = await knex({
       client: 'better-sqlite3',
       debug: globals.DEBUG,
       connection: {
-        filename: settings.get('dbPath') as string,
+        filename: databasePath,
       },
       useNullAsDefault: true,
     });

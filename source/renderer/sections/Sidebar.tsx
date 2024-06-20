@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Box, Flex, ScrollArea, } from '@radix-ui/themes'
 import _ from 'lodash'
 
-import store from '@renderer/utils/store'
+import store from '@renderer/utils/redux-store'
 import { fetchNotepadsThunk, fetchPagesThunk } from '@renderer/actions/notepads.slice'
 import InifiniteScroll from '@renderer/wrappers/InifiniteScroll'
 import SidebarHeader from '@renderer/sections/SidebarHeader'

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { 
   Dialog, 
   Flex, 
@@ -7,7 +7,7 @@ import {
   Text
 } from '@radix-ui/themes'
 
-import store from "@renderer/utils/store"
+import store from "@renderer/utils/redux-store"
 import { updateNotepadThunk } from "@renderer/actions/notepads.slice"
 
 import type { NotepadType } from "@ts/models/Notepads.types"

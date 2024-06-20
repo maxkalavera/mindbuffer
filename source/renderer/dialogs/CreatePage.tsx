@@ -7,7 +7,7 @@ import {
   Text
 } from '@radix-ui/themes'
 
-import store from "@renderer/utils/store"
+import store from "@renderer/utils/redux-store"
 import { createpageThunk } from "@renderer/actions/notepads.slice"
 
 import type { NotepadType } from "@ts/models/Notepads.types"
@@ -33,7 +33,7 @@ const CreatePageContent = (
   const createPage = () => {
     store.dispatch(createpageThunk({
       name: state.name,
-      notepadId: notepad.id
+      notepadID: notepad.id
     })).then(() => {
       // Show Alert of success
     })

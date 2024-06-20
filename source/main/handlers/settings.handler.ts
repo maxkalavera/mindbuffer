@@ -1,4 +1,4 @@
-import settings from '@main/utils/settings'
+import settings from '@main/utils/electron-store'
 import { app, ipcMain } from 'electron'
 
 import { ThrowError } from '@main/utils/errors'
@@ -27,10 +27,8 @@ app.on('ready', () => {
     'settings.sidebarAperture:set',
     async function (
       event: Electron.IpcMainInvokeEvent,
-      payload: { sidebarAperture: number }
+      payload: { sidebarAperture: string }
     ): Promise<any> {
-      if (payload.sidebarAperture > 1.0) payload.sidebarAperture = 1.0
-      else if (payload.sidebarAperture < 0.0) payload.sidebarAperture = 0.0
       try {
         return settings.set('sidebarAperture', payload.sidebarAperture)
       } catch (error) {

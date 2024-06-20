@@ -2,7 +2,7 @@ import React, { useState, useLayoutEffect } from 'react'
 import { Flex, Separator, Text, IconButton, Button, Box } from '@radix-ui/themes'
 import { DotsHorizontalIcon, Pencil2Icon, TrashIcon } from '@radix-ui/react-icons'
 
-import store from '@renderer/utils/store'
+import store from '@renderer/utils/redux-store'
 import DropdownMenu from '@renderer/primitives/DropdownMenu'
 import UpdatePage from '@renderer/dialogs/UpdatePage'
 import DeletePage from '@renderer/dialogs/DeletePage'

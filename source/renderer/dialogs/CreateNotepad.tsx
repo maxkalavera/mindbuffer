@@ -7,7 +7,7 @@ import {
   Text
 } from '@radix-ui/themes'
 
-import store from "@renderer/utils/store"
+import store from "@renderer/utils/redux-store"
 import { createNotepadThunk } from "@renderer/actions/notepads.slice"
 
 function CreateNotepadContent(props: Parameters<typeof Dialog.Content>[0]) {

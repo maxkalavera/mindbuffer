@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Flex, Heading, IconButton } from '@radix-ui/themes'
 import { LayersIcon, PlusIcon } from '@radix-ui/react-icons'
 
-import store from '@renderer/utils/store'
+import store from '@renderer/utils/redux-store'
 import commonsSlice from '@renderer/actions/commons.slice'
 import CreateNotepad from '@renderer/dialogs/CreateNotepad'
 

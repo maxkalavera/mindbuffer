@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { Box, Flex, IconButton, TextArea } from '@radix-ui/themes'
 import { ArrowRightIcon } from '@radix-ui/react-icons'
 
-import store from "@renderer/utils/store"
+import store from "@renderer/utils/redux-store"
 import { createNoteThunk } from "@renderer/actions/notes.slice"
 
 import type { FlexProps  } from '@radix-ui/themes'

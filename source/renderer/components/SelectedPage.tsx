@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Box, Card, Flex, Heading } from '@radix-ui/themes'
 
-import store from '@renderer/utils/store'
+import store from '@renderer/utils/redux-store'
 
 import type { BoxProps } from '@radix-ui/themes'
 

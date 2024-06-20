@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Flex } from '@radix-ui/themes'
 
-import store from '@renderer/utils/store'
+import store from '@renderer/utils/redux-store'
 import { fetchNotesThunk } from '@renderer/actions/notes.slice'
 import InifiniteScroll from '@renderer/wrappers/InifiniteScroll'
 import Note from '@renderer/sections/Note'

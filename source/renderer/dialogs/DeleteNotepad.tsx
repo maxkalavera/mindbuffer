@@ -5,7 +5,7 @@ import {
   Flex, 
 } from '@radix-ui/themes'
 
-import store from "@renderer/utils/store"
+import store from "@renderer/utils/redux-store"
 import { destroyNotepadThunk } from "@renderer/actions/notepads.slice"
 
 import type { NotepadType } from "@ts/models/Notepads.types"

@@ -65,7 +65,6 @@ export const updateNotepadThunk = createAsyncThunk(
   'notepads/updateNotepad',
   async (payload: { value: NotepadType }, thunkAPI) => {
     const response = await window.electronAPI.notepads.update(payload)
-    console.log('updateNotepadThunk', response)
 
     if (thunkAPI.signal.aborted)
       throw 'edcb2bd6-6314-403d-aa98-5847a90c2fbd'
