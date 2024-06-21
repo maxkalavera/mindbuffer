@@ -215,6 +215,28 @@ export default function Home() {
             flexGrow='1'
             p='4'
           />
+          <Box
+            width='100%'
+            asChild={true}
+          >
+            <ResizableSide
+              direction='top'
+              minSize='100px'
+              separator={
+                <div className='resizable-side__horizontal-divider'/>
+              }
+            >
+              <Box
+                width='100%'
+                height='100%'
+                overflow='clip'
+              >
+                <AddNote
+                  p='4'
+                />
+              </Box>
+            </ResizableSide>
+          </Box>
         </Flex>
       </Flex>
     </Flex>
@@ -224,13 +246,30 @@ export default function Home() {
 
 /*
           <ResizableSide
-            direction='top'
+            direction='right'
+            minSize='72px'
+            initialIsOpen={
+              globals.ENVIRONMENT === 'testing' || 
+              commonsSliceInitials.isSidebarOpen
+            }
+            initialAperture={state.sidebarInitialAperture}
+            toggleIsOpenHash={context.commons.sidebarToggleHash}
+            onOpen={onSidebarOpen}
+            onClose={onSidebarClose}
+            onApertureChange={onSidebarApertureChange}
             separator={
-              <div className='resizable-side__horizontal-divider'/>
+              <div 
+                className='resizable-side__vertical-divider'
+              />
             }
           >
-            <AddNote 
-              p='4'
-            />
+            <Box
+              width='100%'
+              height='100%'
+              overflow='clip'
+              asChild={true}
+            >
+              <Sidebar />
+            </Box>
           </ResizableSide>
 */

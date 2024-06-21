@@ -116,6 +116,12 @@ const ResizableSide = React.forwardRef(function ResizableSide (
       }))
     }
   }
+  // Update width/height on dragging
+  const updateSize = (container: HTMLDivElement, value: string) => {
+    direction === 'right' || direction === 'left' ?
+      container.style.maxWidth = value :
+      container.style.maxHeight = value
+  }
 
   /**************************************************************************
   * Props setup
@@ -167,11 +173,11 @@ const ResizableSide = React.forwardRef(function ResizableSide (
         state.isOpen && typeof state.aperture == 'number' && 
         state.aperture > parsed.minSize
       ) {
-        container.style.maxWidth = `${state.aperture}px`
+        updateSize(container, `${state.aperture}px`)
       } else if (state.isOpen && state.aperture === undefined) { 
-        container.style.maxWidth = 'max-content'
+        updateSize(container, 'max-content')
       } else {
-        container.style.maxWidth = `${parsed.minSize}px`
+        updateSize(container, `${parsed.minSize}px`)
       }
     }
   }, [
@@ -187,11 +193,16 @@ const ResizableSide = React.forwardRef(function ResizableSide (
         if (!dragableLineRef.current) {
           return;
         }
-        // Calculate aperture using container boundaries
         {
+          // Calculate aperture using container boundaries
           const containerBoundaries = container.getBoundingClientRect()
-          const aperture = event.clientX - containerBoundaries.left
-          setAperture(aperture)
+          if (direction === 'right') {
+            const aperture = event.clientX - containerBoundaries.left
+            setAperture(aperture)
+          } else if (direction === 'top') {
+            const aperture = containerBoundaries.bottom - event.clientY
+            setAperture(aperture)
+          }
         }
       }
       const onMouseDown = () => {
@@ -249,6 +260,7 @@ const ResizableSide = React.forwardRef(function ResizableSide (
   * Render component
   **************************************************************************/
 
+  const isVertical = direction === 'right' || direction === 'left'
   return (
     <div
       data-testid='resizable-side'
@@ -256,7 +268,8 @@ const ResizableSide = React.forwardRef(function ResizableSide (
       {...aditionalProps}
       style={{
         position: 'relative',
-        maxWidth: 'max-content',
+        maxWidth: isVertical ? 'max-content' : undefined,
+        maxHeight: isVertical ? undefined : 'max-content',
         ...aditionalProps.style || {}
       }}
     >
