@@ -172,6 +172,8 @@ export default function Home() {
           <ResizableSide
             direction='right'
             minSize='72px'
+            maxSize='520px'
+            offsetpad='120px'
             initialIsOpen={
               globals.ENVIRONMENT === 'testing' || 
               commonsSliceInitials.isSidebarOpen
@@ -212,16 +214,21 @@ export default function Home() {
           <NotesBoard 
             width='100%'
             minHeight='0'
+            maxHeight='calc(100% - 100px)'
             flexGrow='1'
             p='4'
           />
           <Box
             width='100%'
+            minHeight='0'
+            flexGrow='10'
             asChild={true}
           >
             <ResizableSide
               direction='top'
               minSize='100px'
+              offsetpad='120px'
+              isOpen={false}
               separator={
                 <div className='resizable-side__horizontal-divider'/>
               }
@@ -248,6 +255,8 @@ export default function Home() {
           <ResizableSide
             direction='right'
             minSize='72px'
+            maxSize='520px'
+            offsetpad='120px'
             initialIsOpen={
               globals.ENVIRONMENT === 'testing' || 
               commonsSliceInitials.isSidebarOpen
