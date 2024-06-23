@@ -15,6 +15,7 @@ import NotesBoard from '@renderer/sections/NotesBoard';
 export default function Home() {
   const [state, setState] = useState({
     sidebarInitialAperture: undefined,
+    addNoteIsFocused: false,
   })
   const [context, setContext] = useState({
     commons: {
@@ -100,9 +101,14 @@ export default function Home() {
     window.electronAPI.store
       .get({ key: 'sidebarAperture' })
       .then((aperture) => {
-        setState({ sidebarInitialAperture: aperture })
+        setSidebarInitialAperture(aperture)
       })
   }, [])
+
+  const onSidebarApertureChange = (aperture: string) => {
+    window.electronAPI.store
+      .set({ key: 'sidebarAperture', value: aperture })
+  }
 
   const onSidebarOpen = () => {
     const { setIsSidebarOpen } = commonsSlice.actions
@@ -114,9 +120,18 @@ export default function Home() {
     store.dispatch(setIsSidebarOpen({ value: false }))
   }
 
-  const onSidebarApertureChange = (aperture: string) => {
-    window.electronAPI.store
-      .set({ key: 'sidebarAperture', value: aperture })
+  const setSidebarInitialAperture = (initialAperture: string) => {
+    setState((prev) => ({ 
+      ...prev, 
+      sidebarInitialAperture: initialAperture 
+    }))
+  }
+
+  const setAddNoteIsFocused = (addNoteIsFocused: boolean) => {
+    setState((prev) => ({ 
+      ...prev, 
+      addNoteIsFocused: addNoteIsFocused 
+    }))
   }
 
   return (
@@ -228,7 +243,7 @@ export default function Home() {
               direction='top'
               minSize='100px'
               offsetpad='120px'
-              isOpen={false}
+              isOpen={state.addNoteIsFocused}
               separator={
                 <div className='resizable-side__horizontal-divider'/>
               }
@@ -240,6 +255,7 @@ export default function Home() {
               >
                 <AddNote
                   p='4'
+                  onFocusChange={(isFocused) => setAddNoteIsFocused(isFocused)}
                 />
               </Box>
             </ResizableSide>

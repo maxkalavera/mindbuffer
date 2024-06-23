@@ -233,6 +233,7 @@ const ResizableSide = React.forwardRef(function ResizableSide (
   ])
 
   useEffect(() => {
+    console.log('SIDEBAR TOGGLE CHANGE')
     containerRef.current?.classList.add('resizable-side__transition')
     setTimeout(() => {
       containerRef.current?.classList.remove('resizable-side__transition')

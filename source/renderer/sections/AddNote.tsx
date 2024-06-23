@@ -10,7 +10,12 @@ import type { FlexProps  } from '@radix-ui/themes'
 /* @ts-ignore */
 const PLATFORM = navigator.userAgentData.platform
 
-function AddNote (props: FlexProps) {
+function AddNote ({
+  onFocusChange=undefined,
+  ...flexProps
+}: FlexProps & {
+  onFocusChange?: (value: boolean) => void
+}) {
   const [state, setState] = useState({
     inputValue: '',
   })
@@ -72,7 +77,7 @@ function AddNote (props: FlexProps) {
       gap='2'
       justify='end'
       align='center'
-      {...props}
+      {...flexProps}
     >
       <Box flexGrow='1'>
         <TextArea
@@ -81,6 +86,8 @@ function AddNote (props: FlexProps) {
           onKeyDown={onKeyDown}
           onKeyUp={onKeyUp} 
           onChange={(event) => setState({ inputValue: event.target.value })}
+          onFocus={() => onFocusChange(true)}
+          onBlur={() => onFocusChange(false)}
         />
       </Box>
       <Box>

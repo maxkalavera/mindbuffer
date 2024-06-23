@@ -75,7 +75,13 @@
 
 /* Resizable side */
 .radix-themes .resizable-side__transition {
-  transition: max-width 0.5s, max-height 0.5s;
+  transition: 
+    max-width 0.5s, 
+    max-height 0.5s,
+    min-width 0.5s, 
+    min-height 0.5s,
+    width 0.5s, 
+    height 0.5s;
 }
 
 .radix-themes .resizable-side__vertical-divider {
