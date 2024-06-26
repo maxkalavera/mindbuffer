@@ -1,6 +1,8 @@
 import React, { useState } from "react"
-import { Box, Card, Flex, IconButton, Reset } from "@radix-ui/themes"
-import { DotsVerticalIcon, TrashIcon, ClipboardCopyIcon } from '@radix-ui/react-icons'
+import { Box, Card, Flex, IconButton } from "@radix-ui/themes"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
+import { faClipboard, faTrashCan } from '@fortawesome/free-regular-svg-icons'
 
 import DropdownMenu from "@renderer/primitives/DropdownMenu"
 import TextNote from "@renderer/components/TextNote"
@@ -73,7 +75,10 @@ function Note (
                     variant="ghost"
                     size='1'
                   >
-                    <DotsVerticalIcon width='14' height='14' />
+                    <FontAwesomeIcon
+                      size='sm'
+                      icon={faEllipsisV}
+                    />
                   </IconButton>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
@@ -81,7 +86,10 @@ function Note (
                     onClick={copyClipboard}
                   >
                     Copy
-                    <ClipboardCopyIcon width='16' height='16' />
+                    <FontAwesomeIcon
+                      size='sm'
+                      icon={faClipboard}
+                    />
                   </DropdownMenu.Item>
                   <DropdownMenu.Separator />
                   <DropdownMenu.Item 
@@ -89,7 +97,10 @@ function Note (
                     onClick={() => setState((prev) => ({...prev, isDeleteNoteOpen: true}))}
                   >
                     Delete
-                    <TrashIcon width='16' height='16' />
+                    <FontAwesomeIcon
+                      size='sm'
+                      icon={faTrashCan}
+                    />
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>        
               </DropdownMenu.Root>

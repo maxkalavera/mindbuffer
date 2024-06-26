@@ -5,6 +5,7 @@ import { Slate, Editable, withReact } from 'slate-react'
 import TextEditorToolbar from '@renderer/components/TextEditorToolbar'
 
 import type { DescendantType } from '@ts/slate.types'
+import { Box, Card, Flex, ScrollArea } from '@radix-ui/themes'
 
 const initialValue: DescendantType[] = [
   {
@@ -87,13 +88,44 @@ function TextEditor () {
   const editor = useMemo(() => withReact(createEditor()), [])
 
   return (
-    <Slate editor={editor} initialValue={initialValue as Descendant[]}>
-      <TextEditorToolbar></TextEditorToolbar>
-      <Editable 
-        renderElement={renderElement}
-        renderLeaf={renderLeaf}
-      />
-    </Slate>
+    <Box
+      width='100%'
+      height='100%'
+      asChild={true}
+    >
+      <Card
+        className='text-editor__frame'
+        variant='surface'
+      >
+        <Slate editor={editor} initialValue={initialValue as Descendant[]}>
+          <Flex
+            width='100%'
+            height='100%'
+            direction='column'
+            justify='start'
+            align='stretch'
+            gap='1'
+          >
+            <TextEditorToolbar />
+            <Box
+              className='scroll-area'
+              minHeight='0'
+              flexGrow='1'
+              asChild={true}
+              overflowX='clip'
+              overflowY='auto'
+            >
+              <Editable 
+                className='text-editor__content'
+                renderElement={renderElement}
+                renderLeaf={renderLeaf}
+              />
+            </Box>
+          </Flex>
+        </Slate>
+      </Card>
+    </Box>
+
   )
 }
 

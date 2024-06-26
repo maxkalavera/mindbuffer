@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Box, Flex, IconButton, Text } from '@radix-ui/themes'
-import { DotsHorizontalIcon, PlusIcon, Pencil2Icon, TrashIcon } from '@radix-ui/react-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons'
+import { faEllipsis, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import DropdownMenu from '@renderer/primitives/DropdownMenu'
 import Page from '@renderer/components/Page'
@@ -40,7 +42,7 @@ function Notepad ({
           onOpenChange={(isOpen) => setState((prev) => ({...prev, isUpdateNotepadOpen: isOpen}))}
         >
           <UpdateNotepad.Content notepad={data} />
-        </UpdateNotepad.Root>      
+        </UpdateNotepad.Root>
         <DeleteNotepad.Root
           open={state.isDeleteNotepadOpen}
           onOpenChange={(isOpen) => setState((prev) => ({...prev, isDeleteNotepadOpen: isOpen}))}
@@ -78,7 +80,10 @@ function Notepad ({
                 size='1'
                 variant='ghost'
               >
-                <DotsHorizontalIcon width='18' height='18' />
+                <FontAwesomeIcon
+                  size='sm'
+                  icon={faEllipsis}
+                />
               </IconButton>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content>
@@ -86,21 +91,30 @@ function Notepad ({
                 onClick={() => setState((prev) => ({...prev, isCreatePageOpen: true}))}
               >
                 Add page
-                <PlusIcon width='16' height='16' />
+                <FontAwesomeIcon
+                  size='sm'
+                  icon={faPlus}
+                />
               </DropdownMenu.Item>
               <DropdownMenu.Separator />
               <DropdownMenu.Item
                 onClick={() => setState((prev) => ({...prev, isUpdateNotepadOpen: true}))}
               >
                 Rename
-                <Pencil2Icon width='16' height='16' />
+                <FontAwesomeIcon
+                  size='sm'
+                  icon={faPenToSquare}
+                />
               </DropdownMenu.Item>
               <DropdownMenu.Item 
                 color="red"
                 onClick={() => setState((prev) => ({...prev, isDeleteNotepadOpen: true}))}
               >
                 Delete
-                <TrashIcon width='16' height='16' />
+                <FontAwesomeIcon
+                  size='sm'
+                  icon={faTrashCan}
+                />
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>

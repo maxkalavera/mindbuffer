@@ -1,6 +1,8 @@
 import React, { useState, useLayoutEffect } from 'react'
 import { Flex, Separator, Text, IconButton, Button, Box } from '@radix-ui/themes'
-import { DotsHorizontalIcon, Pencil2Icon, TrashIcon } from '@radix-ui/react-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons'
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 
 import store from '@renderer/utils/redux-store'
 import DropdownMenu from '@renderer/primitives/DropdownMenu'
@@ -99,7 +101,10 @@ function Page ({
                 size='1'
                 variant='ghost'
               >
-                <DotsHorizontalIcon width='18' height='18' />
+                <FontAwesomeIcon
+                  size='sm'
+                  icon={faEllipsis}
+                />
               </IconButton>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content>
@@ -107,14 +112,20 @@ function Page ({
                 onClick={() => setState((prev) => ({...prev, isUpdatePageOpen: true}))}
               >
                 Rename
-                <Pencil2Icon width='16' height='16' />
+                <FontAwesomeIcon
+                  size='sm'
+                  icon={faPenToSquare}
+                />
               </DropdownMenu.Item>
               <DropdownMenu.Item 
                 color="red"
                 onClick={() => setState((prev) => ({...prev, isDeletePageOpen: true}))}
               >
                 Delete
-                <TrashIcon width='16' height='16' />
+                <FontAwesomeIcon
+                  size='sm'
+                  icon={faTrashCan}
+                />
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>

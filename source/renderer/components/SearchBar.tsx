@@ -77,7 +77,7 @@ const Searchbar = () => {
               onClick={() => sendSearch(state.search)}
             >
               <FontAwesomeIcon 
-                size='sm'
+                size='1x'
                 icon={faMagnifyingGlass}
               />
             </IconButton>
@@ -88,7 +88,7 @@ const Searchbar = () => {
               onClick={() => clearSearch()}
             >
               <FontAwesomeIcon 
-                size='sm'
+                size='1x'
                 icon={faXmark}
               />
             </IconButton>

@@ -43,28 +43,34 @@
   content: none;
 }
 
-/* Infinite scroll */
-.radix-themes .infinite-scroll {
+/******************************************************************************
+* Scroll area
+/*****************************************************************************/
+
+.radix-themes .scroll-area {
   --scrollarea-scrollbar-size: var(--space-1);
   --scrollarea-scrollbar-border-radius: max(var(--radius-1), var(--radius-full));
 }
 
-.radix-themes .infinite-scroll::-webkit-scrollbar {
+.radix-themes .scroll-area::-webkit-scrollbar {
   width: var(--scrollarea-scrollbar-size);
   height: var(--scrollarea-scrollbar-size);
 }
 
-.radix-themes .infinite-scroll::-webkit-scrollbar-track {
+.radix-themes .scroll-area::-webkit-scrollbar-track {
   background-color: var(--gray-a3);
   border-radius: var(--scrollarea-scrollbar-border-radius);
 }
 
-.radix-themes .infinite-scroll::-webkit-scrollbar-thumb {
+.radix-themes .scroll-area::-webkit-scrollbar-thumb {
   background-color: var(--gray-a8);
   border-radius: var(--scrollarea-scrollbar-border-radius);
 }
 
-/* Selected page */
+/******************************************************************************
+* Selected page
+/*****************************************************************************/
+
 .radix-themes .selected-page {
   animation: slide-in-blurred-left 0.6s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
 }
@@ -73,7 +79,10 @@
   animation: slide-out-blurred-left 0.45s cubic-bezier(0.755, 0.050, 0.855, 0.060) both;
 }
 
-/* Resizable side */
+/******************************************************************************
+* Resizable side
+/*****************************************************************************/
+
 .radix-themes .resizable-side__transition {
   transition: 
     max-width 0.5s, 
@@ -102,9 +111,28 @@
   border-bottom: 3px solid var(--accent-a3);
 }
 
-/* Sidebar */
+/******************************************************************************
+* Sidebar
+/*****************************************************************************/
+
 .radix-themes .sidebar__container {
   background-color: var(--accent-a2);
+}
+
+/******************************************************************************
+* Text editor
+/*****************************************************************************/
+
+.radix-themes .text-editor__frame {
+  --card-padding: var(--space-2);
+  --card-border-radius: var(--radius-1);
+  --card-background-color: var(--color-background);
+}
+
+.radix-themes .text-editor__content {
+  padding: 0px;
+  /*border: 1px solid red;*/
+  outline: none;
 }
 
 /******************************************************************************

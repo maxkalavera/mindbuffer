@@ -212,7 +212,7 @@ export default React.forwardRef(function InifiniteScroll (
       data-testid='inifinite-scroll'
       ref={containerRef}
       {...aditionalProps}
-      className={`infinite-scroll ${aditionalProps.className || ''}`}
+      className={`scroll-area ${aditionalProps.className || ''}`}
     >
       { loading && inverse ? loadingElement : null }
       { children }
