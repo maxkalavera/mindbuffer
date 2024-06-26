@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Flex, Heading, IconButton } from '@radix-ui/themes'
-import { LayersIcon, PlusIcon } from '@radix-ui/react-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faLayerGroup, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import store from '@renderer/utils/redux-store'
 import commonsSlice from '@renderer/actions/commons.slice'
@@ -39,9 +40,9 @@ function SidebarHeader({
           variant='ghost'
           onClick={toggleIsSidebarOpen}
         >
-          <LayersIcon 
-            width={20}
-            height={20}
+          <FontAwesomeIcon
+            size='1x'
+            icon={faLayerGroup}
           />
         </IconButton>
       </Box>
@@ -72,9 +73,9 @@ function SidebarHeader({
               size='1'
               variant='ghost'
             >
-              <PlusIcon 
-                width={20}
-                height={20}
+              <FontAwesomeIcon
+                size='sm'
+                icon={faPlus}
               />
             </IconButton>
           </Box>

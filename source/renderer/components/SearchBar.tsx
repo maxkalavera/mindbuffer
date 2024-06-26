@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { TextField, IconButton } from "@radix-ui/themes"
-import { MagnifyingGlassIcon, Cross1Icon } from '@radix-ui/react-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 import store from "@renderer/utils/redux-store"
 import commonsSlice from "@renderer/actions/commons.slice"
@@ -75,7 +76,10 @@ const Searchbar = () => {
               variant="ghost"
               onClick={() => sendSearch(state.search)}
             >
-              <MagnifyingGlassIcon height="18" width="18" />
+              <FontAwesomeIcon 
+                size='sm'
+                icon={faMagnifyingGlass}
+              />
             </IconButton>
           :          
             <IconButton 
@@ -83,7 +87,10 @@ const Searchbar = () => {
               style={{cursor: 'pointer'}}
               onClick={() => clearSearch()}
             >
-              <Cross1Icon height="18" width="18" />
+              <FontAwesomeIcon 
+                size='sm'
+                icon={faXmark}
+              />
             </IconButton>
         }
 

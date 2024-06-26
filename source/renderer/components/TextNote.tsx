@@ -19,7 +19,7 @@ function TextNote (
       >
         { data.content }
       </div>
-  </Reset>
+    </Reset>
   )
 }
 

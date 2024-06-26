@@ -4,6 +4,7 @@ import { ArrowRightIcon } from '@radix-ui/react-icons'
 
 import store from "@renderer/utils/redux-store"
 import { createNoteThunk } from "@renderer/actions/notes.slice"
+import TextEditor from '@renderer/components/TextEditor'
 
 import type { FlexProps  } from '@radix-ui/themes'
 
@@ -73,24 +74,44 @@ function AddNote ({
 
   return (
     <Flex
+      data-testid='add-note'
+      width='100%'
+      height='100%'
       direction='row'
       gap='2'
       justify='end'
-      align='center'
+      align='stretch'
+      onFocus={() => onFocusChange(true)}
+      //onBlur={() => onFocusChange(false)}
       {...flexProps}
     >
-      <Box flexGrow='1'>
-        <TextArea
-          size='1'
-          value={state.inputValue}
-          onKeyDown={onKeyDown}
-          onKeyUp={onKeyUp} 
-          onChange={(event) => setState({ inputValue: event.target.value })}
-          onFocus={() => onFocusChange(true)}
-          onBlur={() => onFocusChange(false)}
-        />
+      <Box 
+        flexGrow='1'
+      >
+        {
+          <TextEditor 
+            //onFocus={() => onFocusChange(true)}
+            //onBlur={() => onFocusChange(false)}
+          />
+        }
+        {/*
+          <TextArea
+            size='1'
+            value={state.inputValue}
+            onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp} 
+            onChange={(event) => setState({ inputValue: event.target.value })}
+            onFocus={() => onFocusChange(true)}
+            onBlur={() => onFocusChange(false)}
+          />
+        */}
       </Box>
-      <Box>
+      <Flex
+        direction='column'
+        gap='2'
+        justify='end'
+        align='center'
+      >
         <IconButton
           data-radius='full'
           size='2'
@@ -99,7 +120,7 @@ function AddNote ({
         >
           <ArrowRightIcon width='18' height='18' />
         </IconButton>
-      </Box>
+      </Flex>
 
     </Flex>
   )
