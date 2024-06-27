@@ -1,30 +1,31 @@
-import React, { ReactNode, Ref, PropsWithChildren } from "react"
+import React  from "react"
 import {
   Editor,
   Transforms,
   Element as SlateElement,
 } from 'slate'
 import { useSlate } from 'slate-react'
-import { Flex, IconButton } from "@radix-ui/themes"
+import { Flex, IconButton, Select } from "@radix-ui/themes"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { } from '@fortawesome/free-regular-svg-icons'
-import { } from '@fortawesome/free-solid-svg-icons'
 import { 
-  FontBoldIcon, 
-  FontItalicIcon, 
-  UnderlineIcon,
-  CodeIcon,
-  QuoteIcon,
-  ListBulletIcon,
-  TextAlignLeftIcon,
-  TextAlignRightIcon,
-  TextAlignJustifyIcon,
-  TextAlignCenterIcon,
-} from "@radix-ui/react-icons"
+  faSquare, 
+} from '@fortawesome/free-regular-svg-icons'
+import { 
+  faHeader, 
+  faBold, 
+  faItalic, 
+  faUnderline, 
+  faStrikethrough,
+  faCode,
+  faListOl,
+  faListCheck,
+  faListUl,
+  faQuoteRight,
+  faLink,
+} from '@fortawesome/free-solid-svg-icons'
 
 import type { ElementType, NodeType } from "@ts/slate.types"
 import type { FlexProps, IconButtonProps } from "@radix-ui/themes"
-
 
 /******************************************************************************
 * Utils
@@ -153,6 +154,46 @@ const MarkButton = React.forwardRef(
   )
 })
 
+const MarkSelect = React.forwardRef(
+  (
+    {
+      items=[]
+    }: {
+      items: { 
+        value: string, 
+        label: string, 
+        className?: string,
+        default?: boolean,
+      }[]
+    },
+    ref: any
+  ) => {
+    const editor = useSlate()
+    return (
+      <Select.Root 
+        defaultValue='normal'
+      >
+        <Select.Trigger variant='ghost'>
+          <FontAwesomeIcon
+            size='sm'
+            icon={faHeader}
+          />
+        </Select.Trigger>
+        <Select.Content variant='soft' >
+          <Select.Item value="normal">
+            Normal
+          </Select.Item>
+          <Select.Item value="h1">
+            Heading 1
+          </Select.Item>
+          <Select.Item value="h2">Heading 2</Select.Item>
+          <Select.Item value="h3">Heading 3</Select.Item>
+        </Select.Content>
+      </Select.Root>
+    )
+  }
+)
+
 
 const Group = React.forwardRef((
   {
@@ -165,7 +206,7 @@ const Group = React.forwardRef((
       direction='row'
       justify='start'
       align='center'
-      gap='1'
+      gap='2'
       ref={ref}
       {...flexProps}
     />
@@ -188,58 +229,105 @@ const TextEditorToolbar = React.forwardRef(function TextEditorToolbar (
 ) {
   return (
     <Flex
+      ref={ref}
+      {...flexProps}
       direction='row'
       justify='start'
       align='center'
-      gap='3'
-      ref={ref}
-      {...flexProps}
+      gap='4'
     >
+      <Group>
+        <MarkSelect 
+          items={[
+            { value: 'h1', label: 'Heading 1'},
+            { value: 'h2', label: 'Heading 2'},
+            { value: 'h3', label: 'Heading 3'},
+          ]}
+        />
+      </Group>
+
       <Group>
         <MarkButton format="bold">
           <FontAwesomeIcon
             size='sm'
-            icon={null}
+            icon={faBold}
           />
-          <FontBoldIcon {...ICONS_SIZE} />
         </MarkButton>
         <MarkButton format="italic">
-          <FontItalicIcon {...ICONS_SIZE} />
+          <FontAwesomeIcon
+            size='sm'
+            icon={faItalic}
+          />
         </MarkButton>
         <MarkButton format="underline">
-          <UnderlineIcon {...ICONS_SIZE} />
+          <FontAwesomeIcon
+            size='sm'
+            icon={faUnderline}
+          />
+        </MarkButton>
+        <MarkButton format="strikethrough">
+          <FontAwesomeIcon
+            size='sm'
+            icon={faStrikethrough}
+          />
         </MarkButton>
       </Group>
 
       <Group>
-        <MarkButton format="code">
-          <CodeIcon {...ICONS_SIZE} />
+        <MarkButton format="inline-code">
+          <FontAwesomeIcon
+            size='sm'
+            icon={faCode}
+          />
         </MarkButton>
+        <BlockButton format='block-code'>
+          <span className="fa-layers fa-fw">
+            <FontAwesomeIcon
+              size='sm'
+              icon={faSquare}
+              transform={'grow-4'}
+            />
+            <FontAwesomeIcon
+              size='sm'
+              icon={faCode}
+              transform={'shrink-8'}
+            />
+          </span>
+        </BlockButton>
         <BlockButton format='block-quote'>
-          <QuoteIcon {...ICONS_SIZE} />
+          <FontAwesomeIcon
+            size='sm'
+            icon={faQuoteRight}
+          />
         </BlockButton>
+        <BlockButton format='link'>
+          <FontAwesomeIcon
+            size='sm'
+            icon={faLink}
+            transform={'shrink-2'}
+          />
+        </BlockButton>
+        
       </Group>
 
       <Group>
-        <BlockButton format='numbered-list'>
-        </BlockButton>
         <BlockButton format='bulleted-list'>
-          <ListBulletIcon {...ICONS_SIZE} />
+          <FontAwesomeIcon
+            size='sm'
+            icon={faListUl}
+          />
         </BlockButton>
-      </Group>
-
-      <Group>
-        <BlockButton format='left'>
-          <TextAlignLeftIcon {...ICONS_SIZE} />
+        <BlockButton format='numbered-list'>
+          <FontAwesomeIcon
+            size='sm'
+            icon={faListOl}
+          />
         </BlockButton>
-        <BlockButton format='center'>
-          <TextAlignCenterIcon {...ICONS_SIZE} />
-        </BlockButton>
-        <BlockButton format='right'>
-          <TextAlignRightIcon {...ICONS_SIZE}/>
-        </BlockButton>
-        <BlockButton format='justify'>
-          <TextAlignJustifyIcon {...ICONS_SIZE} />
+        <BlockButton format='check-list'>
+          <FontAwesomeIcon
+            size='sm'
+            icon={faListCheck}
+          />
         </BlockButton>
       </Group>
     </Flex>
