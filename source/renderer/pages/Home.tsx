@@ -243,7 +243,8 @@ export default function Home() {
               direction='top'
               minSize='100px'
               offsetpad='120px'
-              isOpen={state.addNoteIsFocused}
+              isOpen={true}
+              //isOpen={state.addNoteIsFocused}
               separator={
                 <div className='resizable-side__horizontal-divider'/>
               }
@@ -265,36 +266,3 @@ export default function Home() {
     </Flex>
   );
 }
-
-
-/*
-          <ResizableSide
-            direction='right'
-            minSize='72px'
-            maxSize='520px'
-            offsetpad='120px'
-            initialIsOpen={
-              globals.ENVIRONMENT === 'testing' || 
-              commonsSliceInitials.isSidebarOpen
-            }
-            initialAperture={state.sidebarInitialAperture}
-            toggleIsOpenHash={context.commons.sidebarToggleHash}
-            onOpen={onSidebarOpen}
-            onClose={onSidebarClose}
-            onApertureChange={onSidebarApertureChange}
-            separator={
-              <div 
-                className='resizable-side__vertical-divider'
-              />
-            }
-          >
-            <Box
-              width='100%'
-              height='100%'
-              overflow='clip'
-              asChild={true}
-            >
-              <Sidebar />
-            </Box>
-          </ResizableSide>
-*/

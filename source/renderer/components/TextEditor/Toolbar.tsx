@@ -1,11 +1,11 @@
-import React  from "react"
+import React, { useEffect, useMemo, useRef, useState }  from "react"
 import {
   Editor,
   Transforms,
   Element as SlateElement,
 } from 'slate'
 import { useSlate } from 'slate-react'
-import { Flex, IconButton, Select } from "@radix-ui/themes"
+import { Box, Flex, IconButton, Select } from "@radix-ui/themes"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
   faSquare, 
@@ -27,39 +27,73 @@ import {
 import type { ElementType, NodeType } from "@ts/slate.types"
 import type { FlexProps, IconButtonProps } from "@radix-ui/themes"
 
+import { toggleTextBlock } from "@renderer/utils/slate"
+
 /******************************************************************************
 * Utils
 ******************************************************************************/
 
+/*
+const TEXT_TYPES = []
+const isTextBlockActive = (editor, format) => {
+  const { selection } = editor
+  if (!selection) return false
+
+  const [match] = Array.from(
+    Editor.nodes(editor, {
+      at: Editor.unhangRange(editor, selection),
+      match: (node: NodeType) =>
+        !Editor.isEditor(node) &&
+        SlateElement.isElement(node) &&
+        node.type === format,
+    })
+  )
+
+  console.log('NODES', Array.from(Editor.nodes(editor, {
+    at: Editor.unhangRange(editor, selection),
+  })))
+  console.log('MATCH', match, )
+
+  return !!match
+}
+
+const toggleTextBlock = (editor, format) => {
+  const isActive = isTextBlockActive(
+    editor,
+    format,
+  )
+
+  Transforms.unwrapNodes<NodeType>(editor, {
+    match: (node: NodeType) => 
+      !Editor.isEditor(node) &&
+      SlateElement.isElement(node),
+    split: true,
+  })
+  Transforms.setNodes<ElementType>(
+    editor, { type: isActive ? 'paragraph' : format })
+}
+*/
+
 const LIST_TYPES = ['numbered-list', 'bulleted-list']
-const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify']
-
-
 const toggleBlock = (editor, format) => {
   const isActive = isBlockActive(
     editor,
     format,
-    TEXT_ALIGN_TYPES.includes(format) ? 'align' : 'type'
   )
   const isList = LIST_TYPES.includes(format)
 
   Transforms.unwrapNodes<NodeType>(editor, {
     match: (node: NodeType) => 
       !Editor.isEditor(node) &&
-      SlateElement.isElement(node) &&
-      LIST_TYPES.includes(node.type) &&
-      !TEXT_ALIGN_TYPES.includes(format),
+      SlateElement.isElement(node),
     split: true,
   })
   let newProperties: Partial<ElementType>
-  if (TEXT_ALIGN_TYPES.includes(format)) {
-    newProperties = {
-      align: isActive ? undefined : format,
-    }
-  } else {
-    newProperties = {
-      type: isActive ? 'paragraph' : isList ? 'list-item' : format,
-    }
+
+  newProperties = {
+    type: isActive ? 
+      'paragraph' : 
+      (isList ? 'list-item' : format),
   }
   Transforms.setNodes<ElementType>(editor, newProperties)
 
@@ -79,7 +113,7 @@ const toggleMark = (editor, format) => {
   }
 }
 
-const isBlockActive = (editor, format, blockType = 'type') => {
+const isBlockActive = (editor, format, attribute = 'type') => {
   const { selection } = editor
   if (!selection) return false
 
@@ -89,7 +123,7 @@ const isBlockActive = (editor, format, blockType = 'type') => {
       match: n =>
         !Editor.isEditor(n) &&
         SlateElement.isElement(n) &&
-        n[blockType] === format,
+        n[attribute] === format,
     })
   )
 
@@ -140,62 +174,22 @@ const MarkButton = React.forwardRef(
     },
     ref: React.LegacyRef<HTMLButtonElement>
   ) => {
-  const editor = useSlate()
-  return (
-    <IconButton
-      ref={ref}
-      variant='ghost'
-      onMouseDown={event => {
-        event.preventDefault()
-        toggleMark(editor, format)
-      }}
-      {...iconButtonProps }
-    />
-  )
-})
-
-const MarkSelect = React.forwardRef(
-  (
-    {
-      items=[]
-    }: {
-      items: { 
-        value: string, 
-        label: string, 
-        className?: string,
-        default?: boolean,
-      }[]
-    },
-    ref: any
-  ) => {
     const editor = useSlate()
     return (
-      <Select.Root 
-        defaultValue='normal'
-      >
-        <Select.Trigger variant='ghost'>
-          <FontAwesomeIcon
-            size='sm'
-            icon={faHeader}
-          />
-        </Select.Trigger>
-        <Select.Content variant='soft' >
-          <Select.Item value="normal">
-            Normal
-          </Select.Item>
-          <Select.Item value="h1">
-            Heading 1
-          </Select.Item>
-          <Select.Item value="h2">Heading 2</Select.Item>
-          <Select.Item value="h3">Heading 3</Select.Item>
-        </Select.Content>
-      </Select.Root>
+      <IconButton
+        ref={ref}
+        variant='ghost'
+        onMouseDown={event => {
+          event.preventDefault()
+          toggleMark(editor, format)
+        }}
+        {...iconButtonProps }
+      />
     )
   }
 )
 
-
-const Group = React.forwardRef((
+const ToolbarGroup = React.forwardRef((
   {
     ...flexProps
   }: FlexProps & {},
@@ -213,20 +207,78 @@ const Group = React.forwardRef((
   )
 })
 
+const ToolbarTextWeightSelect = ({ editor }) => {
+  const items: { 
+    format: string, 
+    label: string,
+  }[] = useMemo(() => [
+    { format: 'heading-one', label: 'Heading 1' },
+    { format: 'heading-two', label: 'Heading 2' },
+    { format: 'heading-three', label: 'Heading 3' },
+    { format: 'paragraph', label: 'Normal' },
+  ], [])
+  const [state, setState] = useState({
+    textWeight: 'paragraph'
+  })
+
+  useEffect(() => {
+    const onSelectListener = (operation) => {
+      console.log('SELECTION CHANGED')
+    }
+    editor.setOnOperationListener('set_selection', onSelectListener)
+   return () => {
+    editor.removeOnOperationListener('set_selection', onSelectListener)
+   }
+  }, [])
+
+  const onTextWeightChange = (format) => {
+    //console.log('CHANGE TEXT WEIGHT', format)
+    toggleTextBlock(editor, format)
+    setState((prev) => ({
+      ...prev,
+      textWeight: format
+    }))
+  }
+
+  return (
+    <Select.Root 
+      defaultValue='paragraph'
+      value={state.textWeight}
+      onValueChange={onTextWeightChange}
+    >
+      <Select.Trigger variant='ghost'>
+        <FontAwesomeIcon
+          size='sm'
+          icon={faHeader}
+        />
+      </Select.Trigger>
+      <Select.Content variant='soft' >
+        {
+          items.map(item => (
+            <Select.Item
+              key={item.format}
+              value={item.format}
+            >
+              {item.label}
+            </Select.Item>
+          ))
+        }
+      </Select.Content>
+    </Select.Root>
+  )
+}
+
 /******************************************************************************
 * Renderer component
 ******************************************************************************/
 
-const ICONS_SIZE = {
-  width: '18',
-  height: '18'
-}
-const TextEditorToolbar = React.forwardRef(function TextEditorToolbar (
+const Toolbar = React.forwardRef(function (
   {
     ...flexProps
   }: FlexProps,
   ref: React.LegacyRef<HTMLDivElement>
 ) {
+  const editor = useSlate()
   return (
     <Flex
       ref={ref}
@@ -236,17 +288,11 @@ const TextEditorToolbar = React.forwardRef(function TextEditorToolbar (
       align='center'
       gap='4'
     >
-      <Group>
-        <MarkSelect 
-          items={[
-            { value: 'h1', label: 'Heading 1'},
-            { value: 'h2', label: 'Heading 2'},
-            { value: 'h3', label: 'Heading 3'},
-          ]}
-        />
-      </Group>
+      <ToolbarGroup>
+        <ToolbarTextWeightSelect editor={editor} />
+      </ToolbarGroup>
 
-      <Group>
+      <ToolbarGroup>
         <MarkButton format="bold">
           <FontAwesomeIcon
             size='sm'
@@ -271,9 +317,9 @@ const TextEditorToolbar = React.forwardRef(function TextEditorToolbar (
             icon={faStrikethrough}
           />
         </MarkButton>
-      </Group>
+      </ToolbarGroup>
 
-      <Group>
+      <ToolbarGroup>
         <MarkButton format="inline-code">
           <FontAwesomeIcon
             size='sm'
@@ -308,9 +354,9 @@ const TextEditorToolbar = React.forwardRef(function TextEditorToolbar (
           />
         </BlockButton>
         
-      </Group>
+      </ToolbarGroup>
 
-      <Group>
+      <ToolbarGroup>
         <BlockButton format='bulleted-list'>
           <FontAwesomeIcon
             size='sm'
@@ -329,9 +375,9 @@ const TextEditorToolbar = React.forwardRef(function TextEditorToolbar (
             icon={faListCheck}
           />
         </BlockButton>
-      </Group>
+      </ToolbarGroup>
     </Flex>
   )
 })
 
-export default TextEditorToolbar
+export default Toolbar

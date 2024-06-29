@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Box, Flex, IconButton, TextArea } from '@radix-ui/themes'
-import { ArrowRightIcon } from '@radix-ui/react-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowRight, faArrowUp } from '@fortawesome/free-solid-svg-icons'
 
 import store from "@renderer/utils/redux-store"
 import { createNoteThunk } from "@renderer/actions/notes.slice"
-import TextEditor from '@renderer/components/TextEditor'
+import TextEditor from '@renderer/components/TextEditor/TextEditor'
 
 import type { FlexProps  } from '@radix-ui/themes'
 
@@ -118,7 +119,10 @@ function AddNote ({
           disabled={state.inputValue.trim() === ''}
           onClick={createNote}
         >
-          <ArrowRightIcon width='18' height='18' />
+          <FontAwesomeIcon
+            size='1x'
+            icon={faArrowUp}
+          />
         </IconButton>
       </Flex>
 

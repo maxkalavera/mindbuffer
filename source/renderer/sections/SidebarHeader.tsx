@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Flex, Heading, IconButton } from '@radix-ui/themes'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faLayerGroup, faPlus, faPlusSquare, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import { faLayerGroup, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import store from '@renderer/utils/redux-store'
 import commonsSlice from '@renderer/actions/commons.slice'

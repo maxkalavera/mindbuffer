@@ -1,11 +1,12 @@
 import React, { useMemo, useCallback } from 'react'
-import { createEditor, Descendant, Node } from 'slate'
+import { Descendant, createEditor } from 'slate'
 import { Slate, Editable, withReact } from 'slate-react'
+import { Box, Card, Flex } from '@radix-ui/themes'
 
-import TextEditorToolbar from '@renderer/components/TextEditorToolbar'
+import { widthAmberpadEditor } from '@renderer/utils/slate'
+import TextEditorToolbar from '@renderer/components/TextEditor/Toolbar'
 
 import type { DescendantType } from '@ts/slate.types'
-import { Box, Card, Flex, ScrollArea } from '@radix-ui/themes'
 
 const initialValue: DescendantType[] = [
   {
@@ -14,8 +15,52 @@ const initialValue: DescendantType[] = [
   },
 ]
 
-const Element = ({ attributes, children, element }) => {
-  const style = { textAlign: element.align }
+/******************************************************************************
+* Element rendering components
+******************************************************************************/
+
+const defaultElement = ({ attributes, children, element }) => (
+  <p {...attributes}>
+    {children}
+  </p>
+)
+
+const TextWeights = ({ attributes, children, element }) => (
+  {
+    'heading-one' : (
+      <h1 {...attributes}>
+        {children}
+      </h1>
+    ),
+    'heading-two': (
+      <h2 {...attributes}>
+        {children}
+      </h2>
+    ),
+    'heading-three': (
+      <h3 {...attributes}>
+        {children}
+      </h3>
+    ),
+    'text-normal': (
+      <p {...attributes}>
+        {children}
+      </p>
+    )
+  }[element.type]
+)
+
+const Element = (props) => {
+  const { element } = props;
+  return {
+    'heading-one': TextWeights(props),
+    'heading-two': TextWeights(props),
+    'heading-three': TextWeights(props),
+    'text-normal': TextWeights(props),
+  }[element.type] || 
+  defaultElement(props)
+
+  /*
   switch (element.type) {
     case 'block-quote':
       return (
@@ -60,7 +105,12 @@ const Element = ({ attributes, children, element }) => {
         </p>
       )
   }
+  */
 }
+
+/******************************************************************************
+* Leaf rendering components
+******************************************************************************/
 
 const Leaf = ({ attributes, children, leaf }) => {
   if (leaf.bold) {
@@ -82,10 +132,14 @@ const Leaf = ({ attributes, children, leaf }) => {
   return <span {...attributes}>{children}</span>
 }
 
+/******************************************************************************
+* Render text editor
+******************************************************************************/
+
 function TextEditor () {
   const renderElement = useCallback(props => <Element {...props} />, [])
   const renderLeaf = useCallback(props => <Leaf {...props} />, [])
-  const editor = useMemo(() => withReact(createEditor()), [])
+  const editor = useMemo(() => withReact(widthAmberpadEditor(createEditor())), [])
 
   return (
     <Box
@@ -97,7 +151,13 @@ function TextEditor () {
         className='text-editor__frame'
         variant='surface'
       >
-        <Slate editor={editor} initialValue={initialValue as Descendant[]}>
+        <Slate 
+          editor={editor} 
+          initialValue={initialValue as Descendant[]}
+          //onChange={(value) => {
+          //  console.log('EDITOR:', JSON.stringify(value, undefined, 2))
+          //}}
+        >
           <Flex
             width='100%'
             height='100%'

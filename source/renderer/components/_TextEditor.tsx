@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import Quill from 'quill'
 
 import { Box, Flex, Reset, TextArea } from "@radix-ui/themes"
-import TextEditorToolbar from './TextEditorToolbar';
+import TextEditorToolbar from './TextEditor/Toolbar';
 import '@renderer/styles/quill.core.styl'
 import '@renderer/styles/quill.dark.styl'
 

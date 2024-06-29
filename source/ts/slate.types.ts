@@ -1,14 +1,13 @@
-import {
+import type {
   BaseElement,
   BaseText,
-  Editor,
+  BaseEditor,
 } from 'slate'
 
 export type DescendantType = ElementType | TextType
 
 export interface ElementType extends BaseElement {
   type: string
-  align?: 'left' | 'center' | 'right' | 'justify'
   children: DescendantType[]
 }
 
@@ -16,6 +15,9 @@ export interface TextType extends BaseText {
   text: string
 }
 
+export interface EditorType extends BaseEditor {
 
-export type BaseNodeType = Editor | ElementType | TextType
-export type NodeType = Editor | ElementType | TextType
+}
+
+export type BaseNodeType = EditorType | ElementType | TextType
+export type NodeType = EditorType | ElementType | TextType
